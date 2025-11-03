@@ -1,0 +1,216 @@
+Help me write the class outlines for this Java project. I will tell you the classes, along with the names of member variables and methods. By default, make all member variables private and all methods public. For any getter methods, simply return the requested value. For any setter methods, simply set the member variable to the desired value. For all other methods, declare and define them, but leave the definition empty except for a dummy return value (where appropriate). Be sure to include any necessary import statements. Give each class its own file, as per conventional Java practice. Follow typical java convention to create the standard directory structure for a java project. Make two Main files. One for the server, which will be a single centralized instance. Make a client main file also which may have multiple instances and all connect to the main server instance. Here are my classes:
+
+
+Resource (interface)
++getLogs() : ArrayList<Log>
++addLog(Log) : void
++getName() : String
++getDetails() : String
++isAvailable() : boolean
++setAvailability(boolean) : void
++override compareTo() // for sorting
+
+
+Log
+-member : Member
+-resource : Resource
+-checkOutTime : Date
+-checkInTime : Date
+______________________
++getMember() : Member
++getResource() : Resource
++getCheckOutTime() : Date
++getCheckInTime() : Date
+
+
+Member
+-name : String
+-uid : String
+-checkoutHistory : ArrayList<Log>
+-heldResources : ArrayList<Resource>
+___________________________________
++getName() : String
++getUID() : String
++getCheckoutHistory() : ArrayList<Log>
++getCurrentlyHeldResources() : ArrayList<Resource>
++setName(String) : void
++setUID(String) : void
++addResourceToPossession(Resource) : void
++removeResourceFromPossession(Resource) : void
++addLog(Log) : void
++setLogs(ArrayList<Log>) : void
+
+CD (implements Resource)
+-albumName: String
+-artist : String
+-numSongs : int
+-isAvailable : Boolean 
+-checkoutHistory: ArrayList<Log>
+__________________________________
++getLogs() : ArrayList<Log>
++addLog(Log) : void
++getDetails() : String
++isAvailable() : boolean
++setAvailability(boolean) : void
++override compareTo() // for sorting
+
+Book (implements Resource)
+-author : String
+-publisher : String
+-isbn : String
+-title : String
+-isAvailable : Boolean 
+-checkoutHistory: ArrayList<Log>
+__________________________________
++getLogs() : ArrayList<Log>
++addLog(Log) : void
++getDetails() : String
++isAvailable() : boolean
++setAvailability(boolean) : void
++override compareTo() // for sorting
+
+
+Movie (implements resource)
+-director : String
+-runtime : int
+-rating : String
+-title : String
+-isAvailable : Boolean 
+-checkoutHistory: ArrayList<Log>
+__________________________________
++getLogs() : ArrayList<Log>
++addLog(Log) : void
++getDetails() : String
++isAvailable() : boolean
++setAvailability(boolean) : void
++override compareTo() // for sorting
+
+
+GenericResource (implements Resource)
+-extraDetails : ArrayList<String>
+or
+-extraDetails : Map<String, String>
+-resourceName : String
+-isAvailable : Boolean 
+-checkoutHistory: ArrayList<Log>
+__________________________________
++getLogs() : ArrayList<Log>
++addLog(Log) : void
++getDetails() : String
++isAvailable() : boolean
++setAvailability(boolean) : void
++override compareTo() // for sorting
+
+MemberManager
+-memberList : ArrayList<Member>
+_____________________________________________
++addMember(Member) : void
++removeMember(Member) : void
++getMember(int) : Member
++searchMembers(String) : ArrayList<Member>
++saveChanges() : void
+
+LogManager
+-allLogs : ArrayList<Log>
+_____________________________________________
++getRecentLogs() : ArrayList<Log>
++getLogsByDate(Date) : ArrayList<Log>
++saveChanges() : void
+
+
+ResourceManager
+-catalog : ArrayList<Resources>
+______________________________________________
++searchCatalog(string) : ArrayList<Resource>
++addResource(Resource) : Boolean
++editResource(Resource) : Boolean
++removeResource(Resource) : Boolean
++checkoutResource(Resource, Member) : Boolean
++checkinResource(Resource, Member) : Boolean
++saveChanges() : void
+
+
+StaffManager
+-staffList : ArrayList<Staff>
+_____________________________________________
++addStaff(Staff) : void
++removeStaff(Staff) : void
++getStaff(int) : Staff
++setStaff() : void
++searchStaff(String) : ArrayList<Staff>
++setPermissions(Staff, enumSet<Permissions>) : void
++getPermissions(Staff) : enumSet<Permissions>
++hasPermission(Permission) : boolean
++saveChanges() : void
+
+
+LibraryFacade
+-staffManager : StaffManager 
+-resourceManager : ResourceManager 
+-memberManager : MemberManager 
+-logManager : LogManager
+_________________________________
+*** SPECIAL INSTRUCTIONS ***
+"For LibraryFacade, include methods named after all of the methods in StaffManager, ResourceManager, MemberManager, and LogManager. Have these methods act as a passthrough that just calls the method from the underlying object."
+*** END SPECIAL INSTRUCTIONS ***
+
+LibraryServer
+-libraryFacade : LibraryFacade
+-serverSocket : ServerSocket 
+-port : int
+-clientHandlers : List<ClientHandler>
+______________________________________________
++startServer() : void
++acceptClient() : void
++closeServer() : void
+
+
+ClientHandler
+-socket : Socket
+-iStream : ObjectInputStream
+-oStream : ObjectOutputStream
+-libraryFacade : LibraryFacade
+______________________________________________
++run() : void
++processMessage(Message) : void
++sendMessage(Message) : void
+
+
+Client
+-connection : Socket
+-iStream : ObjectInputStream
+-oStream : ObjectOutputStream
+-guiManager : GUIManager
+
+______________________________________________
++connectToServer(int) : void
++processMessage(Message) : void
++sendMessage(Message) : void
++closeConnection() : void
+
+
+Message
+- messageType : MessageType
+- msgContent : Object
+_________________________________________
++getMessageType() : MessageType
++getMessageContent() : Object
+
+GUIManager
+// content to be determined
+
+Permissions (enumerator)
+
+ADD_RESOURCE
+REMOVE_RESOURCE
+EDIT_RESOURCE
+ADD_MEMBER
+REMOVE_MEMBER
+EDIT_MEMBER
+
+
+PermissionLevel (enumerator)
+
+ADMIN
+STAFF
+CLIENT
