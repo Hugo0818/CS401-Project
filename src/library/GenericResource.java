@@ -41,6 +41,11 @@ public class GenericResource implements Resource {
     
     @Override
     public int compareTo(Resource other) {
-        return 0;
+        return this.getDisplayName().compareTo(other.getDisplayName());
+    }
+
+    @Override
+    public String getDisplayName() {
+        return this.resourceName;
     }
 }
