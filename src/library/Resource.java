@@ -9,7 +9,10 @@ public interface Resource extends Comparable<Resource> {
     String getDetails();
     boolean isAvailable();
     void setAvailability(boolean availability);
+    String getDisplayName();
     
     @Override
-    int compareTo(Resource other);
+    int compareTo(Resource other) {
+        return this.getDisplayName().compareTo(other.getDisplayName());
+    }
 }
