@@ -8,12 +8,12 @@ public class Staff {
 	private String name;
 	private String uid;
 	private String role;
-	private static int idCounter = 0; //for unique ids
+	private static int idCounter = 1; //for unique ids
 	
 	public Staff(String Name, String Role) {
 		name = Name;
 		role = Role;
-		uid = "SID" + ++idCounter;
+		uid = "SID" + idCounter++;
 	}
 	
 	public String getName() {
