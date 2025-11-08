@@ -15,7 +15,8 @@ public class Member {
         this.checkoutHistory = new ArrayList<>; // New checkoutHistory array for logs
         this.heldResources = new ArrayList<>; // New heldResources array for resources currently checked out
     }
-    
+
+    // Getters
     public String getName() {
         return name;
     }
@@ -31,7 +32,8 @@ public class Member {
     public ArrayList<Resource> getCurrentlyHeldResources() {
         return heldResources;
     }
-    
+
+    // Setters
     public void setName(String name) {
         this.name = name;
     }
@@ -41,18 +43,18 @@ public class Member {
     }
     
     public void addResourceToPossession(Resource resource) {
-        
+        heldResources.add(resource);
     }
     
     public void removeResourceFromPossession(Resource resource) {
-        
+        heldResources.remove(resource);
     }
     
     public void addLog(Log log) {
-        
+        checkoutHistory.add(log);
     }
     
     public void setLogs(ArrayList<Log> logs) {
-        
+        this.checkoutHistory = new ArrayList<>(logs);
     }
 }
