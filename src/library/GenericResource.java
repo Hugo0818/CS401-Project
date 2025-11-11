@@ -16,17 +16,20 @@ public class GenericResource implements Resource {
     
     @Override
     public void addLog(Log log) {
-        
+        checkoutHistory.add(log);
     }
     
-    @Override
-    public String getName() {
-        return resourceName;
-    }
+
     
     @Override
     public String getDetails() {
-        return "";
+        StringBuilder details = new StringBuilder();
+        for (Map.Entry<String, String> entry : extraDetails.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            details.append(key).append(": ").append(value).append("\n");
+        }
+        return details.toString();
     }
     
     @Override
@@ -36,16 +39,11 @@ public class GenericResource implements Resource {
     
     @Override
     public void setAvailability(boolean availability) {
-        this.isAvailable = availability;
-    }
-    
-    @Override
-    public int compareTo(Resource other) {
-        return this.getDisplayName().compareTo(other.getDisplayName());
+        isAvailable = availability;
     }
 
     @Override
     public String getDisplayName() {
-        return this.resourceName;
+        return resourceName;
     }
 }
