@@ -6,8 +6,12 @@ import java.util.Date;
 public class LogManager {
     private ArrayList<Log> allLogs;
 
-    public LogManager() {
-        allLogs = new ArrayList<>();
+    public LogManager(ArrayList<Log> allLogs) {
+        if (allLogs != null) {
+            this.allLogs = allLogs;
+        } else {
+            this.allLogs = new ArrayList<>();
+        }
     }
 
     public void addLog(Log log) {
@@ -39,7 +43,4 @@ public class LogManager {
         return day1 == day2;
     }
     
-    public void saveChanges() {
-        
-    }
 }

@@ -4,12 +4,13 @@ import java.util.ArrayList;
 
 public class MemberManager {
     private ArrayList<Member> memberList;
-    private String filepath;
 
-    public MemberManager(String filepath) {
-        this.filepath = filepath;
-        this.memberList = new ArrayList<>();
-        if (this.filepath != null) loadFromDisk();
+    public MemberManager(ArrayList<Member> memberList) {
+        if (memberList != null) {
+            this.memberList = memberList;
+        } else {
+            this.memberList = new ArrayList<>();
+        }
     }
 
     public void addMember(Member member) {
@@ -38,20 +39,4 @@ public class MemberManager {
         return results;
     }
     
-    public void saveChanges() {
-        try (java.io.ObjectOutputStream out = new java.io.ObjectOutputStream(new java.io.FileOutputStream(filepath))) {
-            out.writeObject(memberList);
-        } catch (Exception e) {
-            // Optionally log or handle the error
-        }
-    }
-
-    @SuppressWarnings("unchecked")
-    public void loadFromDisk() {
-        try (java.io.ObjectInputStream in = new java.io.ObjectInputStream(new java.io.FileInputStream(filepath))) {
-            memberList = (ArrayList<Member>) in.readObject();
-        } catch (Exception e) {
-            memberList = new ArrayList<>(); // fallback to empty list if file not found or error
-        }
-    }
 }

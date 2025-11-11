@@ -96,9 +96,31 @@ public class LibraryFacade {
     
     // SaveChanges methods for all managers
     public void saveChanges() {
-        staffManager.saveChanges();
-        resourceManager.saveChanges();
-        memberManager.saveChanges();
-        logManager.saveChanges();
+        // TODO : Shared references are only preserved within a single serialization operation. All managers should be saved in one .ser file to maintain object references.
+        // write all four lists to the same ObjectOutputStream (same file) in sequence
+        // read them back in the same order. cant skip objects when reading. use in.readObject() to iterate through them.
+    }
+
+    public LibraryFacade(String serFilePath) {
+        try (java.io.ObjectInputStream in = new java.io.ObjectInputStream(new java.io.FileInputStream(serFilePath))) {
+            @SuppressWarnings("unchecked")
+            ArrayList<Staff> staffList = (ArrayList<Staff>) in.readObject();
+            @SuppressWarnings("unchecked")
+            ArrayList<Resource> catalog = (ArrayList<Resource>) in.readObject();
+            @SuppressWarnings("unchecked")
+            ArrayList<Member> memberList = (ArrayList<Member>) in.readObject();
+            @SuppressWarnings("unchecked")
+            ArrayList<Log> logList = (ArrayList<Log>) in.readObject();
+            this.staffManager = new StaffManager(staffList);
+            this.resourceManager = new ResourceManager(catalog);
+            this.memberManager = new MemberManager(memberList);
+            this.logManager = new LogManager(logList);
+        } catch (Exception e) {
+            // Optionally handle or log the error
+            this.staffManager = new StaffManager(new ArrayList<>());
+            this.resourceManager = new ResourceManager(new ArrayList<>());
+            this.memberManager = new MemberManager(new ArrayList<>());
+            this.logManager = new LogManager(new ArrayList<>());
+        }
     }
 }

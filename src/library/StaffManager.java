@@ -5,7 +5,14 @@ import java.util.EnumSet;
 
 public class StaffManager {
     private ArrayList<Staff> staffList;
-    
+
+    public StaffManager(ArrayList<Staff> staffList) {
+        if (staffList != null) {
+            this.staffList = staffList;
+        } else {
+            this.staffList = new ArrayList<>();
+        }
+    }
     public void addStaff(Staff staff) {
         staffList.add(staff);
     }
@@ -43,7 +50,4 @@ public class StaffManager {
         return false;
     }
     
-    public void saveChanges() {
-        
-    }
 }
