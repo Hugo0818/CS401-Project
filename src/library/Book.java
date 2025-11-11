@@ -17,13 +17,9 @@ public class Book implements Resource {
     
     @Override
     public void addLog(Log log) {
-        
+        checkoutHistory.add(log);
     }
     
-    @Override
-    public String getName() {
-        return title;
-    }
     
     @Override
     public String getDetails() {
@@ -37,16 +33,11 @@ public class Book implements Resource {
     
     @Override
     public void setAvailability(boolean availability) {
-        this.isAvailable = availability;
-    }
-    
-    @Override
-    public int compareTo(Resource other) {
-        return this.getDisplayName().compareTo(other.getDisplayName());
+        isAvailable = availability;
     }
 
     @Override
     public String getDisplayName() {
-        return this.title;
+        return title;
     }
 }

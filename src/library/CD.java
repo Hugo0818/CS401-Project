@@ -20,11 +20,6 @@ public class CD implements Resource {
     }
     
     @Override
-    public String getName() {
-        return albumName;
-    }
-    
-    @Override
     public String getDetails() {
         return "";
     }
@@ -36,16 +31,11 @@ public class CD implements Resource {
     
     @Override
     public void setAvailability(boolean availability) {
-        this.isAvailable = availability;
-    }
-    
-    @Override
-    public int compareTo(Resource other) {
-        return this.getDisplayName().compareTo(other.getDisplayName());
+        isAvailable = availability;
     }
 
     @Override
     public String getDisplayName() {
-        return this.albumName;
+        return albumName;
     }
 }

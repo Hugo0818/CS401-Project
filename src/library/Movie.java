@@ -9,7 +9,16 @@ public class Movie implements Resource {
     private String title;
     private Boolean isAvailable;
     private ArrayList<Log> checkoutHistory;
-    
+
+    public Movie(String title, String director, int runtime, String rating) {
+        this.title = title;
+        this.director = director;
+        this.runtime = runtime;
+        this.rating = rating;
+        this.isAvailable = true;
+        this.checkoutHistory = new ArrayList<>();
+    }
+
     @Override
     public ArrayList<Log> getLogs() {
         return checkoutHistory;
@@ -17,17 +26,18 @@ public class Movie implements Resource {
     
     @Override
     public void addLog(Log log) {
-        
+        checkoutHistory.add(log);
     }
     
-    @Override
-    public String getName() {
-        return title;
-    }
+
     
     @Override
     public String getDetails() {
-        return "";
+        return 
+        "Title: " + title + "\n" +
+        "Director: " + director + "\n" + 
+        "Runtime: " + runtime + " mins\n" +
+        "Rating: " + rating + "\n";
     }
     
     @Override
@@ -37,16 +47,11 @@ public class Movie implements Resource {
     
     @Override
     public void setAvailability(boolean availability) {
-        this.isAvailable = availability;
-    }
-    
-    @Override
-    public int compareTo(Resource other) {
-        return this.getDisplayName().compareTo(other.getDisplayName());
+        isAvailable = availability;
     }
 
     @Override
     public String getDisplayName() {
-        return this.title;
+        return title;
     }
 }
