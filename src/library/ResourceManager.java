@@ -41,12 +41,12 @@ public class ResourceManager {
     }
 
     public Boolean checkoutResource(Resource resource, Member member) {
-        // Placeholder: implement checkout logic as needed
+        // TODO: Implement checkout logic
         return false;
     }
 
     public Boolean checkinResource(Resource resource, Member member) {
-        // Placeholder: implement checkin logic as needed
+        // TODO: Implement checkin logic
         return false;
     }
 

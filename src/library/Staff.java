@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.EnumSet;
 
 public class Staff {
-    // Staff class implementation - member variables and methods to be determined based on application needs
 	private String name;
 	private String uid;
 	private String role;
 	private static int idCounter = 1; //for unique ids
+    // TODO: Add more staff fields and methods as needed
 	
 	public Staff(String Name, String Role) {
 		name = Name;

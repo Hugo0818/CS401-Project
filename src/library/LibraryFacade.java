@@ -96,9 +96,9 @@ public class LibraryFacade {
     
     // SaveChanges methods for all managers
     public void saveChanges() {
-        // TODO : Shared references are only preserved within a single serialization operation. All managers should be saved in one .ser file to maintain object references.
-        // write all four lists to the same ObjectOutputStream (same file) in sequence
-        // read them back in the same order. cant skip objects when reading. use in.readObject() to iterate through them.
+        // TODO: Implement saveChanges to serialize all four lists to a single .ser file, preserving shared references.
+        // Write all four lists to the same ObjectOutputStream (same file) in sequence.
+        // Read them back in the same order. Can't skip objects when reading. Use in.readObject() to iterate through them.
     }
 
     public LibraryFacade(String serFilePath) {

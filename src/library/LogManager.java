@@ -19,6 +19,7 @@ public class LogManager {
     }
     
     public ArrayList<Log> getRecentLogs() {
+        // TODO: Implement logic to return recent logs
         return null;
     }
     

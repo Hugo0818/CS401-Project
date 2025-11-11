@@ -23,6 +23,7 @@ public class Book implements Resource {
     
     @Override
     public String getDetails() {
+        // TODO: Implement book details string
         return "";
     }
     
