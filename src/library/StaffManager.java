@@ -7,19 +7,24 @@ public class StaffManager {
     private ArrayList<Staff> staffList;
     
     public void addStaff(Staff staff) {
-        
+        staffList.add(staff);
     }
-    
-    public void removeStaff(Staff staff) {
-        
+
+    public boolean removeStaff(Staff staff) {
+        return staffList.remove(staff);
     }
     
     public Staff getStaff(int index) {
-        return null;
+        return staffList.get(index);
     }
-    
-    public void setStaff() {
-        
+
+    public boolean setStaff(Staff original, Staff updated) {
+        int index = staffList.indexOf(original);
+        if (index != -1) {
+            staffList.set(index, updated);
+            return true;
+        }
+        return false;
     }
     
     public ArrayList<Staff> searchStaff(String query) {

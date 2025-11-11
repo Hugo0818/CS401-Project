@@ -7,6 +7,12 @@ public class Log {
     private Resource resource;
     private Date checkOutTime;
     private Date checkInTime;
+
+    public Log(Member member, Resource resource) {
+        if (member != null && resource != null) {
+            checkOut(member, resource);
+        }
+    }
     
     public Member getMember() {
         return member;
@@ -23,4 +29,23 @@ public class Log {
     public Date getCheckInTime() {
         return checkInTime;
     }
+
+    public boolean checkOut(Member member, Resource resource) {
+        if (this.checkOutTime == null) {
+            this.member = member;
+            this.resource = resource;
+            this.checkOutTime = new Date();
+            return true;
+        }
+        return false;
+    }
+
+    public boolean checkIn() {
+        if (member != null && resource != null && checkOutTime != null && checkInTime == null) {
+            checkInTime = new Date();
+            return true;
+        }
+        return false;
+    }
+    
 }
