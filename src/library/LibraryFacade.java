@@ -23,8 +23,8 @@ public class LibraryFacade {
         return staffManager.getStaff(index);
     }
     
-    public void setStaff() {
-        staffManager.setStaff();
+    public boolean setStaff(Staff original, Staff updated) {
+        return staffManager.setStaff(original, updated);
     }
     
     public ArrayList<Staff> searchStaff(String query) {
@@ -52,8 +52,8 @@ public class LibraryFacade {
         return resourceManager.addResource(resource);
     }
     
-    public Boolean editResource(Resource resource) {
-        return resourceManager.editResource(resource);
+    public Boolean editResource(Resource original, Resource updated) {
+        return resourceManager.editResource(original, updated);
     }
     
     public Boolean removeResource(Resource resource) {

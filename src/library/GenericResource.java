@@ -20,7 +20,6 @@ public class GenericResource implements Resource {
     }
     
 
-    
     @Override
     public String getDetails() {
         StringBuilder details = new StringBuilder();

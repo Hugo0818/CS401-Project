@@ -5,13 +5,38 @@ import java.util.Date;
 
 public class LogManager {
     private ArrayList<Log> allLogs;
+
+    public LogManager() {
+        allLogs = new ArrayList<>();
+    }
+
+    public void addLog(Log log) {
+        allLogs.add(log);
+    }
     
     public ArrayList<Log> getRecentLogs() {
         return null;
     }
     
     public ArrayList<Log> getLogsByDate(Date date) {
-        return null;
+        ArrayList<Log> results = new ArrayList<>();
+        if (date == null) return results;
+        for (Log log : allLogs) {
+            Date out = log.getCheckOutTime();
+            Date in = log.getCheckInTime();
+            if (isSameDay(out, date) || isSameDay(in, date)) {
+                results.add(log);
+            }
+        }
+        return results;
+    }
+
+    private boolean isSameDay(Date d1, Date d2) {
+        if (d1 == null || d2 == null) return false;
+        long msPerDay = 24L * 60 * 60 * 1000;
+        long day1 = d1.getTime() / msPerDay;
+        long day2 = d2.getTime() / msPerDay;
+        return day1 == day2;
     }
     
     public void saveChanges() {
