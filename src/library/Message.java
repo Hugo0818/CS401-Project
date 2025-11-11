@@ -6,10 +6,12 @@ public class Message implements Serializable {
     private Object msgContent;
     
     public MessageType getMessageType() {
+        // TODO: Implement getMessageType if needed
         return messageType;
     }
     
     public Object getMessageContent() {
+        // TODO: Implement getMessageContent if needed
         return msgContent;
     }
 }

@@ -16,11 +16,12 @@ public class CD implements Resource {
     
     @Override
     public void addLog(Log log) {
-        
+        // TODO: Implement addLog for CD
     }
     
     @Override
     public String getDetails() {
+        // TODO: Implement CD details string
         return "";
     }
     
