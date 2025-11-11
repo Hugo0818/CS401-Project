@@ -12,8 +12,8 @@ public class Member {
     public Member (String name) {
         this.name = name;
         this.uid = "M" + newID++; // M for member, don't know if there will be other combinations of ID characters
-        this.checkoutHistory = new ArrayList<>; // New checkoutHistory array for logs
-        this.heldResources = new ArrayList<>; // New heldResources array for resources currently checked out
+        this.checkoutHistory = new ArrayList<>(); // New checkoutHistory array for logs
+        this.heldResources = new ArrayList<>(); // New heldResources array for resources currently checked out
     }
 
     // Getters
