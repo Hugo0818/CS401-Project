@@ -2,16 +2,25 @@ package library;
 import java.io.Serializable;
 
 public class Message implements Serializable {
-    private MessageType messageType;
-    private Object msgContent;
+    private static final long serialVersionUID = 1L;
+    private String type;
+    private Object content;
     
-    public MessageType getMessageType() {
-        // TODO: Implement getMessageType if needed
-        return messageType;
+    public Message() {
+        this.type = "Undefined";
+        this.content = null;
     }
     
-    public Object getMessageContent() {
-        // TODO: Implement getMessageContent if needed
-        return msgContent;
+    public Message(String type, Object content) {
+        this.type = type;
+        this.content = content;
+    }
+    
+    public String getType() {
+        return type;
+    }
+    
+    public Object getContent() {
+        return content;
     }
 }
