@@ -8,7 +8,6 @@ public class Staff {
 	private String uid;
 	private String role;
 	private static int idCounter = 1; //for unique ids
-    // TODO: Add more staff fields and methods as needed
 	
 	public Staff(String Name, String Role) {
 		name = Name;

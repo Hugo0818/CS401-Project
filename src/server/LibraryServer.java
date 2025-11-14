@@ -7,29 +7,33 @@ import java.net.Socket;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.net.InetAddress;
+
 public class LibraryServer {
     private LibraryFacade libraryFacade;
     private ServerSocket serverSocket;
+    private String host;
     private int port;
     private List<ClientHandler> clientHandlers;
     private int clientCounter;
-    
-    public LibraryServer(int port, LibraryFacade libraryFacade) {
+
+    public LibraryServer(String host, int port, LibraryFacade libraryFacade) {
+        this.host = host;
         this.port = port;
         this.libraryFacade = libraryFacade;
         this.clientHandlers = new ArrayList<>();
         this.clientCounter = 0;
     }
-    
+
     public void startServer() {
         try {
-            serverSocket = new ServerSocket(port);
+            serverSocket = new ServerSocket(port, 50, InetAddress.getByName(host));
             serverSocket.setReuseAddress(true);
             System.out.println("Library Server started on port " + port);
-            System.out.println("Server address: " + serverSocket.getInetAddress());
-            System.out.println("Listening on all interfaces (0.0.0.0:" + port + ")");
+            System.out.println("Server address: " + host);
+            System.out.println("Listening on " + host + ":" + port);
             System.out.println("Waiting for client connections...");
-            
+
             // Continuously accept clients in a loop
             while (true) {
                 acceptClient();
