@@ -119,9 +119,9 @@ Use this file to track project tasks, assign them to team members, and mark prog
 # Member.java
 | Status | Task Description         | Assigned To | Notes |
 | ------ | ------------------------ | ----------- | ----- |
-| [ ]    | Implement constructor(s) |             |       |
-| [ ]    | Implement getters        |             |       |
-| [ ]    | Implement setters        |             |       |
+| [x]    | Implement constructor(s) |             |       |
+| [x]    | Implement getters        |             |       |
+| [x]    | Implement setters        |             |       |
 | [x]    | Class created            | Nathan      |       |
 
 
@@ -141,7 +141,7 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement constructor(s)              |             |       |
 | [ ]    | Implement getters                     |             |       |
 | [ ]    | Implement setters                     |             |       |
-| [x]    | Class created                        | Ryan-pelo   |       |
+| [x]    | Class created                         | Ryan-pelo   |       |
 
 
 # Movie.java
