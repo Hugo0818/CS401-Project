@@ -179,9 +179,9 @@ Use this file to track project tasks, assign them to team members, and mark prog
 # Staff.java
 | Status | Task Description         | Assigned To | Notes |
 | ------ | ------------------------ | ----------- | ----- |
-| [ ]    | Implement constructor(s) |             |       |
-| [ ]    | Implement getters        |             |       |
-| [ ]    | Implement setters        |             |       |
+| [x]    | Implement constructor(s) | Sal         |       |
+| [x]    | Implement getters        | Sal         |       |
+| [x]    | Implement setters        | Sal         |       |
 | [x]    | Class created            | Sal         |       |
 
 
