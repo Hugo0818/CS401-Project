@@ -190,29 +190,15 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 
 # GUI SECTION
-# GUI.java (1 class for all GUIs)
+# GUI.java 
 | Status | Task Description                 | Assigned To | Notes |
 | ------ | -------------------------------- | ----------- | ----- |
 | [ ]    | Create Main GUI menu             |             |       |
-| [ ]    | 2 different menu based on account|             |       |
-| [ ]    | Staff and Member                 |             |       |
-Depending on what they're signing in as, they're redirected to their respective GUI menu
-
-# Staff GUI
-| Status | Task Description                 | Assigned To | Notes |
-| ------ | -------------------------------- | ----------- | ----- |
 | [ ]    | Create a GUI menu for staff      |             |       |
-
-Operations: Create account, log in/out, add to catalog, check in/out a ressource, maybe more depending on type of staff
-So far, we have not implemented Staff and Staff Manager fully and what the logic is depending on what type of Staff
-
-
-# Member GUI
-| Status | Task Description                 | Assigned To | Notes |
-| ------ | -------------------------------- | ----------- | ----- |
+| [ ]    | Create a GUI menu for staff      |             |       |
+| [ ]    | Librarian Frame                  |             |       |
 | [ ]    | Create a GUI menu for member     |             |       |
-Operations should be create an account, log in, log out, check in / check out a resource.
-
+| [ ]    | Member Frame                     |             |       |
 
 
 
