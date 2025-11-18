@@ -195,8 +195,8 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | ------ | -------------------------------- | ----------- | ----- |
 | [ ]    | Create Main GUI menu             |             |       |
 | [ ]    | Create a GUI menu for staff      |             |       |
-| [ ]    | Create a GUI menu for staff      |             |       |
 | [ ]    | Librarian Frame                  |             |       |
+| [ ]    | Librarian Assistant Frame        |             |       |
 | [ ]    | Create a GUI menu for member     |             |       |
 | [ ]    | Member Frame                     |             |       |
 
