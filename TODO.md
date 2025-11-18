@@ -15,6 +15,54 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 ---
 
+# LibraryFacade.java
+| Status | Task Description              | Assigned To | Notes       |
+| ------ | ----------------------------- | ----------- | ----------- |
+| [ ]    | Implement constructor(s)      |             |             |
+| [ ]    | Implement getters             |             |             |
+| [ ]    | Implement setters             |             |             |
+| [ ]    | Implement saveChanges         |             | saveChanges |
+| [x]    | Implement passthrough methods | Ryan-pelo   |             |
+| [x]    | Implement serialization       | Ryan-pelo   |             |
+
+
+
+# ResourceManager.java
+| Status | Task Description         | Assigned To | Notes   |
+| ------ | ------------------------ | ----------- | ------- |
+| [ ]    | Implement constructor(s) |             |         |
+| [ ]    | Implement getters        |             |         |
+| [ ]    | Implement setters        |             |         |
+| [ ]    | Implement checkout logic |             | line 44 |
+| [ ]    | Implement checkin logic  |             | line 49 |
+| [x]    | Implement searchCatalog  | Ryan-pelo   |         |
+| [x]    | Implement addResource    | Ryan-pelo   |         |
+| [x]    | Implement editResource   | Ryan-pelo   |         |
+| [x]    | Implement removeResource | Ryan-pelo   |         |
+
+# Resource.java
+| Status | Task Description  | Assigned To | Notes |
+| ------ | ----------------- | ----------- | ----- |
+| [x]    | Interface created | Hugo        |       |
+| [x]    | Methods declared  | Hugo        |       |
+
+# GenericResource.java
+| Status | Task Description           | Assigned To | Notes |
+| ------ | ------------------------   | ----------- | ----- |
+| [ ]    | Implement constructor(s)   |             |       |
+| [ ]    | Implement getters          |             |       |
+| [ ]    | Implement setters          |             |       |
+| [ ]    | Implement interface methods|             |       |
+| [x]    | Class created              | Ryan-pelo   |       |
+
+# Movie.java
+| Status | Task Description         | Assigned To | Notes |
+| ------ | ------------------------ | ----------- | ----- |
+| [ ]    | Implement constructor(s) |             |       |
+| [ ]    | Implement getters        |             |       |
+| [ ]    | Implement setters        |             |       |
+| [x]    | Class created            | Ryan-pelo   |       |
+
 
 # Book.java
 | Status | Task Description         | Assigned To | Notes   |
@@ -36,74 +84,6 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement addLog()       |             | line 19 |
 | [x]    | Class created            | Ralph       |         |
 
-
-# Client.java
-| Status | Task Description                  | Assigned To | Notes                 |
-| ------ | --------------------------------- | ----------- | --------------------- |
-| [ ]    | Implement constructor(s)          |             |                       |
-| [ ]    | Implement getters                 |             |                       |
-| [ ]    | Implement message processing      |             | processMessage method |
-| [ ]    | Implement message sending         |             | sendMessage method    |
-| [x]    | Implement socket connection logic | Ryan-pelo   |                       |
-| [x]    | Implement closeConnection method  | Ryan-pelo   |                       |
-
-
-
-
-
-# ClientHandler.java
-| Status | Task Description             | Assigned To | Notes          |
-| ------ | ---------------------------- | ----------- | -------------- |
-| [ ]    | Implement constructor(s)     |             |                |
-| [ ]    | Implement getters            |             |                |
-| [ ]    | Implement setters            |             |                |
-| [ ]    | Implement message processing |             | processMessage |
-| [ ]    | Implement message sending    |             | sendMessage    |
-| [x]    | Implement run method         |             |                |
-
-
-# GenericResource.java
-| Status | Task Description           | Assigned To | Notes |
-| ------ | ------------------------   | ----------- | ----- |
-| [ ]    | Implement constructor(s)   |             |       |
-| [ ]    | Implement getters          |             |       |
-| [ ]    | Implement setters          |             |       |
-| [ ]    | Implement interface methods|             |       |
-| [x]    | Class created              | Ryan-pelo   |       |
-
-
-# GUIManager.java
-| Status | Task Description                 | Assigned To | Notes |
-| ------ | -------------------------------- | ----------- | ----- |
-| [ ]    | Implement constructor(s)         |             |       |
-| [ ]    | Implement getters                |             |       |
-| [ ]    | Implement setters                |             |       |
-| [ ]    | Design Swing GUI layout          |             |       |
-| [ ]    | Implement Swing GUI panels       |             |       |
-| [ ]    | Connect GUI to Client networking |             |       |
-| [x]    | Class skeleton created           | Ryan-pelo   |       |
-
-
-# LibraryFacade.java
-| Status | Task Description              | Assigned To | Notes       |
-| ------ | ----------------------------- | ----------- | ----------- |
-| [ ]    | Implement constructor(s)      |             |             |
-| [ ]    | Implement getters             |             |             |
-| [ ]    | Implement setters             |             |             |
-| [ ]    | Implement saveChanges         |             | saveChanges |
-| [x]    | Implement passthrough methods | Ryan-pelo   |             |
-| [x]    | Implement serialization       | Ryan-pelo   |             |
-
-
-# LibraryServer.java
-| Status | Task Description         | Assigned To | Notes |
-| ------ | ------------------------ | ----------- | ----- |
-| [ ]    | Implement constructor(s) |             |       |
-| [ ]    | Implement getters        |             |       |
-| [ ]    | Implement setters        |             |       |
-| [x]    | Class created            | Ryan-pelo   |       |
-
-
 # LogManager.java
 | Status | Task Description           | Assigned To | Notes   |
 | ------ | -------------------------- | ----------- | ------- |
@@ -116,15 +96,6 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [x]    | Implement addLog           | Ryan-pelo   |         |
 
 
-# Member.java
-| Status | Task Description         | Assigned To | Notes |
-| ------ | ------------------------ | ----------- | ----- |
-| [x]    | Implement constructor(s) |             |       |
-| [x]    | Implement getters        |             |       |
-| [x]    | Implement setters        |             |       |
-| [x]    | Class created            | Nathan      |       |
-
-
 # MemberManager.java
 | Status | Task Description         | Assigned To | Notes |
 | ------ | ------------------------ | ----------- | ----- |
@@ -133,56 +104,13 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement setters        |             |       |
 | [x]    | Class created            | Ryan-pelo   |       |
 
-
-# Message.java
-| Status | Task Description                      | Assigned To | Notes |
-| ------ | ------------------------------------- | ----------- | ----- |
-| [ ]    | Change message content type to String |             |       |
-| [ ]    | Implement constructor(s)              |             |       |
-| [ ]    | Implement getters                     |             |       |
-| [ ]    | Implement setters                     |             |       |
-| [x]    | Class created                         | Ryan-pelo   |       |
-
-
-# Movie.java
+# Member.java
 | Status | Task Description         | Assigned To | Notes |
 | ------ | ------------------------ | ----------- | ----- |
-| [ ]    | Implement constructor(s) |             |       |
-| [ ]    | Implement getters        |             |       |
-| [ ]    | Implement setters        |             |       |
-| [x]    | Class created            | Ryan-pelo   |       |
-
-
-
-# Resource.java
-
-| Status | Task Description  | Assigned To | Notes |
-| ------ | ----------------- | ----------- | ----- |
-| [x]    | Interface created | Hugo        |       |
-| [x]    | Methods declared  | Hugo        |       |
-
-# ResourceManager.java
-| Status | Task Description         | Assigned To | Notes   |
-| ------ | ------------------------ | ----------- | ------- |
-| [ ]    | Implement constructor(s) |             |         |
-| [ ]    | Implement getters        |             |         |
-| [ ]    | Implement setters        |             |         |
-| [ ]    | Implement checkout logic |             | line 44 |
-| [ ]    | Implement checkin logic  |             | line 49 |
-| [x]    | Implement searchCatalog  | Ryan-pelo   |         |
-| [x]    | Implement addResource    | Ryan-pelo   |         |
-| [x]    | Implement editResource   | Ryan-pelo   |         |
-| [x]    | Implement removeResource | Ryan-pelo   |         |
-
-
-
-# Staff.java
-| Status | Task Description         | Assigned To | Notes |
-| ------ | ------------------------ | ----------- | ----- |
-| [x]    | Implement constructor(s) | Sal         |       |
-| [x]    | Implement getters        | Sal         |       |
-| [x]    | Implement setters        | Sal         |       |
-| [x]    | Class created            | Sal         |       |
+| [x]    | Implement constructor(s) |             |       |
+| [x]    | Implement getters        |             |       |
+| [x]    | Implement setters        |             |       |
+| [x]    | Class created            | Nathan      |       |
 
 
 # StaffManager.java
@@ -197,8 +125,98 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [x]    | Implement addStaff           | Ryan-pelo   |         |
 | [x]    | Implement removeStaff        | Ryan-pelo   |         |
 
-# Other/Project Tasks
 
+# Staff.java
+| Status | Task Description         | Assigned To | Notes |
+| ------ | ------------------------ | ----------- | ----- |
+| [x]    | Implement constructor(s) | Sal         |       |
+| [x]    | Implement getters        | Sal         |       |
+| [x]    | Implement setters        | Sal         |       |
+| [x]    | Class created            | Sal         |       |
+
+
+# Message.java
+| Status | Task Description                      | Assigned To | Notes |
+| ------ | ------------------------------------- | ----------- | ----- |
+| [ ]    | Change message content type to String |             |       |
+| [ ]    | Implement constructor(s)              |             |       |
+| [ ]    | Implement getters                     |             |       |
+| [ ]    | Implement setters                     |             |       |
+| [x]    | Class created                         | Ryan-pelo   |       |
+
+
+
+# LibraryServer.java
+| Status | Task Description         | Assigned To | Notes |
+| ------ | ------------------------ | ----------- | ----- |
+| [ ]    | Implement constructor(s) |             |       |
+| [ ]    | Implement getters        |             |       |
+| [ ]    | Implement setters        |             |       |
+| [x]    | Class created            | Ryan-pelo   |       |
+
+# Client.java
+| Status | Task Description                  | Assigned To | Notes                 |
+| ------ | --------------------------------- | ----------- | --------------------- |
+| [ ]    | Implement constructor(s)          |             |                       |
+| [ ]    | Implement getters                 |             |                       |
+| [ ]    | Implement message processing      |             | processMessage method |
+| [ ]    | Implement message sending         |             | sendMessage method    |
+| [x]    | Implement socket connection logic | Ryan-pelo   |                       |
+| [x]    | Implement closeConnection method  | Ryan-pelo   |                       |
+
+
+
+# ClientHandler.java
+| Status | Task Description             | Assigned To | Notes          |
+| ------ | ---------------------------- | ----------- | -------------- |
+| [ ]    | Implement constructor(s)     |             |                |
+| [ ]    | Implement getters            |             |                |
+| [ ]    | Implement setters            |             |                |
+| [ ]    | Implement message processing |             | processMessage |
+| [ ]    | Implement message sending    |             | sendMessage    |
+| [x]    | Implement run method         |             |                |
+
+
+# GUIManager.java
+| Status | Task Description                 | Assigned To | Notes |
+| ------ | -------------------------------- | ----------- | ----- |
+| [ ]    | Implement constructor(s)         |             |       |
+| [ ]    | Implement getters                |             |       |
+| [ ]    | Implement setters                |             |       |
+| [ ]    | Design Swing GUI layout          |             |       |
+| [ ]    | Implement Swing GUI panels       |             |       |
+| [ ]    | Connect GUI to Client networking |             |       |
+| [x]    | Class skeleton created           | Ryan-pelo   |       |
+
+
+# GUI SECTION
+# GUI.java (1 class for all GUIs)
+| Status | Task Description                 | Assigned To | Notes |
+| ------ | -------------------------------- | ----------- | ----- |
+| [ ]    | Create Main GUI menu             |             |       |
+| [ ]    | 2 different menu based on account|             |       |
+| [ ]    | Staff and Member                 |             |       |
+Depending on what they're signing in as, they're redirected to their respective GUI menu
+
+# Staff GUI
+| Status | Task Description                 | Assigned To | Notes |
+| ------ | -------------------------------- | ----------- | ----- |
+| [ ]    | Create a GUI menu for staff      |             |       |
+
+Operations: Create account, log in/out, add to catalog, check in/out a ressource, maybe more depending on type of staff
+So far, we have not implemented Staff and Staff Manager fully and what the logic is depending on what type of Staff
+
+
+# Member GUI
+| Status | Task Description                 | Assigned To | Notes |
+| ------ | -------------------------------- | ----------- | ----- |
+| [ ]    | Create a GUI menu for member     |             |       |
+Operations should be create an account, log in, log out, check in / check out a resource.
+
+
+
+
+# Other/Project Tasks
 | Status | Task Description                        | Assigned To | Notes                  |
 | ------ | --------------------------------------- | ----------- | ---------------------- |
 | [ ]    | Write unit tests for ResourceManager    |             | Test checkout/checkin  |
