@@ -58,9 +58,9 @@ Use this file to track project tasks, assign them to team members, and mark prog
 # Movie.java
 | Status | Task Description         | Assigned To | Notes |
 | ------ | ------------------------ | ----------- | ----- |
-| [ ]    | Implement constructor(s) |             |       |
-| [ ]    | Implement getters        |             |       |
-| [ ]    | Implement setters        |             |       |
+| [ ]    | Implement constructor(s) | Sal         |       |
+| [ ]    | Implement getters        | Sal         |       |
+| [ ]    | Implement setters        | Sal         |       |
 | [x]    | Class created            | Ryan-pelo   |       |
 
 
