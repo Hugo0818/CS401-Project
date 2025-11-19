@@ -41,13 +41,30 @@ public class ResourceManager {
     }
 
     public Boolean checkoutResource(Resource resource, Member member) {
-        // TODO: Implement checkout logic
-        return false;
+        if (resource == null || member == null)
+            return false;
+
+        if (!catalog.contains(resource))
+            return false;
+
+        if (resource.isCheckedOut())
+            return false;
+
+        resource.setCheckedOut(true);
+        member.addBorrowedResource(resource);
+        return true;
     }
 
     public Boolean checkinResource(Resource resource, Member member) {
-        // TODO: Implement checkin logic
-        return false;
+        if (resource == null || member == null)
+            return false;
+
+        if (!resource.isCheckedOut())
+            return false;
+
+        resource.setCheckedOut(false);
+        member.removeBorrowedResource(resource);
+        return true;
     }
 
 }
