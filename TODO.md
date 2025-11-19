@@ -77,11 +77,11 @@ Use this file to track project tasks, assign them to team members, and mark prog
 # CD.java
 | Status | Task Description         | Assigned To | Notes   |
 | ------ | ------------------------ | ----------- | ------- |
-| [ ]    | Implement constructor(s) |             |         |
-| [ ]    | Implement getters        |             |         |
-| [ ]    | Implement setters        |             |         |
-| [ ]    | Implement getDetails()   |             | line 24 |
-| [ ]    | Implement addLog()       |             | line 19 |
+| [ ]    | Implement constructor(s) | Nathan      |         |
+| [ ]    | Implement getters        | Nathan      |         |
+| [ ]    | Implement setters        | Nathan      |         |
+| [ ]    | Implement getDetails()   | Nathan      | line 24 |
+| [ ]    | Implement addLog()       | Nathan      | line 19 |
 | [x]    | Class created            | Ralph       |         |
 
 # LogManager.java
@@ -107,9 +107,9 @@ Use this file to track project tasks, assign them to team members, and mark prog
 # Member.java
 | Status | Task Description         | Assigned To | Notes |
 | ------ | ------------------------ | ----------- | ----- |
-| [x]    | Implement constructor(s) |             |       |
-| [x]    | Implement getters        |             |       |
-| [x]    | Implement setters        |             |       |
+| [x]    | Implement constructor(s) | Nathan      |       |
+| [x]    | Implement getters        | Nathan      |       |
+| [x]    | Implement setters        | Nathan      |       |
 | [x]    | Class created            | Nathan      |       |
 
 
