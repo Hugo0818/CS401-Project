@@ -19,8 +19,18 @@ public class LogManager {
     }
     
     public ArrayList<Log> getRecentLogs() {
-        // TODO: Implement logic to return recent logs
-        return null;
+        ArrayList<Log> recent = new ArrayList<>(); // Create empty list
+        long now = System.currentTimeMIllis(); // Gets current time
+
+        long sevenDays = 7L * 24 * 60 * 60 * 1000; // Calculate time
+
+        for (Log log : allLogs) { // Loop
+            Date out = log.getCheckOutTime(); // Retrieve checkout time 
+            Date in = log.getCheckInTime(); // retrive check in time
+
+            if ((out != null && now - out.getTime() <= sevenDays) || // only check if there is a check out log
+                (in != null && now - in.getTime() <= sevenDays)) { 
+                recent.add(log); // add log to recent list
     }
     
     public ArrayList<Log> getLogsByDate(Date date) {
