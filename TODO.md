@@ -33,8 +33,8 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement constructor(s) |             |         |
 | [ ]    | Implement getters        |             |         |
 | [ ]    | Implement setters        |             |         |
-| [ ]    | Implement checkout logic |             | line 44 |
-| [ ]    | Implement checkin logic  |             | line 49 |
+| [x]    | Implement checkout logic | Hugo        | line 44 |
+| [x]    | Implement checkin logic  | Hugo        | line 49 |
 | [x]    | Implement searchCatalog  | Ryan-pelo   |         |
 | [x]    | Implement addResource    | Ryan-pelo   |         |
 | [x]    | Implement editResource   | Ryan-pelo   |         |
@@ -90,7 +90,7 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement constructor(s)   |             |         |
 | [ ]    | Implement getters          |             |         |
 | [ ]    | Implement setters          |             |         |
-| [ ]    | Implement getRecentLogs    |             | line 22 |
+| [x]    | Implement getRecentLogs    | Hugo        | line 22 |
 | [x]    | Implement getLogsByDate    | Ryan-pelo   |         |
 | [x]    | Implement isSameDay helper | Ryan-pelo   |         |
 | [x]    | Implement addLog           | Ryan-pelo   |         |
