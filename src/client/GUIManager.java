@@ -10,6 +10,7 @@ public class GUIManager {
     private JFrame mainFrame;
 
     public GUIManager() {
+    	// default host and port if config read fails
         String host = "localhost";
         int port = 8080;
         try {
