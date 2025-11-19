@@ -33,8 +33,8 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement constructor(s) |             |         |
 | [ ]    | Implement getters        |             |         |
 | [ ]    | Implement setters        |             |         |
-| [ ]    | Implement checkout logic |             | line 44 |
-| [ ]    | Implement checkin logic  |             | line 49 |
+| [ ]    | Implement checkout logic | Sal         | line 44 |
+| [ ]    | Implement checkin logic  | Sal         | line 49 |
 | [x]    | Implement searchCatalog  | Ryan-pelo   |         |
 | [x]    | Implement addResource    | Ryan-pelo   |         |
 | [x]    | Implement editResource   | Ryan-pelo   |         |
@@ -116,12 +116,12 @@ Use this file to track project tasks, assign them to team members, and mark prog
 # StaffManager.java
 | Status | Task Description             | Assigned To | Notes   |
 | ------ | ---------------------------- | ----------- | ------- |
-| [ ]    | Implement constructor(s)     |             |         |
+| [ ]    | Implement constructor(s)     | Sal         |         |
 | [x]    | Implement getters            |             |         |
 | [x]    | Implement setters            |             |         |
-| [ ]    | Implement staff search logic |             | line 38 |
-| [ ]    | Implement setPermissions     |             | line 43 |
-| [ ]    | Implement hasPermission      |             | line 52 |
+| [ ]    | Implement staff search logic | Sal         | line 38 |
+| [ ]    | Implement setPermissions     | Sal         | line 43 |
+| [ ]    | Implement hasPermission      | Sal         | line 52 |
 | [x]    | Implement addStaff           | Ryan-pelo   |         |
 | [x]    | Implement removeStaff        | Ryan-pelo   |         |
 
