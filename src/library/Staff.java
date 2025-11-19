@@ -7,7 +7,7 @@ public class Staff {
 	private String name;
 	private String uid;
 	private Boolean isAdmin;
-	private static int idCounter = 1; //for unique ids
+	private static int idCounter = 1; 
 	
 	public Staff(String Name, Boolean isAdmin) {
 		name = Name;
