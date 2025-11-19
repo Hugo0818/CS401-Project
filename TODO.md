@@ -33,8 +33,8 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement constructor(s) |             |         |
 | [ ]    | Implement getters        |             |         |
 | [ ]    | Implement setters        |             |         |
-| [ ]    | Implement checkout logic | Sal         | line 44 |
-| [ ]    | Implement checkin logic  | Sal         | line 49 |
+| [ ]    | Implement checkout logic |             | line 44 |
+| [ ]    | Implement checkin logic  |             | line 49 |
 | [x]    | Implement searchCatalog  | Ryan-pelo   |         |
 | [x]    | Implement addResource    | Ryan-pelo   |         |
 | [x]    | Implement editResource   | Ryan-pelo   |         |
