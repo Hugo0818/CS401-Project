@@ -9,6 +9,14 @@ public class CD implements Resource {
     private Boolean isAvailable;
     private ArrayList<Log> checkoutHistory;
     
+    public CD(String albumName, String artist, int numSongs) {
+    	this.albumName = albumName;
+    	this.artist = artist;
+    	this.numSongs = numSongs;
+    	this.isAvailable = true;
+    	this.checkoutHistory = new ArrayList<>();
+    }
+    
     @Override
     public ArrayList<Log> getLogs() {
         return checkoutHistory;
@@ -16,13 +24,15 @@ public class CD implements Resource {
     
     @Override
     public void addLog(Log log) {
-        // TODO: Implement addLog for CD
+        checkoutHistory.add(log);
     }
     
     @Override
     public String getDetails() {
-        // TODO: Implement CD details string
-        return "";
+        return 
+        "Name: " + albumName + "\n" +
+        "Artist: " + artist + "\n" + 
+        "Number of Songs: " + numSongs + "\n";
     }
     
     @Override
