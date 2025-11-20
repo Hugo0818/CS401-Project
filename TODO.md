@@ -80,11 +80,11 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description         | Assigned To | Notes   |
 | ------ | ------------------------ | ----------- | ------- |
-| [ ]    | Implement constructor(s) | Nathan      |         |
+| [x]    | Implement constructor(s) | Nathan      |         |
 | [ ]    | Implement getters        | Nathan      |         |
 | [ ]    | Implement setters        | Nathan      |         |
-| [ ]    | Implement getDetails()   | Nathan      | line 24 |
-| [ ]    | Implement addLog()       | Nathan      | line 19 |
+| [x]    | Implement getDetails()   | Nathan      |         |
+| [x]    | Implement addLog()       | Nathan      |         |
 | [x]    | Class created            | Ralph       |         |
 
 # LogManager.java
