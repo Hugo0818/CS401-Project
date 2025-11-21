@@ -206,9 +206,9 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Librarian Assistant Frame                   |             |       |
 | [ ]    | Create a GUI menu for member                |             |       |
 | [ ]    | Member Frame                                |             |       |
-| [ ]    | Search/Search results frame                 |             |       |
-| [ ]    | Search query interface                      |             |       |
-| [ ]    | Catalog management                          |             |       |
+| [ ]    | Search/Search results frame                 |   Ryan      |       |
+| [ ]    | Search query interface                      |   Ryan      |       |
+| [ ]    | Catalog management                          |   Ryan      |       |
 | [ ]    | Login window                                |             |       |
 | [ ]    | Checkout                                    |             |       |
 | [ ]    | Returns                                     |             |       |
