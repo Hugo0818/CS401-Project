@@ -198,8 +198,8 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description                            | Assigned To | Notes |
 | ------ | ------------------------------------------- | ----------- | ----- |
-| [ ]    | Draft a flow diagram showing GUI navigation |             |       |
-| [ ]    | Sketch visuals for GUI windows              |             |       |
+| [ ]    | Draft a flow diagram showing GUI navigation |   Sal       |       |
+| [ ]    | Sketch visuals for GUI windows              |   Sal       |       |
 | [ ]    | Create Main GUI menu                        |             |       |
 | [ ]    | Create a GUI menu for staff                 |             |       |
 | [ ]    | Librarian Frame                             |             |       |
@@ -209,7 +209,7 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Search/Search results frame                 |   Ryan      |       |
 | [ ]    | Search query interface                      |   Ryan      |       |
 | [ ]    | Catalog management                          |   Ryan      |       |
-| [ ]    | Login window                                |             |       |
+| [ ]    | Login & Sign up window                      |   Sal       |       |
 | [ ]    | Checkout                                    |             |       |
 | [ ]    | Returns                                     |             |       |
 | [ ]    | Member management                           |             |       |
