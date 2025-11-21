@@ -33,6 +33,8 @@ public class LogManager {
                 recent.add(log); // add log to recent list
             }
         }
+        
+        return recent;
     }
     
     public ArrayList<Log> getLogsByDate(Date date) {
