@@ -9,7 +9,7 @@ public class LibraryFacade {
     private MemberManager memberManager;
     private LogManager logManager;
     
-    // StaffManager passthrough methods
+    // StaffManager passthrough methods 
     public void addStaff(Staff staff) {
         staffManager.addStaff(staff);
     }

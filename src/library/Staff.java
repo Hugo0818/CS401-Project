@@ -3,7 +3,7 @@ package library;
 public class Staff {
 	private String name;
 	private String uid;
-	private static int idCounter = 1; // unique id
+	private static int idCounter = 1; //unique id
 	
 	public Staff(String Name, Boolean isAdmin) {
 		name = Name;
