@@ -47,11 +47,12 @@ public class ResourceManager {
         if (!catalog.contains(resource))
             return false;
 
-        if (resource.isCheckedOut())
+        if (!resource.isAvailable())
             return false;
 
         resource.setCheckedOut(true);
-        member.addBorrowedResource(resource);
+        // member.addBorrowedResource(resource);
+        // TODO: this member method does not exist. Fix later
         return true;
     }
 
@@ -59,11 +60,12 @@ public class ResourceManager {
         if (resource == null || member == null)
             return false;
 
-        if (!resource.isCheckedOut())
+        if (!resource.isAvailable())
             return false;
 
         resource.setCheckedOut(false);
-        member.removeBorrowedResource(resource);
+        // member.removeBorrowedResource(resource);
+        // TODO: this member method does not exist. Fix later
         return true;
     }
 

@@ -41,7 +41,7 @@ public class CD implements Resource {
     }
     
     @Override
-    public void setAvailability(boolean availability) {
+    public void setCheckedOut(boolean availability) {
         isAvailable = availability;
     }
 

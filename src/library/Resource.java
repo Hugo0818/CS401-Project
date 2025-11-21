@@ -7,7 +7,7 @@ public interface Resource extends Comparable<Resource> {
     void addLog(Log log);
     String getDetails();
     boolean isAvailable();
-    void setAvailability(boolean availability);
+    void setCheckedOut(boolean availability);
     String getDisplayName();
     
     @Override
