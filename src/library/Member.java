@@ -5,12 +5,14 @@ import java.util.ArrayList;
 public class Member {
     private String name;
     private String uid;
+    private String password;
     private ArrayList<Log> checkoutHistory;
     private ArrayList<Resource> heldResources;
     private static int newID = 1;
 
-    public Member (String name) {
+    public Member (String name, String password) {
         this.name = name;
+        this.password = password;
         this.uid = "M" + newID++; // M for member, don't know if there will be other combinations of ID characters
         this.checkoutHistory = new ArrayList<>(); // New checkoutHistory array for logs
         this.heldResources = new ArrayList<>(); // New heldResources array for resources currently checked out
@@ -19,6 +21,10 @@ public class Member {
     // Getters
     public String getName() {
         return name;
+    }
+    
+    public String getpassword() {
+    	return password;
     }
     
     public String getUID() {
@@ -36,6 +42,10 @@ public class Member {
     // Setters
     public void setName(String name) {
         this.name = name;
+    }
+    
+    public void setPassword(String password) {
+    	this.password = password;
     }
     
     public void setUID(String uid) {
