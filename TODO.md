@@ -176,8 +176,8 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement constructor(s)     |             |                |
 | [ ]    | Implement getters            |             |                |
 | [ ]    | Implement setters            |             |                |
-| [ ]    | Implement message processing |             | processMessage |
-| [ ]    | Implement message sending    |             | sendMessage    |
+| [ ]    | Implement message processing |     RD      | processMessage |
+| [ ]    | Implement message sending    |     RD      | sendMessage    |
 | [x]    | Implement run method         |             |                |
 
 # GUIManager.java
