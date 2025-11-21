@@ -2,7 +2,6 @@ package library;
 
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.EnumSet;
 
 public class LibraryFacade {
     private StaffManager staffManager;
@@ -29,18 +28,6 @@ public class LibraryFacade {
     
     public ArrayList<Staff> searchStaff(String query) {
         return staffManager.searchStaff(query);
-    }
-    
-    public void setPermissions(Staff staff, EnumSet<Permissions> permissions) {
-        staffManager.setPermissions(staff, permissions);
-    }
-    
-    public EnumSet<Permissions> getPermissions(Staff staff) {
-        return staffManager.getPermissions(staff);
-    }
-    
-    public boolean hasPermission(Permissions permission) {
-        return staffManager.hasPermission(permission);
     }
     
     // ResourceManager passthrough methods

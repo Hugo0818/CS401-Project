@@ -35,22 +35,13 @@ public class StaffManager {
     }
     
     public ArrayList<Staff> searchStaff(String query) {
-        // TODO: Implement staff search logic
-        return null;
-    }
-    
-    public void setPermissions(Staff staff, EnumSet<Permissions> permissions) {
-        // TODO: Implement setPermissions logic
-    }
-    
-    public EnumSet<Permissions> getPermissions(Staff staff) {
-        // TODO: Implement getPermissions logic
-        return null;
-    }
-    
-    public boolean hasPermission(Permissions permission) {
-        // TODO: Implement hasPermission logic
-        return false;
+        ArrayList<Staff> results = new ArrayList<>();
+        for(Staff s : staffList) {
+        	if(s.getName().toLowerCase().contains(query.toLowerCase()) || s.getUID().toLowerCase().contains(query.toLowerCase())) {
+        		results.add(s);
+        	}
+        }
+        return results;
     }
     
 }
