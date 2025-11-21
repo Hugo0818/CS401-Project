@@ -121,12 +121,10 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description             | Assigned To | Notes   |
 | ------ | ---------------------------- | ----------- | ------- |
-| [ ]    | Implement constructor(s)     | Sal         |         |
+| [x]    | Implement constructor(s)     | Sal         |         |
 | [x]    | Implement getters            |             |         |
 | [x]    | Implement setters            |             |         |
-| [ ]    | Implement staff search logic | Sal         | line 38 |
-| [ ]    | Implement setPermissions     | Sal         | line 43 |
-| [ ]    | Implement hasPermission      | Sal         | line 52 |
+| [x]    | Implement staff search logic | Sal         | line 38 |
 | [x]    | Implement addStaff           | Ryan-pelo   |         |
 | [x]    | Implement removeStaff        | Ryan-pelo   |         |
 
