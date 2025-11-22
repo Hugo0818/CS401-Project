@@ -2,6 +2,7 @@ package server;
 
 import library.Message;
 import library.Staff;
+import static util.DebugUtil.getCallerInfo;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -29,13 +30,14 @@ public class ClientHandler implements Runnable {
             // Then create input stream
             iStream = new ObjectInputStream(socket.getInputStream());
             
-            System.out.println("[Client #" + clientId + "] Handler started");
+            System.out.println("[DEBUG] " + getCallerInfo() + " [Client #" + clientId + "] Handler started");
             
             // Communication loop
             while (true) {
                 Message receivedMessage = (Message) iStream.readObject();
-                System.out.println("[Client #" + clientId + "] Received " + receivedMessage.getType() + " message");
-                
+                System.out.println("[DEBUG] " + getCallerInfo() + " Server received message from Client #" + clientId);
+                System.out.println("[DEBUG] " + getCallerInfo() + " Message Type: " + receivedMessage.getType());
+                System.out.println("[DEBUG] " + getCallerInfo() + " Message Content: " + receivedMessage.getContent());
                 // Process message and get response
                 Message response = processMessage(receivedMessage);
                 
@@ -49,7 +51,7 @@ public class ClientHandler implements Runnable {
             }
             
         } catch (Exception e) {
-            System.err.println("[Client #" + clientId + "] Error: " + e.getMessage());
+            System.err.println("[DEBUG][ClientHandler.run] [Client #" + clientId + "] Error: " + e.getMessage());
         } finally {
             closeConnection();
         }
@@ -72,9 +74,9 @@ public class ClientHandler implements Runnable {
         try {
             oStream.writeObject(message);
             oStream.flush();
-            System.out.println("[Client #" + clientId + "] Sent " + message.getType() + " response");
+            System.out.println("[DEBUG] " + getCallerInfo() + " message (" + message.getType() + ") sent to [Client #" + clientId + "]");
         } catch (IOException e) {
-            System.err.println("[Client #" + clientId + "] Error sending message: " + e.getMessage());
+            System.err.println("[DEBUG][ClientHandler.sendMessage] [Client #" + clientId + "] Error sending message: " + e.getMessage());
         }
     }
     
@@ -83,9 +85,9 @@ public class ClientHandler implements Runnable {
             if (iStream != null) iStream.close();
             if (oStream != null) oStream.close();
             if (socket != null && !socket.isClosed()) socket.close();
-            System.out.println("[Client #" + clientId + "] Disconnected");
+            System.out.println("[DEBUG] " + getCallerInfo() + " [Client #" + clientId + "] Disconnected");
         } catch (IOException e) {
-            System.err.println("[Client #" + clientId + "] Error closing connection: " + e.getMessage());
+            System.err.println("[DEBUG][ClientHandler.closeConnection] [Client #" + clientId + "] Error closing connection: " + e.getMessage());
         }
     }
 }

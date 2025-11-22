@@ -1,4 +1,5 @@
 package server;
+import static util.DebugUtil.getCallerInfo;
 
 
 import library.LibraryFacade;
@@ -8,7 +9,7 @@ import java.util.Properties;
 
 public class ServerMain {
     public static void main(String[] args) {
-        System.out.println("Starting Library Server...");
+        System.out.println("[DEBUG] " + getCallerInfo() + " Starting Library Server...");
         
         // Load configuration from config.properties
         String host = "0.0.0.0"; // Default to all interfaces
@@ -20,7 +21,7 @@ public class ServerMain {
             host = props.getProperty("HOST", "0.0.0.0");
             port = Integer.parseInt(props.getProperty("PORT", "8080"));
             fis.close();
-            System.out.println("Configuration loaded from config.properties");
+            System.out.println("[DEBUG] " + getCallerInfo() + " Configuration loaded from config.properties");
         } catch (IOException e) {
             System.out.println("Could not load config.properties, using defaults: " + e.getMessage());
         } catch (NumberFormatException e) {
@@ -30,12 +31,12 @@ public class ServerMain {
         // Command line arguments override config file
         if (args.length > 0) {
             host = args[0];
-            System.out.println("Using host from command line: " + host);
+            System.out.println("[DEBUG] " + getCallerInfo() + " Using host from command line: " + host);
         }
         if (args.length > 1) {
             try {
                 port = Integer.parseInt(args[1]);
-                System.out.println("Using port from command line: " + port);
+                System.out.println("[DEBUG] " + getCallerInfo() + " Using port from command line: " + port);
             } catch (NumberFormatException e) {
                 System.err.println("Invalid port argument. Using port from config: " + port);
             }

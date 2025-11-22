@@ -1,4 +1,5 @@
 package server;
+import static util.DebugUtil.getCallerInfo;
 
 import library.LibraryFacade;
 import java.io.IOException;
@@ -29,10 +30,10 @@ public class LibraryServer {
         try {
             serverSocket = new ServerSocket(port, 50, InetAddress.getByName(host));
             serverSocket.setReuseAddress(true);
-            System.out.println("Library Server started on port " + port);
-            System.out.println("Server address: " + host);
-            System.out.println("Listening on " + host + ":" + port);
-            System.out.println("Waiting for client connections...");
+            System.out.println("[DEBUG] " + getCallerInfo() + " Library Server started on port " + port);
+            System.out.println("[DEBUG] " + getCallerInfo() + " Server address: " + host);
+            System.out.println("[DEBUG] " + getCallerInfo() + " Listening on " + host + ":" + port);
+            System.out.println("[DEBUG] " + getCallerInfo() + " Waiting for client connections...");
 
             // Continuously accept clients in a loop
             while (true) {
@@ -51,7 +52,7 @@ public class LibraryServer {
             Socket clientSocket = serverSocket.accept();
             clientCounter++;
             
-            System.out.println("[Client #" + clientCounter + "] Connected");
+            System.out.println("[DEBUG] " + getCallerInfo() + " [Client #" + clientCounter + "] Connected");
             
             // Create handler and start new thread
             ClientHandler handler = new ClientHandler(clientSocket, clientCounter);
@@ -68,7 +69,7 @@ public class LibraryServer {
         try {
             if (serverSocket != null && !serverSocket.isClosed()) {
                 serverSocket.close();
-                System.out.println("Server stopped");
+                System.out.println("[DEBUG] " + getCallerInfo() + " Server stopped");
             }
         } catch (IOException e) {
             System.err.println("Error closing server: " + e.getMessage());

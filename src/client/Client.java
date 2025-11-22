@@ -1,6 +1,7 @@
 package client;
 
 import library.Message;
+import static util.DebugUtil.getCallerInfo;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -56,7 +57,7 @@ public class Client {
         try {
             oStream.writeObject(message);
             oStream.flush();
-            System.out.println("Sent message: " + message.getType());
+            System.out.println("[DEBUG] " + getCallerInfo() + " Sent message: " + message.getType());
         } catch (IOException e) {
             System.err.println("Error sending message: " + e.getMessage());
         }
