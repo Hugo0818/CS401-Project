@@ -7,8 +7,16 @@ public class Book implements Resource {
     private String publisher;
     private String isbn;
     private String title;
-    private Boolean isAvailable;
+    private boolean isAvailable;
     private ArrayList<Log> checkoutHistory;
+    
+    public Book(String title, String author, String isbn, boolean isAvailable) {
+    	this.title = title;
+    	this.author = author;
+        this.isbn = isbn;
+        this.isAvailable = isAvailable;
+        this.checkoutHistory = new ArrayList<>();
+    }
     
     @Override
     public ArrayList<Log> getLogs() {
