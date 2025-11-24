@@ -12,14 +12,14 @@ public class ServerMain {
         System.out.println("[DEBUG] " + getCallerInfo() + " Starting Library Server...");
         
         // Load configuration from config.properties
-        String host = "0.0.0.0"; // Default to all interfaces
-        int port = 8080; // Default
+        String host = "127.0.0.1"; // Default to all interfaces
+        int port = 12345; // Default
         try {
             Properties props = new Properties();
             FileInputStream fis = new FileInputStream("src/config.properties");
             props.load(fis);
-            host = props.getProperty("HOST", "0.0.0.0");
-            port = Integer.parseInt(props.getProperty("PORT", "8080"));
+            host = props.getProperty("HOST", "127.0.0.1");
+            port = Integer.parseInt(props.getProperty("PORT", "12345"));
             fis.close();
             System.out.println("[DEBUG] " + getCallerInfo() + " Configuration loaded from config.properties");
         } catch (IOException e) {

@@ -11,6 +11,8 @@ import java.util.HashMap;
 import java.util.Properties;
 import library.Resource;
 import library.Message;
+import library.MessageType;
+
 import static util.DebugUtil.getCallerInfo;
 
 public class GUIManager {
@@ -138,7 +140,7 @@ public class GUIManager {
             System.out.println("[DEBUG] " + getCallerInfo() + " Search query: " + query);
             
             // Send "Catalog Search" message to server
-            Message searchMessage = new Message("Catalog Search", query);
+            Message searchMessage = new Message(MessageType.CATALOG_SEARCH, query);
             client.sendMessage(searchMessage);
             
             // TODO: Wait for and process server response

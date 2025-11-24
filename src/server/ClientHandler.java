@@ -1,8 +1,8 @@
 package server;
 
 import library.Message;
+import library.MessageType;
 import library.Staff;
-import static util.DebugUtil.getCallerInfo;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
@@ -30,14 +30,13 @@ public class ClientHandler implements Runnable {
             // Then create input stream
             iStream = new ObjectInputStream(socket.getInputStream());
             
-            System.out.println("[DEBUG] " + getCallerInfo() + " [Client #" + clientId + "] Handler started");
+            System.out.println("[Client #" + clientId + "] Handler started");
             
             // Communication loop
             while (true) {
                 Message receivedMessage = (Message) iStream.readObject();
-                System.out.println("[DEBUG] " + getCallerInfo() + " Server received message from Client #" + clientId);
-                System.out.println("[DEBUG] " + getCallerInfo() + " Message Type: " + receivedMessage.getType());
-                System.out.println("[DEBUG] " + getCallerInfo() + " Message Content: " + receivedMessage.getContent());
+                System.out.println("[Client #" + clientId + "] Received " + receivedMessage.getType() + " message");
+                
                 // Process message and get response
                 Message response = processMessage(receivedMessage);
                 
@@ -45,13 +44,13 @@ public class ClientHandler implements Runnable {
                 sendMessage(response);
                 
                 // Check for disconnect message
-                if ("DISCONNECT".equalsIgnoreCase(receivedMessage.getType())) {
+                if (receivedMessage.getType() == MessageType.DISCONNECT) {
                     break;
                 }
             }
             
         } catch (Exception e) {
-            System.err.println("[DEBUG][ClientHandler.run] [Client #" + clientId + "] Error: " + e.getMessage());
+            System.err.println("[Client #" + clientId + "] Error: " + e.getMessage());
         } finally {
             closeConnection();
         }
@@ -60,12 +59,12 @@ public class ClientHandler implements Runnable {
     public Message processMessage(Message message) {
         // TODO: Implement full message processing logic
         // For now, echo back the message
-        String type = message.getType();
+        MessageType type = message.getType();
         
-        if ("DISCONNECT".equalsIgnoreCase(type)) {
-            return new Message("DISCONNECT", "Disconnected from server");
+        if (type == MessageType.DISCONNECT) {
+            return new Message(MessageType.DISCONNECT, "Disconnected from server");
         }
-        
+       
         // Default echo response
         return new Message(type, "Message received: " + message.getContent());
     }
@@ -74,9 +73,9 @@ public class ClientHandler implements Runnable {
         try {
             oStream.writeObject(message);
             oStream.flush();
-            System.out.println("[DEBUG] " + getCallerInfo() + " message (" + message.getType() + ") sent to [Client #" + clientId + "]");
+            System.out.println("[Client #" + clientId + "] Sent " + message.getType() + " response");
         } catch (IOException e) {
-            System.err.println("[DEBUG][ClientHandler.sendMessage] [Client #" + clientId + "] Error sending message: " + e.getMessage());
+            System.err.println("[Client #" + clientId + "] Error sending message: " + e.getMessage());
         }
     }
     
@@ -85,9 +84,9 @@ public class ClientHandler implements Runnable {
             if (iStream != null) iStream.close();
             if (oStream != null) oStream.close();
             if (socket != null && !socket.isClosed()) socket.close();
-            System.out.println("[DEBUG] " + getCallerInfo() + " [Client #" + clientId + "] Disconnected");
+            System.out.println("[Client #" + clientId + "] Disconnected");
         } catch (IOException e) {
-            System.err.println("[DEBUG][ClientHandler.closeConnection] [Client #" + clientId + "] Error closing connection: " + e.getMessage());
+            System.err.println("[Client #" + clientId + "] Error closing connection: " + e.getMessage());
         }
     }
 }

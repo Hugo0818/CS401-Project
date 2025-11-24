@@ -3,23 +3,26 @@ import java.io.Serializable;
 
 public class Message implements Serializable {
     private static final long serialVersionUID = 1L;
-    private String type;
+    private MessageType type;
     private Object content;
     
     public Message() {
-        this.type = "Undefined";
+        this.type = null;
         this.content = null;
     }
     
-    public Message(String type, Object content) {
+    public Message(MessageType type, Object content) {
         this.type = type;
         this.content = content;
     }
     
-    public String getType() {
+    
+    public MessageType getType() {
         return type;
     }
     
+    
+    //return the info of the message
     public Object getContent() {
         return content;
     }
