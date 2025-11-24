@@ -49,9 +49,54 @@ public class GUIManager {
         }
         
         // Create and show the search menu instead of blank frame
-        JFrame searchMenu = makeSearchMenu();
-        windows.put("SearchMenu", searchMenu);
-        searchMenu.setVisible(true);
+//        JFrame searchMenu = makeSearchMenu();
+//        windows.put("SearchMenu", searchMenu);
+//        searchMenu.setVisible(true);
+        mainFrame = new JFrame("Library Management System");
+        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setSize(800, 600);
+        mainFrame.setLocationRelativeTo(null);
+
+        // Load login panel on startup
+        showLoginScreen();
+
+        mainFrame.setVisible(true);
+    }
+    
+    public void setPanel(JPanel panel) {
+        mainFrame.setContentPane(panel);
+        mainFrame.revalidate();
+        mainFrame.repaint();
+    }
+
+    public void showLoginScreen() {
+        setPanel(new LoginPanel(this, client));
+    }
+
+    public void showSignupScreen() {
+        setPanel(new SignupPanel(this, client));
+    }
+
+    public void showStaffDashboard() {
+        setPanel(new StaffDashboardPanel());
+    }
+
+    public void showMemberDashboard() {
+        setPanel(new MemberDashboardPanel());
+    }
+    
+    //Blank Panel for Staff for testing
+    public class StaffDashboardPanel extends JPanel {
+        public StaffDashboardPanel() {
+            add(new JLabel("Staff Dashboard"));
+        }
+    }
+    
+    //Blank Panel for Member for testing
+    public class MemberDashboardPanel extends JPanel {
+        public MemberDashboardPanel() {
+            add(new JLabel("Member Dashboard"));
+        }
     }
 
     /**
