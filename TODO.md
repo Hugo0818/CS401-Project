@@ -198,12 +198,12 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | ------ | ------------------------------------------- | ----------- | ----- |
 | [ ]    | Draft a flow diagram showing GUI navigation |   Sal       |       |
 | [ ]    | Sketch visuals for GUI windows              |   Sal       |       |
-| [ ]    | Create Main GUI menu                        |   Nathan    |       |
+| [ ]    | Create Main GUI menu                        |             |       |
 | [ ]    | Create a GUI menu for staff                 |             |       |
 | [ ]    | Librarian Frame                             |             |       |
 | [ ]    | Librarian Assistant Frame                   |             |       |
 | [ ]    | Create a GUI menu for member                |             |       |
-| [ ]    | Member Frame                                |             |       |
+| [ ]    | Member Frame                                |   Nathan    |       |
 | [ ]    | Search/Search results frame                 |   Ryan      |       |
 | [ ]    | Search query interface                      |   Ryan      |       |
 | [ ]    | Catalog management                          |   Ryan      |       |
