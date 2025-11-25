@@ -1,23 +1,65 @@
 package client;
+import java.io.*;
 
 import library.Message;
+import library.MessageType;
+
 import static util.DebugUtil.getCallerInfo;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.Scanner;
 
-public class Client {
+public class Client implements Runnable {
     private Socket connection;
     private ObjectInputStream iStream;
     private ObjectOutputStream oStream;
     private String host;
     private int port;
+    private String clientType; //use in constructor later?
     
     public Client(String host, int port) {
         this.host = host;
         this.port = port;
+        connectToServer();
+        
     }
+    
+    
+    //main for different clients 
+    public static void main(String[] args) {
+    	//for now using my default, can change to whatever address you use
+    	Client client = new Client("127.0.0.1", 12345);
+    	Thread clientThread = new Thread(client);
+    	clientThread.start();
+    }
+    
+    
+    
+    @Override
+	public void run() {
+    	
+    	//Start the GUI here
+    	
+  
+		
+		//While the thread is running
+		while(true) {
+			
+			//Wait for server response based on GUI buttons
+			Message server_response = receiveMessage();
+			
+			if(server_response != null) {
+				//Process response
+				processMessage(server_response);
+			}
+			
+		}	
+    	
+    }
+    	
+    
     
     public void connectToServer() {
         try {
@@ -35,10 +77,10 @@ public class Client {
         }
     }
     
+    
     public Message receiveMessage() {
         try {
             Message message = (Message) iStream.readObject();
-            processMessage(message);
             return message;
         } catch (Exception e) {
             System.err.println("Error receiving message: " + e.getMessage());
@@ -47,7 +89,19 @@ public class Client {
     }
     
     public void processMessage(Message message) {
-        // TODO: Implement full message processing logic
+        if(message.getType() == MessageType.LOGIN) {
+        	//checks if login was successful
+        	Object valid = message.getContent();
+        	
+        	if((boolean) valid) {
+        		System.out.println("Client login was successful");
+        	}
+        	
+        	else {
+        		System.out.println("Client login was not successful");
+        	}
+        	
+        }
         System.out.println("Received from server:");
         System.out.println("  Type: " + message.getType());
         System.out.println("  Content: " + message.getContent());
@@ -77,4 +131,7 @@ public class Client {
     public boolean isConnected() {
         return connection != null && !connection.isClosed();
     }
+
+
+	
 }

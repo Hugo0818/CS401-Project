@@ -15,6 +15,7 @@ public class ClientHandler implements Runnable {
     private int clientId;
     private Staff loggedInStaff;
     
+    
     public ClientHandler(Socket socket, int clientId) {
         this.socket = socket;
         this.clientId = clientId;
@@ -56,14 +57,27 @@ public class ClientHandler implements Runnable {
         }
     }
     
+    
     public Message processMessage(Message message) {
-        // TODO: Implement full message processing logic
-        // For now, echo back the message
+        
         MessageType type = message.getType();
+        
+        if (type == MessageType.LOGIN) {
+        	boolean valid = false;
+        	
+        	//check the username and password before they proceed to the next page in GUI
+        	////
+        	
+        	//return a new message wheter the info was valid or not valid
+        	return new Message(MessageType.LOGIN, valid);
+        }
         
         if (type == MessageType.DISCONNECT) {
             return new Message(MessageType.DISCONNECT, "Disconnected from server");
+            
         }
+        
+        
        
         // Default echo response
         return new Message(type, "Message received: " + message.getContent());
