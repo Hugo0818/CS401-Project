@@ -3,9 +3,11 @@ package library;
 import java.util.ArrayList;
 
 public class Member {
-    private String name;
+    private String name; 
     private String uid;
-    private String password;
+    private String password; 
+    
+    
     private ArrayList<Log> checkoutHistory;
     private ArrayList<Resource> heldResources;
     private static int newID = 1;
