@@ -16,6 +16,8 @@ public enum MessageType {
 	CHECKOUT_ITEM,
 	RETURN_ITEM,
 	
+	CATOLOG_SEARCH,
+	
 	DISCONNECT,
 	ERROR
 	
