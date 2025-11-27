@@ -16,15 +16,24 @@ public class Staff {
 		return name;
 	}
 	
+	public void setName(String name) {
+		this.name = name;
+	}
+	
 	public String getPassword() {
 		return password;
+	}
+		
+	public String getUID() {
+		return uid;
 	}
 	
 	public void setPassword(String password) {
 		this.password = password;
 	}
 	
-	public String getUID() {
-		return uid;
+	public void setUID(String uid) {
+	    this.uid = uid;
 	}
+
 }

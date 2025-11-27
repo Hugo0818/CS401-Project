@@ -38,6 +38,7 @@ public class SignupPanel extends JPanel {
 
             // TODO: send signup message to server
             JOptionPane.showMessageDialog(null, "Account created!");
+            
 
             gui.showLoginScreen();
         });
