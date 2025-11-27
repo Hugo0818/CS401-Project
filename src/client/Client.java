@@ -39,23 +39,38 @@ public class Client implements Runnable {
     
     @Override
 	public void run() {
+    	boolean connected;
     	
-    	//Start the GUI here
+    	
+    	//Start the GUI
+    	new GUIManager();
     	
   
 		
 		//While the thread is running
-		while(true) {
+		while(!Thread.currentThread().isInterrupted()) {
 			
 			//Wait for server response based on GUI buttons
+			
+			//first response should be login attempts
 			Message server_response = receiveMessage();
 			
-			if(server_response != null) {
-				//Process response
-				processMessage(server_response);
+			if(server_response == null) {
+				System.out.println("server closed connection");
+				break;
 			}
 			
-		}	
+			//while connected wait on server responses
+			connected = processMessage(server_response);
+			
+			
+			//Disconnect message was received break out
+			if(!connected) {
+				break;
+			}
+			
+		}
+		closeConnection();
     	
     }
     	
@@ -88,23 +103,44 @@ public class Client implements Runnable {
         }
     }
     
-    public void processMessage(Message message) {
+    public boolean processMessage(Message message) {
+    	//User login
         if(message.getType() == MessageType.LOGIN) {
         	//checks if login was successful
         	Object valid = message.getContent();
         	
         	if((boolean) valid) {
         		System.out.println("Client login was successful");
+        		return true;
         	}
         	
         	else {
         		System.out.println("Client login was not successful");
+        		return false; 
         	}
         	
         }
-        System.out.println("Received from server:");
-        System.out.println("  Type: " + message.getType());
-        System.out.println("  Content: " + message.getContent());
+        
+        //User wants to disconnect
+        else if(message.getType() == MessageType.DISCONNECT) {
+        	System.out.println("Client attempting disconnection");
+        	return false;
+        	
+        	
+        }
+        
+        //User accessing catalog
+        else if(message.getType() == MessageType.CATALOG_SEARCH) {
+        	System.out.println("Someone is trying to access catalog");
+        	return true;
+        }
+        
+        //none of the cases above, change later
+        else {
+        	return true;
+        }
+        
+        
     }
     
     public void sendMessage(Message message) {

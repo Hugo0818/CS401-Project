@@ -69,6 +69,7 @@ public class ClientHandler implements Runnable {
         	////
         	
         	//return a new message wheter the info was valid or not valid
+        	//for now it returns false
         	return new Message(MessageType.LOGIN, valid);
         }
         
