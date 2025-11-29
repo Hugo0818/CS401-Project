@@ -48,7 +48,7 @@ public class GUIManager {
             System.out.println("Successfully connected to server!");
         }
         
-        // Create and show the search menu instead of blank frame
+        // Create and show the search menu instead of blank frame (Upon Startup)
 //        JFrame searchMenu = makeSearchMenu();
 //        windows.put("SearchMenu", searchMenu);
 //        searchMenu.setVisible(true);
@@ -82,7 +82,7 @@ public class GUIManager {
     }
 
     public void showMemberDashboard() {
-        setPanel(new MemberDashboardPanel());
+    	setPanel(new MemberPanel(this, client));
     }
     
     //Blank Panel for Staff for testing
@@ -205,6 +205,7 @@ public class GUIManager {
             }
         });
         
+        frame.setVisible(true); // Make Search Frame Visible
         return frame;
     }
     // Methods for showing windows will be added here later
