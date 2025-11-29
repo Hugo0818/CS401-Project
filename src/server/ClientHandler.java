@@ -2,159 +2,168 @@ package server;
 
 import library.*;
 
-import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
+import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
 
-
+/**
+ * Client-side handler. Uses LibraryFacade for business logic (login/signup/search/checkout).
+ *
+ * Expected LibraryFacade methods used by this handler:
+ *   Member facade.loginMember(String uid, String password)
+ *   String    facade.signupMember(String name, String password)  // returns UID or null/error
+ *   Staff    facade.loginStaff(String uid, String password)
+ *   String   facade.signupStaff(String name, String password)
+ *   ArrayList<Resource> facade.searchCatalog(String query)
+ *   Member   facade.getMemberByUID(String uid) // optional for member info
+ *
+ * If your facade uses different method names, adapt the calls accordingly.
+ */
 public class ClientHandler implements Runnable {
-    private Socket socket;
-    private ObjectInputStream iStream;
-    private ObjectOutputStream oStream;
-    private int clientId;
-    private Staff loggedInStaff;
-    private LibraryFacade facade;
-    
-    
-    public ClientHandler(Socket socket, int clientId, LibraryFacade lf) {
+    private final Socket socket;
+    private final int clientId;
+    private final LibraryFacade facade;
+    private final LibraryServer server;
+
+    private ObjectOutputStream out;
+    private ObjectInputStream in;
+
+    // track logged user (could be Staff or Member)
+    private Staff loggedStaff = null;
+    private Member loggedMember = null;
+
+    public ClientHandler(Socket socket, int clientId, LibraryFacade facade, LibraryServer server) {
         this.socket = socket;
         this.clientId = clientId;
-        this.loggedInStaff = null;
-        this.facade = lf;
+        this.facade = facade;
+        this.server = server;
     }
-    
+
     @Override
     public void run() {
         try {
-            // Create output stream first
-            oStream = new ObjectOutputStream(socket.getOutputStream());
-            oStream.flush();
-            // Then create input stream
-            iStream = new ObjectInputStream(socket.getInputStream());
-            
-            System.out.println("[Client #" + clientId + "] Handler started");
-            
-            // Communication loop
-            while (true) {
-                Message receivedMessage = (Message) iStream.readObject();
-                System.out.println("[Client #" + clientId + "] Received " + receivedMessage.getType() + " message");
-                
-                // Process message and get response
-                processMessage(receivedMessage);
-                
-           
-                
-                // Check for disconnect message
-                if (receivedMessage.getType() == MessageType.LOGOUT_ATTEMPT) {
-                    break;
-                }
+            out = new ObjectOutputStream(socket.getOutputStream());
+            out.flush();
+            in = new ObjectInputStream(socket.getInputStream());
+
+            System.out.println("[Handler#" + clientId + "] Started");
+
+            while (!socket.isClosed()) {
+                Message msg = (Message) in.readObject();
+                if (msg == null) break;
+                processMessage(msg);
+                if (msg.getType() == MessageType.LOGOUT_ATTEMPT) break;
             }
-            
+        } catch (EOFException eof) {
+            System.out.println("[Handler#" + clientId + "] Client disconnected.");
         } catch (Exception e) {
-            System.err.println("[Client #" + clientId + "] Error: " + e.getMessage());
+            System.err.println("[Handler#" + clientId + "] Error: " + e.getMessage());
         } finally {
             closeConnection();
         }
     }
-    
-    
-    public void processMessage(Message message) {
-        
-        switch (message.getType()) {
-	        case LOGIN_ATTEMPT -> handleLogin(message);
-	        case LOGOUT_ATTEMPT -> handleLogout(message);
-	        case SIGNUP_ATTEMPT -> handleSignup(message);
-	        case CATALOG_SEARCH_REQ -> handleCatalogSearch(message);
-	        case CATALOG_VIEW_REQ -> handleCatalogView(message);
-	        case CHECK_IN_REQ -> handleCheckIn(message);
-	        case CHECK_OUT_REQ -> handleCheckOut(message);
-	        default -> {
-	            // default response
-	            return;
-        }
-        
-        }
-    }
-    
-    
-    private void handleLogin(Message message) {
-    	
-    	
-    	//check the username and password before they proceed to the next page in GUI
-    	////
-    	
-    	//return a new message wheter the info was valid or not valid
-    	//for now it returns true
-    	sendMessage(new Message(MessageType.LOGIN_SUCCESS, "The Found Client"));
-    	
-    	//or return login fail
 
-    }
-    
-    private void handleLogout(Message message) {
-    	 sendMessage(new Message(MessageType.LOGOUT_RESPONSE, "Disconnected from server"));
-
-    }
-    
-    private void handleSignup(Message message) {
-    	LoginInfo info = (LoginInfo) message.getContent();
-    	String username = info.getUsername();
-    	//check if the user exists
-    	
-  
-    	sendMessage(new Message(MessageType.SIGNUP_ATTEMPT, "User sign up"));
-
-   }
-    
-    private void handleCatalogSearch(Message message) {
-    	System.out.println("catalog search being done");
-    	String searching = (String) message.getContent();
-    	
-    	//search the catalog for the item by title and return it to client
-    	ArrayList<Resource> results = facade.searchCatalog(searching);
-    	sendMessage(new Message(MessageType.CATALOG_S_RES, results));
-      	 
-
-    }
-    
-    private void handleCatalogView(Message message) {
-		
-    
-    }
-    
-    private void handleCheckIn(Message message) {
-	
-    }
-    
-    private void handleCheckOut(Message message) {
-
-    }
-   
-    
-    
-    
-    
-    
-    public void sendMessage(Message message) {
+    private void processMessage(Message msg) {
         try {
-            oStream.writeObject(message);
-            oStream.flush();
-            System.out.println("[Client #" + clientId + "] Sent " + message.getType() + " response");
+            switch (msg.getType()) {
+                case LOGIN_ATTEMPT -> handleLogin(msg);
+                case SIGNUP_ATTEMPT -> handleSignup(msg);
+                case CATALOG_SEARCH_REQ -> handleCatalogSearch(msg);
+                case MEMBER_SEARCH_REQ -> handleMemberSearch(msg);
+                case LOGOUT_ATTEMPT -> handleLogout(msg);
+                default -> sendMessage(Message.fail(MessageType.ERROR, "Unknown message type: " + msg.getType()));
+            }
+        } catch (Exception ex) {
+            sendMessage(Message.fail(MessageType.ERROR, "Server error: " + ex.getMessage()));
+        }
+    }
+
+    // LOGIN: payload is LoginInfo (uidOrName,password,isStaff) for login attempts
+    private void handleLogin(Message msg) {
+        Object p = msg.getPayload();
+        if (!(p instanceof LoginInfo info)) {
+            sendMessage(Message.fail(MessageType.LOGIN_FAIL, "Invalid login payload"));
+            return;
+        }
+
+        if (info.isStaff()) {
+            // facade should provide loginStaff(uid, password) -> Staff or null
+            Staff s = facade.loginStaff(info.getUidOrName(), info.getPassword());
+            if (s != null) {
+                loggedStaff = s;
+                sendMessage(Message.ok(MessageType.LOGIN_SUCCESS, "STAFF"));
+            } else {
+                sendMessage(Message.fail(MessageType.LOGIN_FAIL, "Invalid staff credentials"));
+            }
+        } else {
+            Member m = facade.loginMember(info.getUidOrName(), info.getPassword());
+            if (m != null) {
+                loggedMember = m;
+                sendMessage(Message.ok(MessageType.LOGIN_SUCCESS, "MEMBER"));
+            } else {
+                sendMessage(Message.fail(MessageType.LOGIN_FAIL, "Invalid member credentials"));
+            }
+        }
+    }
+
+    // SIGNUP: payload is LoginInfo where uidOrName is name when signing up
+    private void handleSignup(Message msg) {
+        Object p = msg.getPayload();
+        if (!(p instanceof LoginInfo info)) {
+            sendMessage(Message.fail(MessageType.SIGNUP_FAIL, "Invalid signup payload"));
+            return;
+        }
+
+        if (info.isStaff()) {
+            String newUID = facade.signupStaff(info.getUidOrName(), info.getPassword());
+            if (newUID != null) {
+                sendMessage(Message.ok(MessageType.SIGNUP_SUCCESS, newUID));
+            } else {
+                sendMessage(Message.fail(MessageType.SIGNUP_FAIL, "Could not create staff account"));
+            }
+        } else {
+            String newUID = facade.signupMember(info.getUidOrName(), info.getPassword());
+            if (newUID != null) {
+                sendMessage(Message.ok(MessageType.SIGNUP_SUCCESS, newUID));
+            } else {
+                sendMessage(Message.fail(MessageType.SIGNUP_FAIL, "Could not create member account"));
+            }
+        }
+    }
+
+    private void handleCatalogSearch(Message msg) {
+        Object p = msg.getPayload();
+        String q = (p instanceof String) ? (String) p : "";
+        ArrayList<Resource> results = facade.searchCatalog(q);
+        sendMessage(Message.ok(MessageType.CATALOG_SEARCH_RES, results));
+    }
+
+    private void handleMemberSearch(Message msg) {
+        Object p = msg.getPayload();
+        String q = (p instanceof String) ? (String) p : "";
+        ArrayList<Member> results = facade.searchMembers(q); // assume facade exposes this
+        sendMessage(Message.ok(MessageType.MEMBER_SEARCH_RES, results));
+    }
+
+    private void handleLogout(Message msg) {
+        sendMessage(Message.ok(MessageType.LOGOUT_RESPONSE, "Goodbye"));
+    }
+
+    public synchronized void sendMessage(Message msg) {
+        try {
+            out.writeObject(msg);
+            out.flush();
         } catch (IOException e) {
-            System.err.println("[Client #" + clientId + "] Error sending message: " + e.getMessage());
+            System.err.println("[Handler#" + clientId + "] Send failed: " + e.getMessage());
         }
     }
-    
-    private void closeConnection() {
+
+    public void closeConnection() {
         try {
-            if (iStream != null) iStream.close();
-            if (oStream != null) oStream.close();
+            if (in != null) in.close();
+            if (out != null) out.close();
             if (socket != null && !socket.isClosed()) socket.close();
-            System.out.println("[Client #" + clientId + "] Disconnected");
-        } catch (IOException e) {
-            System.err.println("[Client #" + clientId + "] Error closing connection: " + e.getMessage());
-        }
+        } catch (IOException ignored) {}
+        server.removeHandler(this);
     }
 }

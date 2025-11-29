@@ -1,78 +1,63 @@
 package server;
-import static util.DebugUtil.getCallerInfo;
 
 import library.LibraryFacade;
+
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.List;
-
-import java.net.InetAddress;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class LibraryServer {
-    private LibraryFacade libraryFacade;
-    private ServerSocket serverSocket;
-    private String host;
-    private int port;
-    private List<ClientHandler> clientHandlers;
-    private int clientCounter;
 
-    public LibraryServer(String host, int port, LibraryFacade libraryFacade) {
+    private final String host;
+    private final int port;
+    private final LibraryFacade facade;
+    private ServerSocket serverSocket;
+    private volatile boolean running = true;
+    private final List<ClientHandler> handlers = new CopyOnWriteArrayList<>();
+    private int clientCounter = 0;
+
+    public LibraryServer(String host, int port, LibraryFacade facade) {
         this.host = host;
         this.port = port;
-        this.libraryFacade = libraryFacade;
-        this.clientHandlers = new ArrayList<>();
-        this.clientCounter = 0;
+        this.facade = facade;
     }
 
     public void startServer() {
         try {
             serverSocket = new ServerSocket(port, 50, InetAddress.getByName(host));
             serverSocket.setReuseAddress(true);
-            System.out.println("[DEBUG] " + getCallerInfo() + " Library Server started on port " + port);
-            System.out.println("[DEBUG] " + getCallerInfo() + " Server address: " + host);
-            System.out.println("[DEBUG] " + getCallerInfo() + " Listening on " + host + ":" + port);
-            System.out.println("[DEBUG] " + getCallerInfo() + " Waiting for client connections...");
+            System.out.println("[SERVER] Listening on " + host + ":" + port);
 
-            // Continuously accept clients in a loop
-            while (true) {
-                acceptClient();
+            while (running) {
+                Socket clientSocket = serverSocket.accept();
+                clientCounter++;
+                System.out.println("[SERVER] Client #" + clientCounter + " connected: " + clientSocket.getRemoteSocketAddress());
+                ClientHandler handler = new ClientHandler(clientSocket, clientCounter, facade, this);
+                handlers.add(handler);
+                new Thread(handler, "Handler-" + clientCounter).start();
             }
         } catch (IOException e) {
-            System.err.println("Server error: " + e.getMessage());
-            e.printStackTrace();
+            if (running) System.err.println("[SERVER] Error: " + e.getMessage());
         } finally {
-            closeServer();
+            stopServer();
         }
     }
-    
-    public void acceptClient() {
-        try {
-            Socket clientSocket = serverSocket.accept();
-            clientCounter++;
-            
-            System.out.println("[DEBUG] " + getCallerInfo() + " [Client #" + clientCounter + "] Connected");
-            
-            // Create handler and start new thread
-            ClientHandler handler = new ClientHandler(clientSocket, clientCounter, libraryFacade);
-            clientHandlers.add(handler);
-            Thread thread = new Thread(handler);
-            thread.start();
-            
-        } catch (IOException e) {
-            System.err.println("Error accepting client: " + e.getMessage());
-        }
+
+    public void removeHandler(ClientHandler handler) {
+        handlers.remove(handler);
+        System.out.println("[SERVER] Handler removed. Active clients: " + handlers.size());
     }
-    
-    public void closeServer() {
+
+    public void stopServer() {
+        running = false;
         try {
-            if (serverSocket != null && !serverSocket.isClosed()) {
-                serverSocket.close();
-                System.out.println("[DEBUG] " + getCallerInfo() + " Server stopped");
-            }
+            for (ClientHandler h : handlers) h.closeConnection();
+            if (serverSocket != null && !serverSocket.isClosed()) serverSocket.close();
         } catch (IOException e) {
-            System.err.println("Error closing server: " + e.getMessage());
+            System.err.println("[SERVER] Stop error: " + e.getMessage());
         }
     }
 }
