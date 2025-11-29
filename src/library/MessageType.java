@@ -1,44 +1,37 @@
 package library;
 
-public enum MessageType { //REQ = REQUEST, RES = RESPONSE
-	//Login  , Log out,
-	LOGIN_ATTEMPT,  //sent from GUI, content is LoginInfo
-	LOGIN_SUCCESS,
-	LOGIN_FAIL,
-	LOGOUT_ATTEMPT, //sent from GUI, content ____
-	LOGOUT_RESPONSE,
-	
-	//Signing up 
-	SIGNUP_ATTEMPT, //sent from GUI
-	SIGNUP_SUCCESS,
-	SIGNUP_FAIL,
-	
-	
-	//Catalog search/view
-	CATALOG_SEARCH_REQ,  //sent from GUI, content is string title
-	CATALOG_S_RES,
-	CATALOG_VIEW_REQ, //sent from GUI, content is ____
-	CATALOG_VIEW_RES,
-	
-	//Item operations
-	CHECK_IN_REQ, //sent from GUI, 
-	CHECK_IN_RES,
-	
-	CHECK_OUT_REQ, //sent from GUI
-	CHECK_OUT_RES,
-	
-	
-	
-	MEMBER_DATA_REQUEST,
-	
-	SEARCH_MEMBER,
-	SEARCH_RESULTS,
-	
-	
-	
-	
-	
-	
-	ERROR
-	
+public enum MessageType {
+    // Auth
+    LOGIN_ATTEMPT,
+    LOGIN_SUCCESS,
+    LOGIN_FAIL,
+
+    SIGNUP_ATTEMPT,
+    SIGNUP_SUCCESS,
+    SIGNUP_FAIL,
+
+    LOGOUT_ATTEMPT,
+    LOGOUT_RESPONSE,
+
+    // Catalog
+    CATALOG_SEARCH_REQ,
+    CATALOG_SEARCH_RES,
+    CATALOG_VIEW_REQ,
+    CATALOG_VIEW_RES,
+
+    // Member
+    MEMBER_SEARCH_REQ,
+    MEMBER_SEARCH_RES,
+    MEMBER_INFO_REQ,
+    MEMBER_INFO_RES,
+
+    // Checkout / Checkin
+    CHECK_OUT_REQ,
+    CHECK_OUT_RES,
+    CHECK_IN_REQ,
+    CHECK_IN_RES,
+
+    // Generic
+    ERROR,
+    PING
 }
