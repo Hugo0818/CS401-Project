@@ -202,15 +202,15 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Create a GUI menu for staff                 |             |       |
 | [ ]    | Librarian Frame                             |             |       |
 | [ ]    | Librarian Assistant Frame                   |             |       |
-| [ ]    | Create a GUI menu for member                |             |       |
-| [ ]    | Member Frame                                |   Nathan    |       |
+| [x]    | Create a GUI menu for member                |   Nathan    |       |
+| [x]    | Member Frame                                |   Nathan    |       |
 | [ ]    | Search/Search results frame                 |   Ryan      |       |
 | [ ]    | Search query interface                      |   Ryan      |       |
 | [ ]    | Catalog management                          |   Ryan      |       |
 | [ ]    | Login & Sign up window                      |   Sal       |       |
 | [ ]    | Checkout                                    |             |       |
 | [ ]    | Returns                                     |             |       |
-| [ ]    | Member management                           |             |       |
+| [ ]    | Member management                           |   Nathan    |       |
 | [ ]    | Staff management                            |             |       |
 |        |                                             |             |       |
 
