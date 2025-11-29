@@ -185,7 +185,7 @@ public class GUIManager {
             System.out.println("[DEBUG] " + getCallerInfo() + " Search query: " + query);
             
             // Send "Catalog Search" message to server
-            Message searchMessage = new Message(MessageType.CATALOG_SEARCH, query);
+            Message searchMessage = new Message(MessageType.CATALOG_SEARCH_REQ, query);
             client.sendMessage(searchMessage);
             
             // TODO: Wait for and process server response
