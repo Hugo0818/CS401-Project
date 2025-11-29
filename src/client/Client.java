@@ -17,6 +17,7 @@ public class Client implements Runnable {
     private ObjectOutputStream oStream;
     private String host;
     private int port;
+    private GUIManager clientGUI;
     private String clientType; //use in constructor later?
     
     public Client(String host, int port) {
@@ -42,8 +43,8 @@ public class Client implements Runnable {
     	boolean connected;
     	
     	
-    	//Start the GUI
-    	new GUIManager();
+    	//Start the GUI client
+    	clientGUI = new GUIManager();
     	
   
 		
@@ -79,7 +80,7 @@ public class Client implements Runnable {
     public void connectToServer() {
         try {
             connection = new Socket(host, port);
-            System.out.println("Connected to server at " + host + ":" + port);
+            System.out.println("clientjava Connected to server at " + host + ":" + port);
             
             // Create output stream first
             oStream = new ObjectOutputStream(connection.getOutputStream());
@@ -104,43 +105,71 @@ public class Client implements Runnable {
     }
     
     public boolean processMessage(Message message) {
-    	//User login
-        if(message.getType() == MessageType.LOGIN) {
-        	//checks if login was successful
-        	Object valid = message.getContent();
-        	
-        	if((boolean) valid) {
-        		System.out.println("Client login was successful");
-        		return true;
-        	}
-        	
-        	else {
-        		System.out.println("Client login was not successful");
-        		return false; 
-        	}
-        	
+    	
+    	
+    	switch (message.getType()) {
+        case LOGIN_SUCCESS -> {
+        	boolean handling = handleLogin(message);
+        	return handling;
+        }
+        case LOGIN_FAIL -> {
+        	boolean handling = handleLogin(message);
+        	return handling;
+        }
+        case LOGOUT_RESPONSE -> {
+        	boolean handling = handleLogin(message);
+        	return handling;
         }
         
-        //User wants to disconnect
-        else if(message.getType() == MessageType.DISCONNECT) {
-        	System.out.println("Client attempting disconnection");
+        
+        default -> {
+            // default response
+            return true;
+        }
+    
+    }
+    	
+    	
+        
+
+        
+        
+}
+        
+        
+    
+    
+    private boolean handleLogin(Message message) {
+    	if(message.getType() == MessageType.LOGIN_SUCCESS) {
+    		System.out.println("Client login successful");
+        	//Message content should be the client object
+        	//Depending on the clientTYpe
+        	if(message.getContent().getType() == "Staff") {
+        		clientGUI.showStaffDashboard();
+        	}
+        	
+        	else if(message.getContent().getType() == "Member") {
+        		clientGUI.showMemberDashboard();
+        	}
+        	
+        	return true;
+    		
+    	}
+    	
+    	else if(message.getType() == MessageType.LOGIN_FAIL) {
+    		System.out.println("Client login successful");
         	return false;
-        	
-        	
-        }
-        
-        //User accessing catalog
-        else if(message.getType() == MessageType.CATALOG_SEARCH) {
-        	System.out.println("Someone is trying to access catalog");
-        	return true;
-        }
-        
-        //none of the cases above, change later
-        else {
-        	return true;
-        }
-        
-        
+    		
+    	}
+    	
+    	else if(message.getType() == MessageType.LOGOUT_RESPONSE) {
+    		System.out.println("Client attempting disconnection");
+        	return false;
+    		
+    	}
+    	
+  
+
     }
     
     public void sendMessage(Message message) {

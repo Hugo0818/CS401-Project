@@ -5,6 +5,7 @@ public class Staff {
 	private String uid;
 	private String password;
 	private static int idCounter = 1; //unique id
+	private String clientType = "Staff";
 	
 	public Staff(String Name, String password) {
 		name = Name;
@@ -27,6 +28,10 @@ public class Staff {
 	public String getUID() {
 		return uid;
 	}
+	
+	public String getType() {
+    	return clientType;
+    }
 	
 	public void setPassword(String password) {
 		this.password = password;

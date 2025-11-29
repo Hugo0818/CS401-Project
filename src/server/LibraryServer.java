@@ -55,7 +55,7 @@ public class LibraryServer {
             System.out.println("[DEBUG] " + getCallerInfo() + " [Client #" + clientCounter + "] Connected");
             
             // Create handler and start new thread
-            ClientHandler handler = new ClientHandler(clientSocket, clientCounter);
+            ClientHandler handler = new ClientHandler(clientSocket, clientCounter, libraryFacade);
             clientHandlers.add(handler);
             Thread thread = new Thread(handler);
             thread.start();

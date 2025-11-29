@@ -1,12 +1,13 @@
 package server;
 
-import library.Message;
-import library.MessageType;
-import library.Staff;
+import library.*;
+
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
+import java.util.ArrayList;
+
 
 public class ClientHandler implements Runnable {
     private Socket socket;
@@ -14,12 +15,14 @@ public class ClientHandler implements Runnable {
     private ObjectOutputStream oStream;
     private int clientId;
     private Staff loggedInStaff;
+    private LibraryFacade facade;
     
     
-    public ClientHandler(Socket socket, int clientId) {
+    public ClientHandler(Socket socket, int clientId, LibraryFacade lf) {
         this.socket = socket;
         this.clientId = clientId;
         this.loggedInStaff = null;
+        this.facade = lf;
     }
     
     @Override
@@ -39,13 +42,12 @@ public class ClientHandler implements Runnable {
                 System.out.println("[Client #" + clientId + "] Received " + receivedMessage.getType() + " message");
                 
                 // Process message and get response
-                Message response = processMessage(receivedMessage);
+                processMessage(receivedMessage);
                 
-                // Send response
-                sendMessage(response);
+           
                 
                 // Check for disconnect message
-                if (receivedMessage.getType() == MessageType.DISCONNECT) {
+                if (receivedMessage.getType() == MessageType.LOGOUT_ATTEMPT) {
                     break;
                 }
             }
@@ -58,31 +60,82 @@ public class ClientHandler implements Runnable {
     }
     
     
-    public Message processMessage(Message message) {
+    public void processMessage(Message message) {
         
-        MessageType type = message.getType();
-        
-        if (type == MessageType.LOGIN) {
-        	boolean valid = false;
-        	
-        	//check the username and password before they proceed to the next page in GUI
-        	////
-        	
-        	//return a new message wheter the info was valid or not valid
-        	//for now it returns false
-        	return new Message(MessageType.LOGIN, valid);
+        switch (message.getType()) {
+	        case LOGIN_ATTEMPT -> handleLogin(message);
+	        case LOGOUT_ATTEMPT -> handleLogout(message);
+	        case SIGNUP_ATTEMPT -> handleSignup(message);
+	        case CATALOG_SEARCH_REQ -> handleCatalogSearch(message);
+	        case CATALOG_VIEW_REQ -> handleCatalogView(message);
+	        case CHECK_IN_REQ -> handleCheckIn(message);
+	        case CHECK_OUT_REQ -> handleCheckOut(message);
+	        default -> {
+	            // default response
+	            return;
         }
         
-        if (type == MessageType.DISCONNECT) {
-            return new Message(MessageType.DISCONNECT, "Disconnected from server");
-            
         }
-        
-        
-       
-        // Default echo response
-        return new Message(type, "Message received: " + message.getContent());
     }
+    
+    
+    private void handleLogin(Message message) {
+    	
+    	
+    	//check the username and password before they proceed to the next page in GUI
+    	////
+    	
+    	//return a new message wheter the info was valid or not valid
+    	//for now it returns true
+    	sendMessage(new Message(MessageType.LOGIN_SUCCESS, "The Found Client"));
+    	
+    	//or return login fail
+
+    }
+    
+    private void handleLogout(Message message) {
+    	 sendMessage(new Message(MessageType.LOGOUT_RESPONSE, "Disconnected from server"));
+
+    }
+    
+    private void handleSignup(Message message) {
+    	LoginInfo info = (LoginInfo) message.getContent();
+    	String username = info.getUsername();
+    	//check if the user exists
+    	
+  
+    	sendMessage(new Message(MessageType.SIGNUP_ATTEMPT, "User sign up"));
+
+   }
+    
+    private void handleCatalogSearch(Message message) {
+    	System.out.println("catalog search being done");
+    	String searching = (String) message.getContent();
+    	
+    	//search the catalog for the item by title and return it to client
+    	ArrayList<Resource> results = facade.searchCatalog(searching);
+    	sendMessage(new Message(MessageType.CATALOG_S_RES, results));
+      	 
+
+    }
+    
+    private void handleCatalogView(Message message) {
+		
+    
+    }
+    
+    private void handleCheckIn(Message message) {
+	
+    }
+    
+    private void handleCheckOut(Message message) {
+
+    }
+   
+    
+    
+    
+    
     
     public void sendMessage(Message message) {
         try {

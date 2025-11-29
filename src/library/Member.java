@@ -6,6 +6,7 @@ public class Member {
     private String name; 
     private String uid;
     private String password; 
+    private String clientType = "Member";
     
     
     private ArrayList<Log> checkoutHistory;
@@ -31,6 +32,10 @@ public class Member {
     
     public String getUID() {
         return uid;
+    }
+    
+    public String getType() {
+    	return clientType;
     }
     
     public ArrayList<Log> getCheckoutHistory() {
