@@ -110,6 +110,7 @@ public class GUIManager {
             String pw = new String(passField.getPassword());
             boolean isStaff = staffCB.isSelected();
             if (name.isEmpty() || pw.isEmpty()) { showError("Fill fields"); return; }
+            
             //LoginInfo li = new LoginInfo(name, pw, isStaff); // uidOrName holds name for signup
             if(isStaff == true) {
             	Staff s = new Staff(name,pw);

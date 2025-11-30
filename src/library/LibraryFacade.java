@@ -103,7 +103,6 @@ public class LibraryFacade {
         return m;
     }
 
-
     // ---------------------------
     // Resource passthrough methods
     // ---------------------------
