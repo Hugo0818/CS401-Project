@@ -110,8 +110,15 @@ public class GUIManager {
             String pw = new String(passField.getPassword());
             boolean isStaff = staffCB.isSelected();
             if (name.isEmpty() || pw.isEmpty()) { showError("Fill fields"); return; }
-            LoginInfo li = new LoginInfo(name, pw, isStaff); // uidOrName holds name for signup
-            client.sendMessage(new Message(MessageType.SIGNUP_ATTEMPT, li));
+            //LoginInfo li = new LoginInfo(name, pw, isStaff); // uidOrName holds name for signup
+            if(isStaff == true) {
+            	Staff s = new Staff(name,pw);
+            	client.sendMessage(new Message(MessageType.SIGNUP_ATTEMPT, s));
+            }
+            else {
+            	Member m = new Member(name, pw);
+            	client.sendMessage(new Message(MessageType.SIGNUP_ATTEMPT, m));
+            }
             showInfo("Signup sent...");
         });
 
