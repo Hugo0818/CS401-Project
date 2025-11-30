@@ -114,6 +114,7 @@ public class GUIManager {
             LoginInfo li = new LoginInfo(name, pw, isStaff); // uidOrName holds name for signup
 
             showInfo("Signup sent...");
+            showLoginScreen();
         });
 
         backBtn.addActionListener(e -> showLoginScreen());
