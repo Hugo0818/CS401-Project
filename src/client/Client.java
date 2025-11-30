@@ -319,21 +319,25 @@ public class Client implements Runnable {
             
             }
             
-            
-            
-            
-            
-            
-            case SIGNUP_SUCCESS -> {
-                // payload: UID string
-                gui.showInfo("Account created. Your UID: " + msg.getPayload());
-                gui.showLoginScreen();
-                return true;
+            case SIGNUP_RESPONSE ->{
+            	//2 cases ok is true or false
+            	if(msg.isOk()) {
+            		// payload: UID string
+                    gui.showInfo("Account created. Your UID: " + msg.getPayload());
+                    gui.showLoginScreen();
+                    return true;
+            	}
+            	
+            	else {
+         
+            		gui.showError("Signup failed: " + msg.getPayload());
+                    return true;
+            		
+            	}
             }
-            case SIGNUP_FAIL -> {
-                gui.showError("Signup failed: " + msg.getPayload());
-                return true;
-            }
+            
+            
+            
             case CATALOG_SEARCH_RES -> {
                 // payload: ArrayList<Resource>
                 gui.handleCatalogSearchResults(msg.getPayload());

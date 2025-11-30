@@ -5,8 +5,6 @@ public enum MessageType {
     LOGIN_ATTEMPT,
     LOGIN_RESPONSE,
     
-    LOGIN_SUCCESS,
-    LOGIN_FAIL,
 
     SIGNUP_ATTEMPT,
     SIGNUP_RESPONSE,

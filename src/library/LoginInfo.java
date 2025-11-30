@@ -50,6 +50,9 @@ public class LoginInfo implements Serializable {
         this.password = password;
         this.isStaff = isStaff;
     }
+    
+    
+    
 
     public String getUidOrName() { return uidOrName; }
     public String getPassword() { return password; }

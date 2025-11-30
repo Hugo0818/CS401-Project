@@ -1,41 +1,42 @@
 package library;
 
 public class Staff {
-	private String name;
+	
+	private LoginInfo creds;
 	private String uid;
-	private String password;
 	private static int idCounter = 1; //unique id
 	private String clientType = "Staff";
 	
-	public Staff(String Name, String password) {
-		name = Name;
-		this.password = password;
+	public Staff(LoginInfo info) {
 		uid = "S" + idCounter++;
+		creds = info;
 	}
+	
+	
+	public void setCreds(LoginInfo info) {
+		creds= info;
+	}
+	
 	
 	public String getName() {
-		return name;
+		return creds.getUidOrName();
 	}
 	
-	public void setName(String name) {
-		this.name = name;
-	}
 	
 	public String getPassword() {
-		return password;
+		return creds.getPassword();
 	}
 		
 	public String getUID() {
 		return uid;
 	}
 	
+	
 	public String getType() {
     	return clientType;
     }
 	
-	public void setPassword(String password) {
-		this.password = password;
-	}
+	
 	
 	public void setUID(String uid) {
 	    this.uid = uid;

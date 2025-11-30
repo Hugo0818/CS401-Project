@@ -137,23 +137,33 @@ public class ClientHandler implements Runnable {
     private void handleSignup(Message msg) {
         Object p = msg.getPayload();
         if (!(p instanceof LoginInfo info)) {
-            sendMessage(Message.fail(MessageType.SIGNUP_FAIL, "Invalid signup payload"));
+            sendMessage(Message.fail(MessageType.SIGNUP_RESPONSE, "Invalid signup payload"));
             return;
         }
 
         if (info.isStaff()) {
-            Staff exists = facade.findStaffByUsername(info.getUidOrName());
-            if (exists != null) {
-                sendMessage(Message.ok(MessageType.SIGNUP_SUCCESS, exists));
+        	//check if the username exists 
+            Staff newStaff = facade.findStaffByUsername(info.getUidOrName());
+            //new staff passed as message to be created
+            if (newStaff == null) {
+            	newStaff = new Staff(info); //create new staff with username and password
+            	facade.addStaff(newStaff); //add to the staff list
+                sendMessage(Message.ok(MessageType.SIGNUP_RESPONSE, newStaff.getUID()));
+                //if the usernames exists
             } else {
-                sendMessage(Message.fail(MessageType.SIGNUP_FAIL, "Could not create staff account"));
+                sendMessage(Message.fail(MessageType.SIGNUP_RESPONSE, "This username is taken"));
             }
+            
+         
+         //same logic as staff, check if the member exists and create new one if not
         } else {
-            Member exists = facade.findMemberByUsername(info.getUidOrName());
-            if (exists != null) {
-                sendMessage(Message.ok(MessageType.SIGNUP_SUCCESS, exists));
+            Member newMember = facade.findMemberByUsername(info.getUidOrName());
+            if (newMember == null) {
+            	newMember = new Member(info); //create new member with info entered
+            	facade.addMember(newMember); //add to the member list
+                sendMessage(Message.ok(MessageType.SIGNUP_RESPONSE, newMember.getUID()));
             } else {
-                sendMessage(Message.fail(MessageType.SIGNUP_FAIL, "Could not create member account"));
+                sendMessage(Message.fail(MessageType.SIGNUP_RESPONSE, "This username is taken"));
             }
         }
     }
