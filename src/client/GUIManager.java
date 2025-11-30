@@ -112,6 +112,7 @@ public class GUIManager {
             if (name.isEmpty() || pw.isEmpty()) { showError("Fill fields"); return; }
             
             LoginInfo li = new LoginInfo(name, pw, isStaff); // uidOrName holds name for signup
+            client.sendMessage(new Message(MessageType.SIGNUP_ATTEMPT, li));
 
             showInfo("Signup sent...");
             showLoginScreen();
