@@ -3,6 +3,8 @@ package client;
 import library.*;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 /**
  * Minimal GUIManager: creates login and signup panels and reacts to client callbacks.
@@ -15,10 +17,21 @@ public class GUIManager {
     public GUIManager(Client client) {
         this.client = client;
         mainFrame = new JFrame("Library System");
-        mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        //mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        mainFrame.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         mainFrame.setSize(640, 480);
         mainFrame.setLocationRelativeTo(null);
+        mainFrame.addWindowListener(new WindowAdapter() {
+        	@Override
+        	public void windowClosing(WindowEvent e) {
+        		//disconnects the client
+        		client.sendMessage(new Message(MessageType.W_CLOSED, null));
+        		mainFrame.dispose();	
+        	}
+        });
     }
+    
+    
 
     public void showLoginScreen() {
         JPanel panel = new JPanel(new GridBagLayout());
