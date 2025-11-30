@@ -10,9 +10,10 @@ public class Book implements Resource {
     private boolean isAvailable;
     private ArrayList<Log> checkoutHistory;
     
-    public Book(String title, String author, String isbn, boolean isAvailable) {
+    public Book(String title, String author, String publisher, String isbn, boolean isAvailable) {
     	this.title = title;
     	this.author = author;
+    	this.publisher = publisher;
         this.isbn = isbn;
         this.isAvailable = isAvailable;
         this.checkoutHistory = new ArrayList<>();
@@ -31,8 +32,11 @@ public class Book implements Resource {
     
     @Override
     public String getDetails() {
-        // TODO: Implement book details string
-        return "";
+        return 
+        "Title: " + title + "\n" +
+        "Author: " + author + "\n" + 
+        "Publisher: " + publisher + "\n" + 
+        "ISBN: " + isbn + "\n";
     }
     
     @Override
@@ -50,3 +54,4 @@ public class Book implements Resource {
         return title;
     }
 }
+
