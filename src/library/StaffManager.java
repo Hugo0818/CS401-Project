@@ -44,4 +44,27 @@ public class StaffManager {
         return results;
     }
     
+    public Staff findByUsername(String username) {
+        for (Staff staff : staffList) {
+            if (staff.getName().equals(username)) {
+                return staff;
+            }
+        }
+        return null;
+    }
+    
+    public Staff findByUID(int uid) {
+        String uidStr = "S" + uid;
+        for (Staff staff : staffList) {
+            if (staff.getUID().equals(uidStr)) {
+                return staff;
+            }
+        }
+        return null;
+    }
+    
+    public ArrayList<Staff> getAll() {
+        return staffList;
+    }
+    
 }

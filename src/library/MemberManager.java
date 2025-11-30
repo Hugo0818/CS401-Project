@@ -39,4 +39,27 @@ public class MemberManager {
         return results;
     }
     
+    public Member findByUsername(String username) {
+        for (Member member : memberList) {
+            if (member.getName().equals(username)) {
+                return member;
+            }
+        }
+        return null;
+    }
+    
+    public Member findByUID(int uid) {
+        String uidStr = "M" + uid;
+        for (Member member : memberList) {
+            if (member.getUID().equals(uidStr)) {
+                return member;
+            }
+        }
+        return null;
+    }
+    
+    public ArrayList<Member> getAll() {
+        return memberList;
+    }
+    
 }
