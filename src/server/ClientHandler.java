@@ -82,27 +82,54 @@ public class ClientHandler implements Runnable {
     private void handleLogin(Message msg) {
         Object p = msg.getPayload();
         if (!(p instanceof LoginInfo info)) {
-            sendMessage(Message.fail(MessageType.LOGIN_FAIL, "Invalid login payload"));
+            sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "Invalid login payload"));
             return;
         }
-
+        
+        
         if (info.isStaff()) {
-            // facade should provide loginStaff(uid, password) -> Staff or null
-            Staff s = facade.loginStaff(info.getUidOrName(), info.getPassword());
-            if (s != null) {
-                loggedStaff = s;
-                sendMessage(Message.ok(MessageType.LOGIN_SUCCESS, "STAFF"));
-            } else {
-                sendMessage(Message.fail(MessageType.LOGIN_FAIL, "Invalid staff credentials"));
+            // Look for the staff member
+            Staff searchedStaff = facade.findStaffByUsername(info.getUidOrName());
+            if(searchedStaff == null) {
+            	sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "This username does not exists"));
             }
+            else {
+            	//passwords match
+            	if(searchedStaff.getPassword().equals(info.getPassword())) {
+            		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, searchedStaff));
+            	}
+            	
+            	//passwords don't match
+            	else {
+            		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, "Invalid password"));
+            		
+            	}
+            		
+            }
+            
+            
+            
         } else {
-            Member m = facade.loginMember(info.getUidOrName(), info.getPassword());
-            if (m != null) {
-                loggedMember = m;
-                sendMessage(Message.ok(MessageType.LOGIN_SUCCESS, "MEMBER"));
-            } else {
-                sendMessage(Message.fail(MessageType.LOGIN_FAIL, "Invalid member credentials"));
+            Member searchedMember = facade.findMemberByUsername(info.getUidOrName());
+            if(searchedMember == null) {
+            	
             }
+            
+            else {
+            	//passwords match
+            	if(searchedMember.getpassword().equals(info.getPassword())) {
+            		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, searchedMember));
+            	}
+            	
+            	//passwords don't match
+            	else {
+            		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, "Invalid password"));
+            		
+            	}
+            	
+            }
+            
+            
         }
     }
 
@@ -115,16 +142,16 @@ public class ClientHandler implements Runnable {
         }
 
         if (info.isStaff()) {
-            String newUID = facade.signupStaff(info.getUidOrName(), info.getPassword());
-            if (newUID != null) {
-                sendMessage(Message.ok(MessageType.SIGNUP_SUCCESS, newUID));
+            Staff exists = facade.findStaffByUsername(info.getUidOrName());
+            if (exists != null) {
+                sendMessage(Message.ok(MessageType.SIGNUP_SUCCESS, exists));
             } else {
                 sendMessage(Message.fail(MessageType.SIGNUP_FAIL, "Could not create staff account"));
             }
         } else {
-            String newUID = facade.signupMember(info.getUidOrName(), info.getPassword());
-            if (newUID != null) {
-                sendMessage(Message.ok(MessageType.SIGNUP_SUCCESS, newUID));
+            Member exists = facade.findMemberByUsername(info.getUidOrName());
+            if (exists != null) {
+                sendMessage(Message.ok(MessageType.SIGNUP_SUCCESS, exists));
             } else {
                 sendMessage(Message.fail(MessageType.SIGNUP_FAIL, "Could not create member account"));
             }

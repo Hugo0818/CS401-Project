@@ -209,7 +209,7 @@
 //	
 //}
 package client;
-
+import library.*;
 import library.Message;
 import library.MessageType;
 
@@ -296,22 +296,34 @@ public class Client implements Runnable {
     /** Handles incoming messages from server and updates GUI accordingly. */
     private boolean handleServerMessage(Message msg) {
         switch (msg.getType()) {
-            case LOGIN_SUCCESS -> {
-                // payload: either "STAFF"/"MEMBER" or full object depending on your design
-                Object payload = msg.getPayload();
-                if (payload instanceof String s) {
-                    if (s.equalsIgnoreCase("STAFF")) gui.showStaffDashboard();
-                    else gui.showMemberDashboard();
-                } else {
-                    // fallback: show member dashboard
-                    gui.showMemberDashboard();
-                }
-                return true;
+   
+            case LOGIN_RESPONSE -> {
+            	//2 cases ok is true or false
+            	if(msg.isOk()) {
+            		Object payload = msg.getPayload(); //staff or member
+            		
+            		if(payload instanceof Staff staff) {
+            			gui.showStaffDashboard();
+            		}
+            		
+            		else {
+            			gui.showMemberDashboard();
+            		}
+            		return true;
+            		
+            	}
+            	
+            	else {
+            		gui.showError("Login failed: " + msg.getInfo());
+            	}
+            
             }
-            case LOGIN_FAIL -> {
-                gui.showError("Login failed: " + msg.getInfo());
-                return true;
-            }
+            
+            
+            
+            
+            
+            
             case SIGNUP_SUCCESS -> {
                 // payload: UID string
                 gui.showInfo("Account created. Your UID: " + msg.getPayload());
@@ -348,6 +360,7 @@ public class Client implements Runnable {
                 return true;
             }
         }
+		return false;
     }
 
     /** Thread-safe send */

@@ -3,10 +3,14 @@ package library;
 public enum MessageType {
     // Auth
     LOGIN_ATTEMPT,
+    LOGIN_RESPONSE,
+    
     LOGIN_SUCCESS,
     LOGIN_FAIL,
 
     SIGNUP_ATTEMPT,
+    SIGNUP_RESPONSE,
+    
     SIGNUP_SUCCESS,
     SIGNUP_FAIL,
 
