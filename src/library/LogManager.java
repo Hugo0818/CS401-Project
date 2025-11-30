@@ -57,5 +57,10 @@ public class LogManager {
         long day2 = d2.getTime() / msPerDay;
         return day1 == day2;
     }
+
+	public Object getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
     
 }

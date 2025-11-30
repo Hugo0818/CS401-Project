@@ -145,9 +145,9 @@ public class LibraryFacade {
             System.out.println("[LibraryFacade] Saving data to " + serFilePath);
 
             out.writeObject(staffManager.getAll());
-            out.writeObject(resourceManager.getAll());
+            out.writeObject(resourceManager.getAll()); //not implemented
             out.writeObject(memberManager.getAll());
-            out.writeObject(logManager.getAll());
+            out.writeObject(logManager.getAll()); //not implemented
 
         } catch (Exception e) {
             System.err.println("[LibraryFacade] Error saving data: " + e.getMessage());

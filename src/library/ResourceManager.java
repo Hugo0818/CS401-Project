@@ -69,4 +69,9 @@ public class ResourceManager {
         return true;
     }
 
+	public Object getAll() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
