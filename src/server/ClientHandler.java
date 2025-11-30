@@ -97,6 +97,7 @@ public class ClientHandler implements Runnable {
             	//passwords match
             	if(searchedStaff.getPassword().equals(info.getPassword())) {
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, searchedStaff));
+            		System.out.println("Login success"); //DEBUG MSG
             	}
             	
             	//passwords don't match
@@ -148,6 +149,7 @@ public class ClientHandler implements Runnable {
             if (newStaff == null) {
             	newStaff = new Staff(info); //create new staff with username and password
             	facade.addStaff(newStaff); //add to the staff list
+            	System.out.print("Staff signup success"); //DEBUG MSG
                 sendMessage(Message.ok(MessageType.SIGNUP_RESPONSE, newStaff.getUID()));
                 //if the usernames exists
             } else {
@@ -161,6 +163,7 @@ public class ClientHandler implements Runnable {
             if (newMember == null) {
             	newMember = new Member(info); //create new member with info entered
             	facade.addMember(newMember); //add to the member list
+            	System.out.print("Member signup success"); //DEBUG MSG
                 sendMessage(Message.ok(MessageType.SIGNUP_RESPONSE, newMember.getUID()));
             } else {
                 sendMessage(Message.fail(MessageType.SIGNUP_RESPONSE, "This username is taken"));

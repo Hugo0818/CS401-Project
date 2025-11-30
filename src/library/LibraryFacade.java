@@ -68,13 +68,16 @@ public class LibraryFacade {
         return staffManager.searchStaff(q);
     }
     
+    /////////////////////
+    /*
     public Staff signupStaff(String name) {
         Staff s = new Staff(name);
         staffManager.addStaff(s);
         staffManager.saveToFile();
         return s;
     }
-
+    */
+///////////////////////////////
 
     // ---------------------------
     // Member passthrough methods
@@ -95,14 +98,18 @@ public class LibraryFacade {
     public ArrayList<Member> searchMembers(String query) {
         return memberManager.searchMembers(query);
     }
-    
+    //////////////////////
+    /*
     public Member signupMember(String name) {
         Member m = new Member(name);
         memberManager.addMember(m);
         memberManager.saveToFile();
         return m;
     }
-
+    */
+///////////////////////////////
+    
+    
     // ---------------------------
     // Resource passthrough methods
     // ---------------------------
