@@ -66,8 +66,9 @@ public class ClientHandler implements Runnable {
     private void processMessage(Message msg) {
         try {
             switch (msg.getType()) {
-                case LOGIN_ATTEMPT -> handleLogin(msg);
+                case LOGIN_ATTEMPT -> handleLogin(msg); 
                 case SIGNUP_ATTEMPT -> handleSignup(msg);
+                
                 case CATALOG_SEARCH_REQ -> handleCatalogSearch(msg);
                 case MEMBER_SEARCH_REQ -> handleMemberSearch(msg);
                 case LOGOUT_ATTEMPT -> handleLogout(msg);
@@ -104,35 +105,26 @@ public class ClientHandler implements Runnable {
             	else {
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, "Invalid password"));
             		
-            	}
-            		
-            }
-            
-            
-            
+            	}            		
+            }                                 
         } else {
             Member searchedMember = facade.findMemberByUsername(info.getUidOrName());
-            if(searchedMember == null) {
-            	
-            }
-            
+            if(searchedMember == null) {            	
+            }           
             else {
             	//passwords match
             	if(searchedMember.getpassword().equals(info.getPassword())) {
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, searchedMember));
-            	}
-            	
+            	}            	
             	//passwords don't match
             	else {
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, "Invalid password"));
             		
-            	}
-            	
-            }
-            
-            
+            	}            	
+            }     
         }
     }
+    
 
     // SIGNUP: payload is LoginInfo where uidOrName is name when signing up
     private void handleSignup(Message msg) {
@@ -171,13 +163,20 @@ public class ClientHandler implements Runnable {
         }
     }
 
-    private void handleCatalogSearch(Message msg) {
-        Object p = msg.getPayload();
-        String q = (p instanceof String) ? (String) p : "";
-        ArrayList<Resource> results = facade.searchCatalog(q);
-        sendMessage(Message.ok(MessageType.CATALOG_SEARCH_RES, results));
+    private void handleCatalogSearch(Message msg) {    	       
+        String ressourceTitle = (String) msg.getPayload();        
+        ArrayList<Resource> results = facade.searchCatalog(ressourceTitle);
+        if(results.size() > 0) {
+        	//send the list showing available copies
+        	sendMessage(Message.ok(MessageType.CATALOG_SEARCH_RES, results));
+        	}
+        else {
+        	//send a string meaning not found
+        	sendMessage(Message.fail(MessageType.CATALOG_SEARCH_RES, "unavailable"));
+        }
     }
 
+    
     private void handleMemberSearch(Message msg) {
         Object p = msg.getPayload();
         String q = (p instanceof String) ? (String) p : "";

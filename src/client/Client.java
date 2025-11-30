@@ -95,20 +95,17 @@ public class Client implements Runnable {
             		
             		if(payload instanceof Staff staff) {
             			gui.showStaffDashboard();
-            		}
-            		
+            		}            		
             		else {
             			gui.showMemberDashboard();
             		}
-            		return true;
-            		
-            	}
-            	
+            		return true;            		
+            	}            	
             	else {
             		gui.showError("Login failed: " + msg.getInfo());
-            	}
-            
+            	}           
             }
+            
             
             case SIGNUP_RESPONSE ->{
             	//2 cases ok is true or false
@@ -117,18 +114,15 @@ public class Client implements Runnable {
                     gui.showInfo("Account created. Your UID: " + msg.getPayload());
                     gui.showLoginScreen();
                     return true;
-            	}
-            	
-            	else {
-         
+            	}            	
+            	else {         
             		gui.showError("Signup failed: " + msg.getPayload());
                     return true;
             		
             	}
             }
             
-            
-            
+                      
             case CATALOG_SEARCH_RES -> {
                 // payload: ArrayList<Resource>
                 gui.handleCatalogSearchResults(msg.getPayload());
