@@ -6,6 +6,7 @@ import library.MessageType;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.Properties;
 
 /**
  * Threaded client. Construct with host,port; call start() to start its listener thread.
@@ -25,7 +26,24 @@ public class Client implements Runnable {
     private GUIManager gui; // set when GUIManager constructed
     
     public static void main(String[] args) {
-        Client client = new Client("localhost", 12345); // or your server port
+        // Load configuration from config.properties
+        String host = "127.0.0.1"; // Default
+        int port = 12345; // Default
+        try {
+            Properties props = new Properties();
+            FileInputStream fis = new FileInputStream("src/config.properties");
+            props.load(fis);
+            host = props.getProperty("HOST", "127.0.0.1");
+            port = Integer.parseInt(props.getProperty("PORT", "12345"));
+            fis.close();
+            System.out.println("[CLIENT] Configuration loaded: " + host + ":" + port);
+        } catch (IOException e) {
+            System.out.println("[CLIENT] Could not load config.properties, using defaults: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.err.println("[CLIENT] Invalid PORT in config.properties, using default: 12345");
+        }
+        
+        Client client = new Client(host, port);
         client.start();
     }
 
@@ -96,13 +114,18 @@ public class Client implements Runnable {
             		if(payload instanceof Staff staff) {
             			gui.showStaffDashboard();
             		}            		
-            		else {
+            		else if(payload instanceof Member member) {
             			gui.showMemberDashboard();
+            		}
+            		else {
+            			// payload is error message string
+            			gui.showError("Login failed: " + payload);
             		}
             		return true;            		
             	}            	
             	else {
             		gui.showError("Login failed: " + msg.getInfo());
+            		return true;
             	}           
             }
             
@@ -155,15 +178,20 @@ public class Client implements Runnable {
                 return true;
             }
         }
+<<<<<<< HEAD
+=======
         
 		return false;
+>>>>>>> a05e54ba44f7267443fc09b01906365bc94368a9
     }
 
     /** Thread-safe send */
     public synchronized void sendMessage(Message msg) {
         try {
+            System.out.println("[CLIENT] Sending message: " + msg.getType());
             out.writeObject(msg);
             out.flush();
+            System.out.println("[CLIENT] Message sent successfully: " + msg.getType());
         } catch (IOException e) {
             System.err.println("[CLIENT] Send failed: " + e.getMessage());
             gui.showError("Network error sending message.");

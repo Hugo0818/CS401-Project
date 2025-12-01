@@ -33,6 +33,7 @@ public class LibraryServer {
 
             while (running) {
                 Socket clientSocket = serverSocket.accept();
+                clientSocket.setReuseAddress(true);
                 clientCounter++;
                 System.out.println("[SERVER] Client #" + clientCounter + " connected: " + clientSocket.getRemoteSocketAddress());
                 ClientHandler handler = new ClientHandler(clientSocket, clientCounter, facade, this);
@@ -52,10 +53,21 @@ public class LibraryServer {
     }
 
     public void stopServer() {
+        if (!running) return; // Already stopped
         running = false;
+        System.out.println("[SERVER] Stopping server and closing all connections...");
         try {
-            for (ClientHandler h : handlers) h.closeConnection();
-            if (serverSocket != null && !serverSocket.isClosed()) serverSocket.close();
+            // Close all client handlers
+            for (ClientHandler h : handlers) {
+                h.closeConnection();
+            }
+            handlers.clear();
+            
+            // Close server socket
+            if (serverSocket != null && !serverSocket.isClosed()) {
+                serverSocket.close();
+                System.out.println("[SERVER] Server socket closed.");
+            }
         } catch (IOException e) {
             System.err.println("[SERVER] Stop error: " + e.getMessage());
         }

@@ -51,6 +51,7 @@ public class ClientHandler implements Runnable {
             while (!socket.isClosed()) {
                 Message msg = (Message) in.readObject();
                 if (msg == null) break;
+                System.out.println("[Handler#" + clientId + "] Received message: " + msg.getType());
                 processMessage(msg);
                 if (msg.getType() == MessageType.W_CLOSED) break;
             }
@@ -64,6 +65,7 @@ public class ClientHandler implements Runnable {
     }
 
     private void processMessage(Message msg) {
+        System.out.println("[Handler#" + clientId + "] Processing message: " + msg.getType());
         try {
             switch (msg.getType()) {
                 case LOGIN_ATTEMPT -> handleLogin(msg); 
@@ -89,6 +91,8 @@ public class ClientHandler implements Runnable {
         if (!(p instanceof LoginInfo info)) {
             sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "Invalid login payload"));
             return;
+        } else {
+            System.out.println("[Handler#" + clientId + "] Login attempt for " + info.getUidOrName() + " as " + (info.isStaff() ? "Staff" : "Member"));
         }
         
         
@@ -96,33 +100,37 @@ public class ClientHandler implements Runnable {
             // Look for the staff member
             Staff searchedStaff = facade.findStaffByUsername(info.getUidOrName());
             if(searchedStaff == null) {
-            	sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "This username does not exists"));
+            	sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "This username does not exist"));
             }
             else {
             	//passwords match
             	if(searchedStaff.getPassword().equals(info.getPassword())) {
+            		loggedStaff = searchedStaff;
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, searchedStaff));
-            		System.out.println("Login success"); //DEBUG MSG
+            		System.out.println("[Handler#" + clientId + "] Staff login success: " + searchedStaff.getName());
             	}
             	
             	//passwords don't match
             	else {
-            		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, "Invalid password"));
+            		sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "Invalid password"));
             		
             	}            		
             }                                 
         } else {
             Member searchedMember = facade.findMemberByUsername(info.getUidOrName());
-            if(searchedMember == null) {            	
+            if(searchedMember == null) {
+            	sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "This username does not exist"));
             }           
             else {
             	//passwords match
             	if(searchedMember.getpassword().equals(info.getPassword())) {
+            		loggedMember = searchedMember;
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, searchedMember));
+            		System.out.println("[Handler#" + clientId + "] Member login success: " + searchedMember.getName());
             	}            	
             	//passwords don't match
             	else {
-            		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, "Invalid password"));
+            		sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "Invalid password"));
             		
             	}            	
             }     
