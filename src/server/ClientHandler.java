@@ -28,10 +28,6 @@ public class ClientHandler implements Runnable {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    // track logged user (could be Staff or Member)
-    private Staff loggedStaff = null;
-    private Member loggedMember = null;
-
     public ClientHandler(Socket socket, int clientId, LibraryFacade facade, LibraryServer server) {
         this.socket = socket;
         this.clientId = clientId;
@@ -51,7 +47,6 @@ public class ClientHandler implements Runnable {
             while (!socket.isClosed()) {
                 Message msg = (Message) in.readObject();
                 if (msg == null) break;
-                System.out.println("[Handler#" + clientId + "] Received message: " + msg.getType());
                 processMessage(msg);
                 if (msg.getType() == MessageType.W_CLOSED) break;
             }
@@ -65,7 +60,6 @@ public class ClientHandler implements Runnable {
     }
 
     private void processMessage(Message msg) {
-        System.out.println("[Handler#" + clientId + "] Processing message: " + msg.getType());
         try {
             switch (msg.getType()) {
                 case LOGIN_ATTEMPT -> handleLogin(msg); 
@@ -73,8 +67,7 @@ public class ClientHandler implements Runnable {
                 case W_CLOSED -> {
                     sendMessage(Message.ok(MessageType.W_CLOSED, "Goodbye"));
                     closeConnection();
-                }
-                
+                }      
                 case CATALOG_SEARCH_REQ -> handleCatalogSearch(msg);
                 case MEMBER_SEARCH_REQ -> handleMemberSearch(msg);
                 case REMOVE_MEMBER_REQ -> handleRemoveMember(msg);
@@ -84,12 +77,18 @@ public class ClientHandler implements Runnable {
                 case CHECK_OUT_REQ -> handleCheckout(msg);
                 case CHECK_IN_REQ -> handleCheckin(msg);
                 case LOGOUT_ATTEMPT -> handleLogout(msg);
+
                 default -> sendMessage(Message.fail(MessageType.ERROR, "Unknown message type: " + msg.getType()));
             }
         } catch (Exception ex) {
             sendMessage(Message.fail(MessageType.ERROR, "Server error: " + ex.getMessage()));
         }
     }
+    
+    
+   
+    
+  
 
     // LOGIN: payload is LoginInfo (uidOrName,password,isStaff) for login attempts
     private void handleLogin(Message msg) {
@@ -97,8 +96,6 @@ public class ClientHandler implements Runnable {
         if (!(p instanceof LoginInfo info)) {
             sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "Invalid login payload"));
             return;
-        } else {
-            System.out.println("[Handler#" + clientId + "] Login attempt for " + info.getUidOrName() + " as " + (info.isStaff() ? "Staff" : "Member"));
         }
         
         
@@ -106,37 +103,34 @@ public class ClientHandler implements Runnable {
             // Look for the staff member
             Staff searchedStaff = facade.findStaffByUsername(info.getUidOrName());
             if(searchedStaff == null) {
-            	sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "This username does not exist"));
+            	sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "This username does not exists"));
             }
             else {
             	//passwords match
             	if(searchedStaff.getPassword().equals(info.getPassword())) {
-            		loggedStaff = searchedStaff;
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, searchedStaff));
-            		System.out.println("[Handler#" + clientId + "] Staff login success: " + searchedStaff.getName());
+            		System.out.println("Login success"); //DEBUG MSG
             	}
             	
             	//passwords don't match
             	else {
-            		sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "Invalid password"));
+            		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, "Invalid password"));
             		
             	}            		
             }                                 
         } else {
             Member searchedMember = facade.findMemberByUsername(info.getUidOrName());
-            if(searchedMember == null) {
-            	sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "This username does not exist"));
+            if(searchedMember == null) {  
+            	sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "This username does not exists"));
             }           
             else {
             	//passwords match
             	if(searchedMember.getpassword().equals(info.getPassword())) {
-            		loggedMember = searchedMember;
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, searchedMember));
-            		System.out.println("[Handler#" + clientId + "] Member login success: " + searchedMember.getName());
             	}            	
             	//passwords don't match
             	else {
-            		sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "Invalid password"));
+            		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, "Invalid password"));
             		
             	}            	
             }     
@@ -261,6 +255,7 @@ public class ClientHandler implements Runnable {
     private void handleLogout(Message msg) {
         sendMessage(Message.ok(MessageType.LOGOUT_RESPONSE, "Goodbye"));
     }
+
     
     private void handleAddResource(Message msg) {
         Object p = msg.getPayload();
@@ -269,16 +264,13 @@ public class ClientHandler implements Runnable {
             return;
         }
         
-        // Check if user is staff
-        if (loggedStaff == null) {
-            sendMessage(Message.fail(MessageType.ADD_RESOURCE_RES, "Only staff can add resources"));
-            return;
-        }
         
         boolean success = facade.addResource(resource);
         if (success) {
             System.out.println("[Handler#" + clientId + "] Resource added: " + resource.getDisplayName());
             sendMessage(Message.ok(MessageType.ADD_RESOURCE_RES, "Resource added successfully"));
+          //log the operation
+            facade.addLog(new Log(resource, MessageType.ADD_RESOURCE_RES));
         } else {
             sendMessage(Message.fail(MessageType.ADD_RESOURCE_RES, "Failed to add resource"));
         }
@@ -291,16 +283,12 @@ public class ClientHandler implements Runnable {
             return;
         }
         
-        // Check if user is staff
-        if (loggedStaff == null) {
-            sendMessage(Message.fail(MessageType.REMOVE_RESOURCE_RES, "Only staff can remove resources"));
-            return;
-        }
         
         boolean success = facade.removeResource(resource);
         if (success) {
             System.out.println("[Handler#" + clientId + "] Resource removed: " + resource.getDisplayName());
             sendMessage(Message.ok(MessageType.REMOVE_RESOURCE_RES, "Resource removed successfully"));
+            facade.addLog(new Log(resource, MessageType.REMOVE_RESOURCE_RES));
         } else {
             sendMessage(Message.fail(MessageType.REMOVE_RESOURCE_RES, "Failed to remove resource"));
         }
@@ -323,11 +311,6 @@ public class ClientHandler implements Runnable {
             return;
         }
         
-        // Check if user is staff
-        if (loggedStaff == null) {
-            sendMessage(Message.fail(MessageType.CHECK_OUT_RES, "Only staff can checkout resources"));
-            return;
-        }
         
         // Find member by UID
         Member member = null;
@@ -356,6 +339,8 @@ public class ClientHandler implements Runnable {
             System.out.println("[Handler#" + clientId + "] After checkout - Member " + member.getName() + " has " + member.getCurrentlyHeldResources().size() + " borrowed items");
             System.out.println("[Handler#" + clientId + "] Checkout: " + resource.getDisplayName() + " to " + member.getName());
             sendMessage(Message.ok(MessageType.CHECK_OUT_RES, "Checked out successfully"));
+          //log the operation
+            facade.addLog(new Log(member, resource, MessageType.CHECK_OUT_RES));
         } else {
             sendMessage(Message.fail(MessageType.CHECK_OUT_RES, "Checkout failed - resource may not be available"));
         }
@@ -378,11 +363,7 @@ public class ClientHandler implements Runnable {
             return;
         }
         
-        // Check if user is staff
-        if (loggedStaff == null) {
-            sendMessage(Message.fail(MessageType.CHECK_IN_RES, "Only staff can check in resources"));
-            return;
-        }
+        
         
         // Find member by UID
         Member member = null;
@@ -409,10 +390,13 @@ public class ClientHandler implements Runnable {
         if (success) {
             System.out.println("[Handler#" + clientId + "] Check-in: " + resource.getDisplayName() + " from " + member.getName());
             sendMessage(Message.ok(MessageType.CHECK_IN_RES, "Checked in successfully"));
+            //log the operation
+            facade.addLog(new Log(member, resource, MessageType.CHECK_IN_RES));
         } else {
             sendMessage(Message.fail(MessageType.CHECK_IN_RES, "Check-in failed"));
         }
     }
+
 
     public synchronized void sendMessage(Message msg) {
         try {

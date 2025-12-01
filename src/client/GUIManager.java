@@ -143,8 +143,8 @@ public class GUIManager {
             
             LoginInfo li = new LoginInfo(name, pw, isStaff); // uidOrName holds name for signup
             client.sendMessage(new Message(MessageType.SIGNUP_ATTEMPT, li));
-
-            showInfo("Signup sent...");
+            
+            
             showLoginScreen();
         });
 
@@ -977,7 +977,7 @@ public class GUIManager {
                 if (newResource != null) {
                     // Send message to server to add resource
                     client.sendMessage(new Message(MessageType.ADD_RESOURCE_REQ, newResource));
-                    showInfo("Resource created successfully!");
+                    showInfo("Resource add request sent");
                     
                     // Clear fields
                     fieldsPanel.removeAll();
