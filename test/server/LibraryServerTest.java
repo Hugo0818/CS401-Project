@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.List;
 
-/**
+/*
  * Unit tests for LibraryServer class (simple, no network integration).
  */
 public class LibraryServerTest {
