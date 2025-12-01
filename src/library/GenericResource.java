@@ -1,13 +1,23 @@
 package library;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Map;
 
-public class GenericResource implements Resource {
+import java.io.Serializable;
+
+public class GenericResource implements Resource, Serializable {
     private Map<String, String> extraDetails;
     private String resourceName;
     private Boolean isAvailable;
     private ArrayList<Log> checkoutHistory;
+    
+    public GenericResource(String resourceName, Map<String, String> extraDetails) {
+        this.resourceName = resourceName;
+        this.extraDetails = extraDetails != null ? extraDetails : new HashMap<>();
+        this.isAvailable = true;
+        this.checkoutHistory = new ArrayList<>();
+    }
     
     @Override
     public ArrayList<Log> getLogs() {

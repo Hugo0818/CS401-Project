@@ -14,8 +14,16 @@ public class GUIManager {
     private final Client client;
     private final JFrame mainFrame;
     
+//<<<<<<< HEAD
     private DefaultListModel<Member> resultsAreaModel;
     private JList<Member> resultsArea;
+//=======
+    // For managing search results display
+    private JTable currentResultsTable;
+    private javax.swing.table.DefaultTableModel currentTableModel;
+    private JTextArea currentDetailsArea;
+    private java.util.List<Resource> currentSearchResults;
+//>>>>>>> branch 'main' of https://github.com/Hugo0818/CS401-Project
 
     public GUIManager(Client client) {
         this.client = client;
@@ -182,7 +190,7 @@ public class GUIManager {
         contentArea.add(welcomeLabel, BorderLayout.CENTER);
         
         // Menu buttons
-        String[] menuItems = {"Checkout", "Check In", "Browse Catalog", "Manage Members", "View Logs", "Logout"};
+        String[] menuItems = {"Checkout", "Check In", "Browse Catalog", "Add Resource", "Remove Resource", "Manage Members", "View Logs", "Logout"};
         ButtonGroup buttonGroup = new ButtonGroup();
         
         for (String item : menuItems) {
@@ -196,6 +204,8 @@ public class GUIManager {
                     case "Checkout" -> showCheckoutPanel(contentArea);
                     case "Check In" -> showCheckinPanel(contentArea);
                     case "Browse Catalog" -> showBrowseCatalogPanel(contentArea);
+                    case "Add Resource" -> showAddResourcePanel(contentArea);
+                    case "Remove Resource" -> showRemoveResourcePanel(contentArea);
                     case "Manage Members" -> showManageMembersPanel(contentArea);
                     case "View Logs" -> showLogsPanel(contentArea);
                     case "Logout" -> {
@@ -317,34 +327,117 @@ public class GUIManager {
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
         contentArea.add(titleLabel, BorderLayout.NORTH);
         
+        // Top panel with member UID and search
+        JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        
+        JPanel memberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        memberPanel.add(new JLabel("Member UID:"));
+        JTextField memberUidField = new JTextField(15);
+        memberPanel.add(memberUidField);
+        topPanel.add(memberPanel);
+        
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JTextField searchField = new JTextField(30);
-        JButton searchBtn = new JButton("Search");
         searchPanel.add(new JLabel("Search Catalog:"));
+        JTextField searchField = new JTextField(30);
         searchPanel.add(searchField);
+        JButton searchBtn = new JButton("Search");
         searchPanel.add(searchBtn);
+        topPanel.add(searchPanel);
         
-        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
-        centerPanel.add(searchPanel, BorderLayout.NORTH);
+        contentArea.add(topPanel, BorderLayout.NORTH);
         
-        // Results area
-        JTextArea resultsArea = new JTextArea(15, 50);
-        resultsArea.setEditable(false);
-        resultsArea.setText("Enter a search term and click Search to browse the catalog.");
-        JScrollPane scrollPane = new JScrollPane(resultsArea);
-        centerPanel.add(scrollPane, BorderLayout.CENTER);
+        // Center panel with split pane: results on left, details on right
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setResizeWeight(0.6);
         
-        contentArea.add(centerPanel, BorderLayout.CENTER);
+        // Left: Results table
+        String[] columnNames = {"Resource Name", "Type"};
+        currentTableModel = new javax.swing.table.DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        currentResultsTable = new JTable(currentTableModel);
+        currentResultsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane tableScroll = new JScrollPane(currentResultsTable);
+        tableScroll.setBorder(BorderFactory.createTitledBorder("Search Results"));
+        splitPane.setLeftComponent(tableScroll);
         
+        // Right: Details area
+        currentDetailsArea = new JTextArea();
+        currentDetailsArea.setEditable(false);
+        currentDetailsArea.setText("Select a resource to view details.");
+        currentDetailsArea.setLineWrap(true);
+        currentDetailsArea.setWrapStyleWord(true);
+        JScrollPane detailsScroll = new JScrollPane(currentDetailsArea);
+        detailsScroll.setBorder(BorderFactory.createTitledBorder("Resource Details"));
+        splitPane.setRightComponent(detailsScroll);
+        
+        contentArea.add(splitPane, BorderLayout.CENTER);
+        
+        // Bottom panel with checkout button
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton checkoutBtn = new JButton("Checkout Selected Resource");
+        checkoutBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+        bottomPanel.add(checkoutBtn);
+        contentArea.add(bottomPanel, BorderLayout.SOUTH);
+        
+        // Table selection listener to show details
+        currentResultsTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = currentResultsTable.getSelectedRow();
+                if (selectedRow >= 0 && currentSearchResults != null && selectedRow < currentSearchResults.size()) {
+                    Resource resource = currentSearchResults.get(selectedRow);
+                    currentDetailsArea.setText(resource.getDetails() + 
+                        "\nAvailable: " + (resource.isAvailable() ? "Yes" : "No"));
+                }
+            }
+        });
+        
+        // Search button action
         searchBtn.addActionListener(e -> {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
-                resultsArea.setText("Searching for: " + query + "\n\nResults will appear here...");
+                currentTableModel.setRowCount(0);
+                currentDetailsArea.setText("Searching...");
                 client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
             }
         });
         
         searchField.addActionListener(e -> searchBtn.doClick());
+        
+        // Checkout button action
+        checkoutBtn.addActionListener(e -> {
+            String memberUid = memberUidField.getText().trim();
+            int selectedRow = currentResultsTable.getSelectedRow();
+            
+            if (memberUid.isEmpty()) {
+                showError("Please enter a Member UID");
+                return;
+            }
+            
+            if (selectedRow < 0) {
+                showError("Please select a resource to checkout");
+                return;
+            }
+            
+            if (currentSearchResults != null && selectedRow < currentSearchResults.size()) {
+                Resource selectedResource = currentSearchResults.get(selectedRow);
+                
+                if (!selectedResource.isAvailable()) {
+                    showError("This resource is not available for checkout");
+                    return;
+                }
+                
+                // Send checkout request with member UID and resource
+                java.util.Map<String, Object> checkoutData = new java.util.HashMap<>();
+                checkoutData.put("memberUid", memberUid);
+                checkoutData.put("resource", selectedResource);
+                
+                client.sendMessage(new Message(MessageType.CHECK_OUT_REQ, checkoutData));
+            }
+        });
     }
     
     private void showCheckinPanel(JPanel contentArea) {
@@ -354,12 +447,117 @@ public class GUIManager {
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
         contentArea.add(titleLabel, BorderLayout.NORTH);
         
-        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
-        JLabel infoLabel = new JLabel("Check in functionality coming soon...");
-        infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        centerPanel.add(infoLabel, BorderLayout.CENTER);
+        // Top panel with member UID and search
+        JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
         
-        contentArea.add(centerPanel, BorderLayout.CENTER);
+        JPanel memberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        memberPanel.add(new JLabel("Member UID:"));
+        JTextField memberUidField = new JTextField(15);
+        memberPanel.add(memberUidField);
+        topPanel.add(memberPanel);
+        
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(new JLabel("Search Catalog:"));
+        JTextField searchField = new JTextField(30);
+        searchPanel.add(searchField);
+        JButton searchBtn = new JButton("Search");
+        searchPanel.add(searchBtn);
+        topPanel.add(searchPanel);
+        
+        contentArea.add(topPanel, BorderLayout.NORTH);
+        
+        // Center panel with split pane: results on left, details on right
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setResizeWeight(0.6);
+        
+        // Left: Results table
+        String[] columnNames = {"Resource Name", "Type"};
+        currentTableModel = new javax.swing.table.DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        currentResultsTable = new JTable(currentTableModel);
+        currentResultsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane tableScroll = new JScrollPane(currentResultsTable);
+        tableScroll.setBorder(BorderFactory.createTitledBorder("Search Results"));
+        splitPane.setLeftComponent(tableScroll);
+        
+        // Right: Details area
+        currentDetailsArea = new JTextArea();
+        currentDetailsArea.setEditable(false);
+        currentDetailsArea.setText("Select a resource to view details.");
+        currentDetailsArea.setLineWrap(true);
+        currentDetailsArea.setWrapStyleWord(true);
+        JScrollPane detailsScroll = new JScrollPane(currentDetailsArea);
+        detailsScroll.setBorder(BorderFactory.createTitledBorder("Resource Details"));
+        splitPane.setRightComponent(detailsScroll);
+        
+        contentArea.add(splitPane, BorderLayout.CENTER);
+        
+        // Bottom panel with check-in button
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton checkinBtn = new JButton("Check In Selected Resource");
+        checkinBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+        bottomPanel.add(checkinBtn);
+        contentArea.add(bottomPanel, BorderLayout.SOUTH);
+        
+        // Table selection listener to show details
+        currentResultsTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = currentResultsTable.getSelectedRow();
+                if (selectedRow >= 0 && currentSearchResults != null && selectedRow < currentSearchResults.size()) {
+                    Resource resource = currentSearchResults.get(selectedRow);
+                    currentDetailsArea.setText(resource.getDetails() + 
+                        "\nAvailable: " + (resource.isAvailable() ? "Yes" : "No"));
+                }
+            }
+        });
+        
+        // Search button action
+        searchBtn.addActionListener(e -> {
+            String query = searchField.getText().trim();
+            if (!query.isEmpty()) {
+                currentTableModel.setRowCount(0);
+                currentDetailsArea.setText("Searching...");
+                client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
+            }
+        });
+        
+        searchField.addActionListener(e -> searchBtn.doClick());
+        
+        // Check-in button action
+        checkinBtn.addActionListener(e -> {
+            String memberUid = memberUidField.getText().trim();
+            int selectedRow = currentResultsTable.getSelectedRow();
+            
+            if (memberUid.isEmpty()) {
+                showError("Please enter a Member UID");
+                return;
+            }
+            
+            if (selectedRow < 0) {
+                showError("Please select a resource to check in");
+                return;
+            }
+            
+            if (currentSearchResults != null && selectedRow < currentSearchResults.size()) {
+                Resource selectedResource = currentSearchResults.get(selectedRow);
+                
+                if (selectedResource.isAvailable()) {
+                    showError("This resource is already checked in");
+                    return;
+                }
+                
+                // Send check-in request with member UID and resource
+                java.util.Map<String, Object> checkinData = new java.util.HashMap<>();
+                checkinData.put("memberUid", memberUid);
+                checkinData.put("resource", selectedResource);
+                
+                client.sendMessage(new Message(MessageType.CHECK_IN_REQ, checkinData));
+            }
+        });
     }
     
     private void showBrowseCatalogPanel(JPanel contentArea) {
@@ -493,13 +691,54 @@ public class GUIManager {
 
     // Called by client listener when server sends catalog search results.
     public void handleCatalogSearchResults(Object payload) {
-        // payload is expected to be ArrayList<Resource>
-        // You can show results in a new window. For now show a dialog.
         SwingUtilities.invokeLater(() -> {
-            if (payload instanceof java.util.List list) {
-                showInfo("Search returned " + list.size() + " items.");
-            } else showInfo("Search returned no items.");
+            if (payload instanceof java.util.List) {
+                @SuppressWarnings("unchecked")
+                java.util.List<Resource> results = (java.util.List<Resource>) payload;
+                currentSearchResults = results;
+                
+                if (currentTableModel != null && currentResultsTable != null) {
+                    // Clear existing rows
+                    currentTableModel.setRowCount(0);
+                    
+                    // Add new rows
+                    for (Resource resource : results) {
+                        String resourceType = getResourceType(resource);
+                        currentTableModel.addRow(new Object[]{
+                            resource.getDisplayName(),
+                            resourceType
+                        });
+                    }
+                    
+                    if (currentDetailsArea != null) {
+                        currentDetailsArea.setText("Found " + results.size() + " result(s). Select one to view details.");
+                    }
+                } else {
+                    // Fallback if table not initialized
+                    showInfo("Search returned " + results.size() + " items.");
+                }
+            } else {
+                if (currentDetailsArea != null) {
+                    currentDetailsArea.setText("No results found.");
+                } else {
+                    showInfo("Search returned no items.");
+                }
+            }
         });
+    }
+    
+    private String getResourceType(Resource resource) {
+        if (resource instanceof Book) {
+            return "Book";
+        } else if (resource instanceof Movie) {
+            return "Movie";
+        } else if (resource instanceof CD) {
+            return "CD";
+        } else if (resource instanceof GenericResource) {
+            return "Other";
+        } else {
+            return "Unknown";
+        }
     }
 
     public void handleMemberSearchResults(Object payload) {
@@ -523,4 +762,352 @@ public class GUIManager {
 
     public void showError(String s) { JOptionPane.showMessageDialog(mainFrame, s, "Error", JOptionPane.ERROR_MESSAGE); }
     public void showInfo(String s) { JOptionPane.showMessageDialog(mainFrame, s, "Info", JOptionPane.INFORMATION_MESSAGE); }
+    
+    private void showAddResourcePanel(JPanel contentArea) {
+        contentArea.setLayout(new BorderLayout(10, 10));
+        
+        JLabel titleLabel = new JLabel("Add New Resource");
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
+        contentArea.add(titleLabel, BorderLayout.NORTH);
+        
+        JPanel mainPanel = new JPanel(new BorderLayout(10, 10));
+        
+        // Resource type selection
+        JPanel typePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        typePanel.add(new JLabel("Resource Type:"));
+        
+        JComboBox<String> typeCombo = new JComboBox<>(new String[]{"Book", "Movie", "CD", "Other"});
+        typePanel.add(typeCombo);
+        
+        mainPanel.add(typePanel, BorderLayout.NORTH);
+        
+        // Fields panel (dynamic based on type)
+        JPanel fieldsPanel = new JPanel();
+        fieldsPanel.setLayout(new BoxLayout(fieldsPanel, BoxLayout.Y_AXIS));
+        JScrollPane fieldsScroll = new JScrollPane(fieldsPanel);
+        fieldsScroll.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        
+        mainPanel.add(fieldsScroll, BorderLayout.CENTER);
+        
+        // Create button
+        JButton createBtn = new JButton("Create Resource");
+        createBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        bottomPanel.add(createBtn);
+        mainPanel.add(bottomPanel, BorderLayout.SOUTH);
+        
+        contentArea.add(mainPanel, BorderLayout.CENTER);
+        
+        // Update fields when type changes
+        typeCombo.addActionListener(e -> {
+            fieldsPanel.removeAll();
+            String selectedType = (String) typeCombo.getSelectedItem();
+            
+            switch (selectedType) {
+                case "Book" -> createBookFields(fieldsPanel);
+                case "Movie" -> createMovieFields(fieldsPanel);
+                case "CD" -> createCDFields(fieldsPanel);
+                case "Other" -> createGenericFields(fieldsPanel);
+            }
+            
+            fieldsPanel.revalidate();
+            fieldsPanel.repaint();
+        });
+        
+        // Initialize with Book fields
+        createBookFields(fieldsPanel);
+        
+        // Create button action
+        createBtn.addActionListener(e -> {
+            String selectedType = (String) typeCombo.getSelectedItem();
+            Resource newResource = null;
+            
+            try {
+                switch (selectedType) {
+                    case "Book" -> newResource = createBookFromFields(fieldsPanel);
+                    case "Movie" -> newResource = createMovieFromFields(fieldsPanel);
+                    case "CD" -> newResource = createCDFromFields(fieldsPanel);
+                    case "Other" -> newResource = createGenericFromFields(fieldsPanel);
+                }
+                
+                if (newResource != null) {
+                    // Send message to server to add resource
+                    client.sendMessage(new Message(MessageType.ADD_RESOURCE_REQ, newResource));
+                    showInfo("Resource created successfully!");
+                    
+                    // Clear fields
+                    fieldsPanel.removeAll();
+                    if (selectedType.equals("Book")) createBookFields(fieldsPanel);
+                    else if (selectedType.equals("Movie")) createMovieFields(fieldsPanel);
+                    else if (selectedType.equals("CD")) createCDFields(fieldsPanel);
+                    else createGenericFields(fieldsPanel);
+                    fieldsPanel.revalidate();
+                    fieldsPanel.repaint();
+                }
+            } catch (Exception ex) {
+                showError("Error creating resource: " + ex.getMessage());
+            }
+        });
+    }
+    
+    private void createBookFields(JPanel panel) {
+        addLabeledField(panel, "Title:", "");
+        addLabeledField(panel, "Author:", "");
+        addLabeledField(panel, "Publisher:", "");
+        addLabeledField(panel, "ISBN:", "");
+    }
+    
+    private void createMovieFields(JPanel panel) {
+        addLabeledField(panel, "Title:", "");
+        addLabeledField(panel, "Director:", "");
+        addLabeledField(panel, "Runtime (mins):", "");
+        addLabeledField(panel, "Rating:", "");
+    }
+    
+    private void createCDFields(JPanel panel) {
+        addLabeledField(panel, "Album Name:", "");
+        addLabeledField(panel, "Artist:", "");
+        addLabeledField(panel, "Number of Songs:", "");
+    }
+    
+    private void createGenericFields(JPanel panel) {
+        addLabeledField(panel, "Resource Name:", "");
+        
+        JLabel extraLabel = new JLabel("Additional Fields:");
+        extraLabel.setFont(new Font("SansSerif", Font.BOLD, 12));
+        extraLabel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(extraLabel);
+        panel.add(Box.createRigidArea(new Dimension(0, 5)));
+        
+        // Container for dynamic field pairs
+        JPanel dynamicFieldsContainer = new JPanel();
+        dynamicFieldsContainer.setLayout(new BoxLayout(dynamicFieldsContainer, BoxLayout.Y_AXIS));
+        dynamicFieldsContainer.setAlignmentX(Component.LEFT_ALIGNMENT);
+        panel.add(dynamicFieldsContainer);
+        
+        // Add first empty pair
+        addDynamicFieldPair(dynamicFieldsContainer);
+    }
+    
+    private void addDynamicFieldPair(JPanel container) {
+        JPanel pairPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        pairPanel.setMaximumSize(new Dimension(600, 35));
+        pairPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        JTextField keyField = new JTextField(15);
+        JTextField valueField = new JTextField(20);
+        
+        pairPanel.add(new JLabel("Field Name:"));
+        pairPanel.add(keyField);
+        pairPanel.add(new JLabel("Value:"));
+        pairPanel.add(valueField);
+        
+        container.add(pairPanel);
+        
+        // Add new pair when either field gets focus and has content
+        Runnable checkAndAdd = () -> {
+            String key = keyField.getText().trim();
+            String value = valueField.getText().trim();
+            
+            if (!key.isEmpty() || !value.isEmpty()) {
+                // Check if this is the last pair
+                int index = getComponentIndex(container, pairPanel);
+                if (index == container.getComponentCount() - 1) {
+                    addDynamicFieldPair(container);
+                    container.revalidate();
+                    container.repaint();
+                }
+            }
+        };
+        
+        keyField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                checkAndAdd.run();
+            }
+        });
+        
+        valueField.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                checkAndAdd.run();
+            }
+        });
+    }
+    
+    private int getComponentIndex(JPanel container, JPanel component) {
+        Component[] components = container.getComponents();
+        for (int i = 0; i < components.length; i++) {
+            if (components[i] == component) return i;
+        }
+        return -1;
+    }
+    
+    private void addLabeledField(JPanel panel, String labelText, String defaultValue) {
+        JPanel fieldPanel = new JPanel(new FlowLayout(FlowLayout.LEFT, 5, 5));
+        fieldPanel.setMaximumSize(new Dimension(600, 35));
+        fieldPanel.setAlignmentX(Component.LEFT_ALIGNMENT);
+        
+        JLabel label = new JLabel(labelText);
+        label.setPreferredSize(new Dimension(120, 25));
+        JTextField textField = new JTextField(defaultValue, 30);
+        
+        fieldPanel.add(label);
+        fieldPanel.add(textField);
+        panel.add(fieldPanel);
+    }
+    
+    private Book createBookFromFields(JPanel panel) {
+        Component[] components = panel.getComponents();
+        String title = getFieldValue(components, 0);
+        String author = getFieldValue(components, 1);
+        String publisher = getFieldValue(components, 2);
+        String isbn = getFieldValue(components, 3);
+        
+        if (title.isEmpty()) {
+            throw new IllegalArgumentException("Title is required");
+        }
+        
+        return new Book(title, author, publisher, isbn, true);
+    }
+    
+    private Movie createMovieFromFields(JPanel panel) {
+        Component[] components = panel.getComponents();
+        String title = getFieldValue(components, 0);
+        String director = getFieldValue(components, 1);
+        String runtimeStr = getFieldValue(components, 2);
+        String rating = getFieldValue(components, 3);
+        
+        if (title.isEmpty()) {
+            throw new IllegalArgumentException("Title is required");
+        }
+        
+        int runtime = 0;
+        try {
+            runtime = Integer.parseInt(runtimeStr);
+        } catch (NumberFormatException e) {
+            // Default to 0 if not provided or invalid
+        }
+        
+        return new Movie(title, director, runtime, rating);
+    }
+    
+    private CD createCDFromFields(JPanel panel) {
+        Component[] components = panel.getComponents();
+        String albumName = getFieldValue(components, 0);
+        String artist = getFieldValue(components, 1);
+        String numSongsStr = getFieldValue(components, 2);
+        
+        if (albumName.isEmpty()) {
+            throw new IllegalArgumentException("Album name is required");
+        }
+        
+        int numSongs = 0;
+        try {
+            numSongs = Integer.parseInt(numSongsStr);
+        } catch (NumberFormatException e) {
+            // Default to 0 if not provided or invalid
+        }
+        
+        return new CD(albumName, artist, numSongs);
+    }
+    
+    private GenericResource createGenericFromFields(JPanel panel) {
+        Component[] components = panel.getComponents();
+        String resourceName = getFieldValue(components, 0);
+        
+        if (resourceName.isEmpty()) {
+            throw new IllegalArgumentException("Resource name is required");
+        }
+        
+        // Find the dynamic fields container
+        JPanel dynamicContainer = null;
+        for (Component comp : components) {
+            if (comp instanceof JPanel p && p.getLayout() instanceof BoxLayout) {
+                dynamicContainer = p;
+                break;
+            }
+        }
+        
+        java.util.Map<String, String> extraDetails = new java.util.HashMap<>();
+        
+        if (dynamicContainer != null) {
+            Component[] pairs = dynamicContainer.getComponents();
+            for (Component comp : pairs) {
+                if (comp instanceof JPanel pairPanel) {
+                    Component[] pairComps = pairPanel.getComponents();
+                    String key = "";
+                    String value = "";
+                    
+                    for (Component c : pairComps) {
+                        if (c instanceof JTextField tf) {
+                            if (key.isEmpty()) {
+                                key = tf.getText().trim();
+                            } else {
+                                value = tf.getText().trim();
+                            }
+                        }
+                    }
+                    
+                    if (!key.isEmpty() && !value.isEmpty()) {
+                        extraDetails.put(key, value);
+                    }
+                }
+            }
+        }
+        
+        return new GenericResource(resourceName, extraDetails);
+    }
+    
+    private String getFieldValue(Component[] components, int fieldIndex) {
+        int currentField = 0;
+        for (Component comp : components) {
+            if (comp instanceof JPanel panel) {
+                for (Component c : panel.getComponents()) {
+                    if (c instanceof JTextField tf) {
+                        if (currentField == fieldIndex) {
+                            return tf.getText().trim();
+                        }
+                        currentField++;
+                        break;
+                    }
+                }
+            }
+        }
+        return "";
+    }
+    
+    private void showRemoveResourcePanel(JPanel contentArea) {
+        contentArea.setLayout(new BorderLayout(10, 10));
+        
+        JLabel titleLabel = new JLabel("Remove Resource");
+        titleLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
+        contentArea.add(titleLabel, BorderLayout.NORTH);
+        
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        JTextField searchField = new JTextField(30);
+        JButton searchBtn = new JButton("Search");
+        searchPanel.add(new JLabel("Search for resource to remove:"));
+        searchPanel.add(searchField);
+        searchPanel.add(searchBtn);
+        
+        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
+        centerPanel.add(searchPanel, BorderLayout.NORTH);
+        
+        JTextArea resultsArea = new JTextArea(15, 50);
+        resultsArea.setEditable(false);
+        resultsArea.setText("Search for a resource to remove it from the catalog.");
+        JScrollPane scrollPane = new JScrollPane(resultsArea);
+        centerPanel.add(scrollPane, BorderLayout.CENTER);
+        
+        contentArea.add(centerPanel, BorderLayout.CENTER);
+        
+        searchBtn.addActionListener(e -> {
+            String query = searchField.getText().trim();
+            if (!query.isEmpty()) {
+                resultsArea.setText("Searching for: " + query + "\n\nResults will appear here...\nSelect a resource and click Remove.");
+                client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
+            }
+        });
+        
+        searchField.addActionListener(e -> searchBtn.doClick());
+    }
 }

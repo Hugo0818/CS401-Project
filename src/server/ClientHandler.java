@@ -77,6 +77,10 @@ public class ClientHandler implements Runnable {
                 
                 case CATALOG_SEARCH_REQ -> handleCatalogSearch(msg);
                 case MEMBER_SEARCH_REQ -> handleMemberSearch(msg);
+                case ADD_RESOURCE_REQ -> handleAddResource(msg);
+                case REMOVE_RESOURCE_REQ -> handleRemoveResource(msg);
+                case CHECK_OUT_REQ -> handleCheckout(msg);
+                case CHECK_IN_REQ -> handleCheckin(msg);
                 case LOGOUT_ATTEMPT -> handleLogout(msg);
                 default -> sendMessage(Message.fail(MessageType.ERROR, "Unknown message type: " + msg.getType()));
             }
@@ -198,6 +202,156 @@ public class ClientHandler implements Runnable {
 
     private void handleLogout(Message msg) {
         sendMessage(Message.ok(MessageType.LOGOUT_RESPONSE, "Goodbye"));
+    }
+    
+    private void handleAddResource(Message msg) {
+        Object p = msg.getPayload();
+        if (!(p instanceof Resource resource)) {
+            sendMessage(Message.fail(MessageType.ADD_RESOURCE_RES, "Invalid resource payload"));
+            return;
+        }
+        
+        // Check if user is staff
+        if (loggedStaff == null) {
+            sendMessage(Message.fail(MessageType.ADD_RESOURCE_RES, "Only staff can add resources"));
+            return;
+        }
+        
+        boolean success = facade.addResource(resource);
+        if (success) {
+            System.out.println("[Handler#" + clientId + "] Resource added: " + resource.getDisplayName());
+            sendMessage(Message.ok(MessageType.ADD_RESOURCE_RES, "Resource added successfully"));
+        } else {
+            sendMessage(Message.fail(MessageType.ADD_RESOURCE_RES, "Failed to add resource"));
+        }
+    }
+    
+    private void handleRemoveResource(Message msg) {
+        Object p = msg.getPayload();
+        if (!(p instanceof Resource resource)) {
+            sendMessage(Message.fail(MessageType.REMOVE_RESOURCE_RES, "Invalid resource payload"));
+            return;
+        }
+        
+        // Check if user is staff
+        if (loggedStaff == null) {
+            sendMessage(Message.fail(MessageType.REMOVE_RESOURCE_RES, "Only staff can remove resources"));
+            return;
+        }
+        
+        boolean success = facade.removeResource(resource);
+        if (success) {
+            System.out.println("[Handler#" + clientId + "] Resource removed: " + resource.getDisplayName());
+            sendMessage(Message.ok(MessageType.REMOVE_RESOURCE_RES, "Resource removed successfully"));
+        } else {
+            sendMessage(Message.fail(MessageType.REMOVE_RESOURCE_RES, "Failed to remove resource"));
+        }
+    }
+    
+    private void handleCheckout(Message msg) {
+        Object p = msg.getPayload();
+        if (!(p instanceof java.util.Map)) {
+            sendMessage(Message.fail(MessageType.CHECK_OUT_RES, "Invalid checkout payload"));
+            return;
+        }
+        
+        @SuppressWarnings("unchecked")
+        java.util.Map<String, Object> data = (java.util.Map<String, Object>) p;
+        String memberUid = (String) data.get("memberUid");
+        Resource resource = (Resource) data.get("resource");
+        
+        if (memberUid == null || resource == null) {
+            sendMessage(Message.fail(MessageType.CHECK_OUT_RES, "Missing member UID or resource"));
+            return;
+        }
+        
+        // Check if user is staff
+        if (loggedStaff == null) {
+            sendMessage(Message.fail(MessageType.CHECK_OUT_RES, "Only staff can checkout resources"));
+            return;
+        }
+        
+        // Find member by UID
+        Member member = null;
+        try {
+            // Extract numeric part from UID (e.g., "M123" -> 123)
+            if (memberUid.startsWith("M")) {
+                int uid = Integer.parseInt(memberUid.substring(1));
+                member = facade.findMemberByUID(uid);
+            } else {
+                // Try to find by username if not a UID format
+                member = facade.findMemberByUsername(memberUid);
+            }
+        } catch (NumberFormatException e) {
+            // Try as username
+            member = facade.findMemberByUsername(memberUid);
+        }
+        
+        if (member == null) {
+            sendMessage(Message.fail(MessageType.CHECK_OUT_RES, "Member not found: " + memberUid));
+            return;
+        }
+        
+        boolean success = facade.checkoutResource(resource, member);
+        if (success) {
+            System.out.println("[Handler#" + clientId + "] Checkout: " + resource.getDisplayName() + " to " + member.getName());
+            sendMessage(Message.ok(MessageType.CHECK_OUT_RES, "Checked out successfully"));
+        } else {
+            sendMessage(Message.fail(MessageType.CHECK_OUT_RES, "Checkout failed - resource may not be available"));
+        }
+    }
+    
+    private void handleCheckin(Message msg) {
+        Object p = msg.getPayload();
+        if (!(p instanceof java.util.Map)) {
+            sendMessage(Message.fail(MessageType.CHECK_IN_RES, "Invalid check-in payload"));
+            return;
+        }
+        
+        @SuppressWarnings("unchecked")
+        java.util.Map<String, Object> data = (java.util.Map<String, Object>) p;
+        String memberUid = (String) data.get("memberUid");
+        Resource resource = (Resource) data.get("resource");
+        
+        if (memberUid == null || resource == null) {
+            sendMessage(Message.fail(MessageType.CHECK_IN_RES, "Missing member UID or resource"));
+            return;
+        }
+        
+        // Check if user is staff
+        if (loggedStaff == null) {
+            sendMessage(Message.fail(MessageType.CHECK_IN_RES, "Only staff can check in resources"));
+            return;
+        }
+        
+        // Find member by UID
+        Member member = null;
+        try {
+            // Extract numeric part from UID (e.g., "M123" -> 123)
+            if (memberUid.startsWith("M")) {
+                int uid = Integer.parseInt(memberUid.substring(1));
+                member = facade.findMemberByUID(uid);
+            } else {
+                // Try to find by username if not a UID format
+                member = facade.findMemberByUsername(memberUid);
+            }
+        } catch (NumberFormatException e) {
+            // Try as username
+            member = facade.findMemberByUsername(memberUid);
+        }
+        
+        if (member == null) {
+            sendMessage(Message.fail(MessageType.CHECK_IN_RES, "Member not found: " + memberUid));
+            return;
+        }
+        
+        boolean success = facade.checkinResource(resource, member);
+        if (success) {
+            System.out.println("[Handler#" + clientId + "] Check-in: " + resource.getDisplayName() + " from " + member.getName());
+            sendMessage(Message.ok(MessageType.CHECK_IN_RES, "Checked in successfully"));
+        } else {
+            sendMessage(Message.fail(MessageType.CHECK_IN_RES, "Check-in failed"));
+        }
     }
 
     public synchronized void sendMessage(Message msg) {
