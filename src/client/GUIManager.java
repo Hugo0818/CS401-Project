@@ -5,6 +5,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.util.ArrayList;
 
 /**
  * Minimal GUIManager: creates login and signup panels and reacts to client callbacks.
@@ -505,7 +506,7 @@ public class GUIManager {
                 int selectedRow = currentResultsTable.getSelectedRow();
                 if (selectedRow >= 0 && currentSearchResults != null && selectedRow < currentSearchResults.size()) {
                     Resource resource = currentSearchResults.get(selectedRow);
-                    currentDetailsArea.setText(resource.getDetails());
+                    currentDetailsArea.setText(getResourceDetailsWithLogs(resource));
                 }
             }
         });
@@ -614,8 +615,7 @@ public class GUIManager {
                 int selectedRow = currentResultsTable.getSelectedRow();
                 if (selectedRow >= 0 && currentSearchResults != null && selectedRow < currentSearchResults.size()) {
                     Resource resource = currentSearchResults.get(selectedRow);
-                    currentDetailsArea.setText(resource.getDetails() + 
-                        "\nAvailable: " + (resource.isAvailable() ? "Yes" : "No"));
+                    currentDetailsArea.setText(getResourceDetailsWithLogs(resource));
                 }
             }
         });
@@ -702,14 +702,44 @@ public class GUIManager {
         
         JLabel titleLabel = new JLabel("System Logs");
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
-        contentArea.add(titleLabel, BorderLayout.NORTH);
         
-        JTextArea logsArea = new JTextArea(15, 50);
-        logsArea.setEditable(false);
-        logsArea.setText("Recent system activity logs will appear here...");
-        JScrollPane scrollPane = new JScrollPane(logsArea);
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        topPanel.add(titleLabel);
         
+        JButton refreshBtn = new JButton("Refresh Logs");
+        topPanel.add(Box.createHorizontalStrut(20));
+        topPanel.add(refreshBtn);
+        
+        contentArea.add(topPanel, BorderLayout.NORTH);
+        
+        // Table to display logs
+        String[] columnNames = {"Time", "Operation", "Resource", "Member"};
+        javax.swing.table.DefaultTableModel logsTableModel = new javax.swing.table.DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        JTable logsTable = new JTable(logsTableModel);
+        logsTable.getColumnModel().getColumn(0).setPreferredWidth(150);
+        logsTable.getColumnModel().getColumn(1).setPreferredWidth(100);
+        logsTable.getColumnModel().getColumn(2).setPreferredWidth(200);
+        logsTable.getColumnModel().getColumn(3).setPreferredWidth(150);
+        
+        JScrollPane scrollPane = new JScrollPane(logsTable);
         contentArea.add(scrollPane, BorderLayout.CENTER);
+        
+        // Store reference for later updates
+        currentTableModel = logsTableModel;
+        
+        // Refresh button action
+        refreshBtn.addActionListener(e -> {
+            logsTableModel.setRowCount(0);
+            client.sendMessage(new Message(MessageType.LOGS_REQ, null));
+        });
+        
+        // Auto-fetch logs on panel show
+        client.sendMessage(new Message(MessageType.LOGS_REQ, null));
     }
     
     private void showMyCheckoutsPanel(JPanel contentArea) {
@@ -804,6 +834,36 @@ public class GUIManager {
             return "Unknown";
         }
     }
+    
+    private String getResourceDetailsWithLogs(Resource resource) {
+        StringBuilder details = new StringBuilder(resource.getDetails());
+        details.append("\nAvailable: ").append(resource.isAvailable() ? "Yes" : "No");
+        
+        // Add latest log information
+        ArrayList<Log> logs = resource.getLogs();
+        if (logs != null && !logs.isEmpty()) {
+            Log latestLog = logs.get(logs.size() - 1);
+            details.append("\n\n--- Latest Activity ---");
+            
+            // Determine operation type and timestamp
+            if (latestLog.getCheckInTime() != null) {
+                details.append("\nOperation: Checked in");
+                details.append("\nTimestamp: ").append(latestLog.getCheckInTime());
+            } else if (latestLog.getCheckOutTime() != null) {
+                details.append("\nOperation: Checked out");
+                details.append("\nTimestamp: ").append(latestLog.getCheckOutTime());
+            }
+            
+            Member member = latestLog.getMember();
+            if (member != null) {
+                details.append("\nBy member: ").append(member.getName()).append(" (").append(member.getUID()).append(")");
+            }
+        } else {
+            details.append("\n\nNo checkout history available.");
+        }
+        
+        return details.toString();
+    }
 
     public void handleMemberSearchResults(Object payload) {
         SwingUtilities.invokeLater(() -> {
@@ -821,6 +881,38 @@ public class GUIManager {
             }
 
             showInfo("Found " + resultsAreaModel.size() + " member(s).");
+        });
+    }
+    
+    public void handleLogsResponse(ArrayList<Log> logs) {
+        SwingUtilities.invokeLater(() -> {
+            System.out.println("[GUIManager] handleLogsResponse called with " + logs.size() + " logs");
+            
+            if (currentTableModel != null) {
+                // Clear existing rows
+                currentTableModel.setRowCount(0);
+                
+                // Add log entries
+                for (Log log : logs) {
+                    String time = "";
+                    String operation = "";
+                    
+                    if (log.getCheckInTime() != null) {
+                        time = log.getCheckInTime().toString();
+                        operation = "Check In";
+                    } else if (log.getCheckOutTime() != null) {
+                        time = log.getCheckOutTime().toString();
+                        operation = "Check Out";
+                    }
+                    
+                    String resourceName = (log.getResource() != null) ? log.getResource().getDisplayName() : "Unknown";
+                    String memberName = (log.getMember() != null) ? log.getMember().getName() + " (" + log.getMember().getUID() + ")" : "Unknown";
+                    
+                    currentTableModel.addRow(new Object[]{time, operation, resourceName, memberName});
+                }
+                
+                System.out.println("[GUIManager] Loaded " + logs.size() + " logs into table");
+            }
         });
     }
     

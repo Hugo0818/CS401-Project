@@ -41,6 +41,9 @@ public class LibraryFacade {
             
             // Reconcile member borrowed resources with catalog instances
             reconcileBorrowedResources(memberList, resources);
+            
+            // Populate resources with their historical logs
+            populateResourceLogs(resources, logList);
 
         } catch (Exception e) {
             // File does NOT exist or is corrupted → start empty
@@ -127,6 +130,10 @@ public class LibraryFacade {
     public ArrayList<Resource> searchCatalog(String query) {
         return resourceManager.searchCatalog(query);
     }
+    
+    public Resource findResourceByNameAndDetails(String displayName, String details) {
+        return resourceManager.findResourceByNameAndDetails(displayName, details);
+    }
 
     public boolean addResource(Resource resource) {
         boolean ok = resourceManager.addResource(resource);
@@ -167,6 +174,10 @@ public class LibraryFacade {
 
     public ArrayList<Log> getLogsByDate(Date d) {
         return logManager.getLogsByDate(d);
+    }
+    
+    public ArrayList<Log> getAllLogs() {
+        return logManager.getAll();
     }
     
     public void addLog (Log log) {
@@ -236,5 +247,24 @@ public class LibraryFacade {
             borrowedResources.addAll(reconciledResources);
             System.out.println("[LibraryFacade] Reconciled " + reconciledResources.size() + " borrowed items for member " + member.getName());
         }
+    }
+    
+    // Populate resources with their historical logs from LogManager
+    private void populateResourceLogs(ArrayList<Resource> resources, ArrayList<Log> logs) {
+        System.out.println("[LibraryFacade] Populating resources with historical logs...");
+        int totalLogsAdded = 0;
+        
+        for (Resource resource : resources) {
+            for (Log log : logs) {
+                if (log.getResource() != null && 
+                    log.getResource().getDisplayName().equals(resource.getDisplayName()) &&
+                    log.getResource().getDetails().equals(resource.getDetails())) {
+                    resource.addLog(log);
+                    totalLogsAdded++;
+                }
+            }
+        }
+        
+        System.out.println("[LibraryFacade] Added " + totalLogsAdded + " historical logs to resources");
     }
 }

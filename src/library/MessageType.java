@@ -36,6 +36,10 @@ public enum MessageType {
     CHECK_IN_REQ,
     CHECK_IN_RES,
 
+    // Logs
+    LOGS_REQ,
+    LOGS_RES,
+
     // Generic
     ERROR,
     PING,

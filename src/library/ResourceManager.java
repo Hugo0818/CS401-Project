@@ -56,6 +56,15 @@ public class ResourceManager {
         System.out.println("[ResourceManager] Failed to remove resource: " + resource.getDisplayName() + " - not found in catalog");
         return false;
     }
+    
+    public Resource findResourceByNameAndDetails(String displayName, String details) {
+        for (Resource r : catalog) {
+            if (r.getDisplayName().equals(displayName) && r.getDetails().equals(details)) {
+                return r;
+            }
+        }
+        return null;
+    }
 
     public Boolean checkoutResource(Resource resource, Member member) {
         if (resource == null || member == null)

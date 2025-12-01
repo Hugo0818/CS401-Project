@@ -22,13 +22,15 @@ public class Log implements Serializable {
     	if(type == MessageType.CHECK_OUT_RES) {
     		member = m; //record the member 
         	resource = r; //record the ressource
-        	details = "Member " + member.getUID() + "checked out " + resource.getDisplayName();    		
+        	checkOutTime = new Date(); //record timestamp
+        	details = "Member " + member.getUID() + " checked out " + resource.getDisplayName();    		
     	}
     	//else it was a check in
     	else {
     		member = m; //record the member 
         	resource = r; //record the ressource
-        	details = "Member " + member.getUID() + "checked in " + resource.getDisplayName();	
+        	checkInTime = new Date(); //record timestamp
+        	details = "Member " + member.getUID() + " checked in " + resource.getDisplayName();	
     	}    	
     }
     
@@ -41,13 +43,15 @@ public class Log implements Serializable {
     	if(type == MessageType.CHECK_OUT_RES) {
     		staff = s; //record the member 
         	resource = r; //record the ressource
-        	details = "Staff " + staff.getUID() + "checked out " + resource.getDisplayName();    		
+        	checkOutTime = new Date(); //record timestamp
+        	details = "Staff " + staff.getUID() + " checked out " + resource.getDisplayName();    		
     	}
     	//else it was a check in
     	else if(type == MessageType.CHECK_IN_RES) {
     		staff = s; //record the member 
         	resource = r; //record the ressource
-        	details = "Staff " + staff.getUID() + "checked in " + resource.getDisplayName();	
+        	checkInTime = new Date(); //record timestamp
+        	details = "Staff " + staff.getUID() + " checked in " + resource.getDisplayName();	
     	}  
     	
     }

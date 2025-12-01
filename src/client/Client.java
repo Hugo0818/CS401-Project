@@ -6,6 +6,7 @@ import library.MessageType;
 
 import java.io.*;
 import java.net.Socket;
+import java.util.ArrayList;
 
 /**
  * Threaded client. Construct with host,port; call start() to start its listener thread.
@@ -28,7 +29,7 @@ public class Client implements Runnable {
     private String lastCheckoutMemberUid;
     
     public static void main(String[] args) {
-        Client client = new Client("localhost", 12345); // or your server port
+        Client client = new Client("192.168.1.124", 12345); // or your server port
         client.start();
     }
 
@@ -199,6 +200,17 @@ public class Client implements Runnable {
             
             case REMOVE_MEMBER_RES -> {
                 gui.handleRemoveMember(msg.getPayload());
+                return true;
+            }
+            
+            case LOGS_RES -> {
+                if (msg.isOk() && msg.getPayload() instanceof ArrayList<?>) {
+                    @SuppressWarnings("unchecked")
+                    ArrayList<Log> logs = (ArrayList<Log>) msg.getPayload();
+                    gui.handleLogsResponse(logs);
+                } else {
+                    gui.showError("Failed to fetch logs: " + msg.getInfo());
+                }
                 return true;
             }
             

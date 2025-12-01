@@ -76,6 +76,7 @@ public class ClientHandler implements Runnable {
                 case REMOVE_RESOURCE_REQ -> handleRemoveResource(msg);
                 case CHECK_OUT_REQ -> handleCheckout(msg);
                 case CHECK_IN_REQ -> handleCheckin(msg);
+                case LOGS_REQ -> handleLogsRequest(msg);
                 case LOGOUT_ATTEMPT -> handleLogout(msg);
 
                 default -> sendMessage(Message.fail(MessageType.ERROR, "Unknown message type: " + msg.getType()));
@@ -342,9 +343,16 @@ public class ClientHandler implements Runnable {
         if (success) {
             System.out.println("[Handler#" + clientId + "] After checkout - Member " + member.getName() + " (Object: " + System.identityHashCode(member) + ") has " + member.getCurrentlyHeldResources().size() + " borrowed items");
             System.out.println("[Handler#" + clientId + "] Checkout: " + resource.getDisplayName() + " to " + member.getName());
+            
+            // Find catalog resource and add log to both master logbook and resource
+            Resource catalogResource = facade.findResourceByNameAndDetails(resource.getDisplayName(), resource.getDetails());
+            if (catalogResource != null) {
+                Log checkoutLog = new Log(member, catalogResource, MessageType.CHECK_OUT_RES);
+                facade.addLog(checkoutLog);
+                catalogResource.addLog(checkoutLog);
+            }
+            
             sendMessage(Message.ok(MessageType.CHECK_OUT_RES, "Checked out successfully"));
-          //log the operation
-            facade.addLog(new Log(member, resource, MessageType.CHECK_OUT_RES));
         } else {
             sendMessage(Message.fail(MessageType.CHECK_OUT_RES, "Checkout failed - resource may not be available"));
         }
@@ -393,14 +401,38 @@ public class ClientHandler implements Runnable {
         boolean success = facade.checkinResource(resource, member);
         if (success) {
             System.out.println("[Handler#" + clientId + "] Check-in: " + resource.getDisplayName() + " from " + member.getName());
+            
+            // Find catalog resource and add log to both master logbook and resource
+            Resource catalogResource = facade.findResourceByNameAndDetails(resource.getDisplayName(), resource.getDetails());
+            if (catalogResource != null) {
+                Log checkinLog = new Log(member, catalogResource, MessageType.CHECK_IN_RES);
+                facade.addLog(checkinLog);
+                catalogResource.addLog(checkinLog);
+            }
+            
             sendMessage(Message.ok(MessageType.CHECK_IN_RES, "Checked in successfully"));
-            //log the operation
-            facade.addLog(new Log(member, resource, MessageType.CHECK_IN_RES));
         } else {
             sendMessage(Message.fail(MessageType.CHECK_IN_RES, "Check-in failed"));
         }
     }
 
+
+    private void handleLogsRequest(Message msg) {
+        System.out.println("[Handler#" + clientId + "] Fetching all logs");
+        ArrayList<Log> allLogs = facade.getAllLogs();
+        
+        // Sort logs by timestamp (chronological order)
+        allLogs.sort((log1, log2) -> {
+            java.util.Date date1 = log1.getCheckInTime() != null ? log1.getCheckInTime() : log1.getCheckOutTime();
+            java.util.Date date2 = log2.getCheckInTime() != null ? log2.getCheckInTime() : log2.getCheckOutTime();
+            if (date1 == null) return 1;
+            if (date2 == null) return -1;
+            return date1.compareTo(date2);
+        });
+        
+        System.out.println("[Handler#" + clientId + "] Sending " + allLogs.size() + " logs");
+        sendMessage(Message.ok(MessageType.LOGS_RES, allLogs));
+    }
 
     public synchronized void sendMessage(Message msg) {
         try {
