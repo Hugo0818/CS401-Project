@@ -49,8 +49,6 @@ public class Member implements Serializable {
     }
 
     // Setters
-    
-    
     public void setUID(String uid) {
         this.uid = uid;
     }
@@ -69,5 +67,9 @@ public class Member implements Serializable {
     
     public void setLogs(ArrayList<Log> logs) {
         this.checkoutHistory = new ArrayList<>(logs);
+    }
+    
+    public String toString() {
+        return "Username: " + getName() + "  —  UID: " + getUID();
     }
 }
