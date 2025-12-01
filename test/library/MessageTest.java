@@ -68,5 +68,3 @@ class MessageTest {
         assertTrue(s.contains("info=Window closed"));
     }
 }
-
-

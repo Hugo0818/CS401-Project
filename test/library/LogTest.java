@@ -75,4 +75,3 @@ class LogTest {
         assertFalse(log.checkIn());
     }
 }
-

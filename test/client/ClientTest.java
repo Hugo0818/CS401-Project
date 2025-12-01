@@ -98,5 +98,3 @@ class ClientTest {
                 "Client should not report connected when no socket exists.");
     }
 }
-
-

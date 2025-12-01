@@ -72,7 +72,7 @@ class LibraryServerTest {
         }
     }
 
-    /**
+    /*
      * FakeFacade: calls super with a dummy filename so it compiles.
      * LibraryFacade will initialize empty managers when file missing.
      */
