@@ -55,10 +55,21 @@ public class Member implements Serializable {
     
     public void addResourceToPossession(Resource resource) {
         heldResources.add(resource);
+        System.out.println("[Member] Added resource to " + getName() + "'s possession: " + resource.getDisplayName() + " - Total borrowed: " + heldResources.size());
     }
     
     public void removeResourceFromPossession(Resource resource) {
-        heldResources.remove(resource);
+        // Find and remove by matching display name and details since equals() is not implemented
+        for (int i = 0; i < heldResources.size(); i++) {
+            Resource r = heldResources.get(i);
+            if (r.getDisplayName().equals(resource.getDisplayName()) && 
+                r.getDetails().equals(resource.getDetails())) {
+                heldResources.remove(i);
+                System.out.println("[Member] Removed resource from " + getName() + "'s possession: " + resource.getDisplayName() + " - Total borrowed: " + heldResources.size());
+                return;
+            }
+        }
+        System.out.println("[Member] Failed to remove resource from " + getName() + "'s possession: " + resource.getDisplayName() + " - not found");
     }
     
     public void addLog(Log log) {

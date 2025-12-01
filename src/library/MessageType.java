@@ -25,6 +25,8 @@ public enum MessageType {
     MEMBER_SEARCH_RES,
     MEMBER_INFO_REQ,
     MEMBER_INFO_RES,
+    MEMBER_BORROWED_REQ,
+    MEMBER_BORROWED_RES,
 
     // Checkout / Checkin
     CHECK_OUT_REQ,
