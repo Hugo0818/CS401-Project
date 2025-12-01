@@ -38,6 +38,9 @@ public class LibraryFacade {
             this.resourceManager = new ResourceManager(resources);
             this.memberManager = new MemberManager(memberList);
             this.logManager = new LogManager(logList);
+            
+            // Reconcile member borrowed resources with catalog instances
+            reconcileBorrowedResources(memberList, resources);
 
         } catch (Exception e) {
             // File does NOT exist or is corrupted → start empty
@@ -191,6 +194,43 @@ public class LibraryFacade {
         } catch (Exception e) {
             System.err.println("[LibraryFacade] Error saving data: " + e.getMessage());
             e.printStackTrace();
+        }
+    }
+    
+    // Reconcile borrowed resources to use catalog instances
+    private void reconcileBorrowedResources(ArrayList<Member> members, ArrayList<Resource> catalogResources) {
+        System.out.println("[LibraryFacade] Reconciling borrowed resources with catalog...");
+        for (Member member : members) {
+            ArrayList<Resource> borrowedResources = member.getCurrentlyHeldResources();
+            ArrayList<Resource> reconciledResources = new ArrayList<>();
+            
+            for (Resource borrowed : borrowedResources) {
+                // Find matching resource in catalog
+                Resource catalogResource = null;
+                for (Resource catalogItem : catalogResources) {
+                    if (catalogItem.getDisplayName().equals(borrowed.getDisplayName()) &&
+                        catalogItem.getDetails().equals(borrowed.getDetails())) {
+                        catalogResource = catalogItem;
+                        break;
+                    }
+                }
+                
+                if (catalogResource != null) {
+                    reconciledResources.add(catalogResource);
+                    // Ensure catalog resource is marked as checked out
+                    if (catalogResource.isAvailable()) {
+                        catalogResource.setCheckedOut(false);
+                        System.out.println("[LibraryFacade] Marked " + catalogResource.getDisplayName() + " as checked out");
+                    }
+                } else {
+                    System.err.println("[LibraryFacade] Warning: Borrowed resource not found in catalog: " + borrowed.getDisplayName());
+                }
+            }
+            
+            // Replace member's borrowed list with reconciled list
+            borrowedResources.clear();
+            borrowedResources.addAll(reconciledResources);
+            System.out.println("[LibraryFacade] Reconciled " + reconciledResources.size() + " borrowed items for member " + member.getName());
         }
     }
 }

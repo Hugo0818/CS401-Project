@@ -78,6 +78,7 @@ public class ClientHandler implements Runnable {
                 case CATALOG_SEARCH_REQ -> handleCatalogSearch(msg);
                 case MEMBER_SEARCH_REQ -> handleMemberSearch(msg);
                 case REMOVE_MEMBER_REQ -> handleRemoveMember(msg);
+                case MEMBER_BORROWED_REQ -> handleMemberBorrowed(msg);
                 case ADD_RESOURCE_REQ -> handleAddResource(msg);
                 case REMOVE_RESOURCE_REQ -> handleRemoveResource(msg);
                 case CHECK_OUT_REQ -> handleCheckout(msg);
@@ -185,6 +186,10 @@ public class ClientHandler implements Runnable {
         ArrayList<Resource> results = facade.searchCatalog(ressourceTitle);
         if(results.size() > 0) {
         	//send the list showing available copies
+        	System.out.println("[Handler#" + clientId + "] Sending catalog search results:");
+        	for (Resource r : results) {
+        	    System.out.println("  - " + r.getDisplayName() + " - isAvailable: " + r.isAvailable());
+        	}
         	sendMessage(Message.ok(MessageType.CATALOG_SEARCH_RES, results));
         	}
         else {
@@ -219,7 +224,40 @@ public class ClientHandler implements Runnable {
         facade.removeMember(m);
         sendMessage(Message.ok(MessageType.REMOVE_MEMBER_RES, "Member removed successfully"));
     }
-    
+        
+    private void handleMemberBorrowed(Message msg) {
+        Object p = msg.getPayload();
+        if (!(p instanceof String memberUid)) {
+            sendMessage(Message.fail(MessageType.MEMBER_BORROWED_RES, "Invalid member UID"));
+            return;
+        }
+        
+        // Find member by UID
+        Member member = null;
+        try {
+            // Extract numeric part from UID (e.g., "M123" -> 123)
+            if (memberUid.startsWith("M")) {
+                int uid = Integer.parseInt(memberUid.substring(1));
+                member = facade.findMemberByUID(uid);
+            } else {
+                // Try to find by username if not a UID format
+                member = facade.findMemberByUsername(memberUid);
+            }
+        } catch (NumberFormatException e) {
+            // Try as username
+            member = facade.findMemberByUsername(memberUid);
+        }
+        
+        if (member == null) {
+            sendMessage(Message.fail(MessageType.MEMBER_BORROWED_RES, "Member not found: " + memberUid));
+            return;
+        }
+        
+        ArrayList<Resource> borrowedResources = member.getCurrentlyHeldResources();
+        System.out.println("[Handler#" + clientId + "] Member " + member.getName() + " has " + borrowedResources.size() + " borrowed items");
+        sendMessage(Message.ok(MessageType.MEMBER_BORROWED_RES, borrowedResources));
+    }
+
     private void handleLogout(Message msg) {
         sendMessage(Message.ok(MessageType.LOGOUT_RESPONSE, "Goodbye"));
     }
@@ -312,8 +350,10 @@ public class ClientHandler implements Runnable {
             return;
         }
         
+        System.out.println("[Handler#" + clientId + "] Before checkout - Member " + member.getName() + " has " + member.getCurrentlyHeldResources().size() + " borrowed items");
         boolean success = facade.checkoutResource(resource, member);
         if (success) {
+            System.out.println("[Handler#" + clientId + "] After checkout - Member " + member.getName() + " has " + member.getCurrentlyHeldResources().size() + " borrowed items");
             System.out.println("[Handler#" + clientId + "] Checkout: " + resource.getDisplayName() + " to " + member.getName());
             sendMessage(Message.ok(MessageType.CHECK_OUT_RES, "Checked out successfully"));
         } else {

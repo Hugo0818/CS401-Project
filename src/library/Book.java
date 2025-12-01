@@ -43,12 +43,15 @@ public class Book implements Resource, Serializable {
     
     @Override
     public boolean isAvailable() {
+        System.out.println("[Book] isAvailable() called for '" + title + "' - field value: " + isAvailable);
         return isAvailable;
     }
     
     @Override
     public void setCheckedOut(boolean availability) {
+        System.out.println("[Book] setCheckedOut(" + availability + ") called for '" + title + "' - old value: " + isAvailable);
         isAvailable = availability;
+        System.out.println("[Book] After setCheckedOut - new value: " + isAvailable);
     }
 
     @Override

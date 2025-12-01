@@ -15,11 +15,14 @@ public class ResourceManager {
 
     public ArrayList<Resource> searchCatalog(String query) {
         ArrayList<Resource> results = new ArrayList<>();
+        System.out.println("[ResourceManager] Searching catalog with query: '" + query + "' - Total catalog items: " + catalog.size());
         for (Resource resource : catalog) {
             if (resource.getDetails().toLowerCase().contains(query.toLowerCase())) {
                 results.add(resource);
+                System.out.println("[ResourceManager] Search result: " + resource.getDisplayName() + " - isAvailable: " + resource.isAvailable() + " (Object: " + System.identityHashCode(resource) + ")");
             }
         }
+        System.out.println("[ResourceManager] Search returned " + results.size() + " results");
         return results;
     }
 
@@ -58,15 +61,31 @@ public class ResourceManager {
         if (resource == null || member == null)
             return false;
 
-        if (!catalog.contains(resource))
-            return false;
+        // Find the actual resource in catalog by matching display name and details
+        Resource catalogResource = null;
+        for (Resource r : catalog) {
+            if (r.getDisplayName().equals(resource.getDisplayName()) && 
+                r.getDetails().equals(resource.getDetails())) {
+                catalogResource = r;
+                break;
+            }
+        }
 
-        if (!resource.isAvailable())
+        if (catalogResource == null) {
+            System.out.println("[ResourceManager] Checkout failed: resource not found in catalog");
             return false;
+        }
 
-        resource.setCheckedOut(true);
-        // member.addBorrowedResource(resource);
-        // TODO: this member method does not exist. Fix later
+        if (!catalogResource.isAvailable()) {
+            System.out.println("[ResourceManager] Checkout failed: resource not available");
+            return false;
+        }
+
+        catalogResource.setCheckedOut(false); // false = not available (checked out)
+        member.addResourceToPossession(catalogResource);
+        System.out.println("[ResourceManager] Resource checked out: " + catalogResource.getDisplayName() + " to member " + member.getName() + " (UID: " + member.getUID() + ")");
+        System.out.println("[ResourceManager] After checkout - isAvailable: " + catalogResource.isAvailable() + " (Object: " + System.identityHashCode(catalogResource) + ")");
+        System.out.println("[ResourceManager] Member now has " + member.getCurrentlyHeldResources().size() + " borrowed items");
         return true;
     }
 
@@ -74,12 +93,29 @@ public class ResourceManager {
         if (resource == null || member == null)
             return false;
 
-        if (!resource.isAvailable())
-            return false;
+        // Find the actual resource in catalog by matching display name and details
+        Resource catalogResource = null;
+        for (Resource r : catalog) {
+            if (r.getDisplayName().equals(resource.getDisplayName()) && 
+                r.getDetails().equals(resource.getDetails())) {
+                catalogResource = r;
+                break;
+            }
+        }
 
-        resource.setCheckedOut(false);
-        // member.removeBorrowedResource(resource);
-        // TODO: this member method does not exist. Fix later
+        if (catalogResource == null) {
+            System.out.println("[ResourceManager] Checkin failed: resource not found in catalog");
+            return false;
+        }
+
+        if (catalogResource.isAvailable()) {
+            System.out.println("[ResourceManager] Checkin failed: resource is already available (not checked out)");
+            return false;
+        }
+
+        catalogResource.setCheckedOut(true); // true = available (checked in)
+        member.removeResourceFromPossession(catalogResource);
+        System.out.println("[ResourceManager] Resource checked in: " + catalogResource.getDisplayName());
         return true;
     }
 
