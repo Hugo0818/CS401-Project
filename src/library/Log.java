@@ -1,8 +1,9 @@
 package library;
 
+import java.io.Serializable;
 import java.util.Date;
 
-public class Log {
+public class Log implements Serializable {
     private Member member;
     private Staff staff;
     private Resource resource;
