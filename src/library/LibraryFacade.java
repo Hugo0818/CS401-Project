@@ -31,6 +31,8 @@ public class LibraryFacade {
             ArrayList<Member> memberList = (ArrayList<Member>) in.readObject();
             @SuppressWarnings("unchecked")
             ArrayList<Log> logList = (ArrayList<Log>) in.readObject();
+            
+            System.out.println("[LibraryFacade] Loaded " + staffList.size() + " staff, " + resources.size() + " resources, " + memberList.size() + " members, " + logList.size() + " logs");
 
             this.staffManager = new StaffManager(staffList);
             this.resourceManager = new ResourceManager(resources);
@@ -171,14 +173,24 @@ public class LibraryFacade {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serFilePath))) {
 
             System.out.println("[LibraryFacade] Saving data to " + serFilePath);
+            
+            ArrayList<Staff> staff = staffManager.getAll();
+            ArrayList<Resource> resources = (ArrayList<Resource>) resourceManager.getAll();
+            ArrayList<Member> members = memberManager.getAll();
+            ArrayList<Log> logs = (ArrayList<Log>) logManager.getAll();
+            
+            System.out.println("[LibraryFacade] Saving " + staff.size() + " staff, " + resources.size() + " resources, " + members.size() + " members, " + logs.size() + " logs");
 
-            out.writeObject(staffManager.getAll());
-            out.writeObject(resourceManager.getAll()); //not implemented
-            out.writeObject(memberManager.getAll());
-            out.writeObject(logManager.getAll()); //not implemented
+            out.writeObject(staff);
+            out.writeObject(resources);
+            out.writeObject(members);
+            out.writeObject(logs);
+            
+            System.out.println("[LibraryFacade] Save completed successfully");
 
         } catch (Exception e) {
             System.err.println("[LibraryFacade] Error saving data: " + e.getMessage());
+            e.printStackTrace();
         }
     }
 }

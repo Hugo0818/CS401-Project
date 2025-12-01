@@ -24,7 +24,9 @@ public class ResourceManager {
     }
 
     public Boolean addResource(Resource resource) {
-        return catalog.add(resource);
+        boolean result = catalog.add(resource);
+        System.out.println("[ResourceManager] Resource added: " + resource.getDisplayName() + " - Total resources: " + catalog.size());
+        return result;
     }
 
     public Boolean editResource(Resource original, Resource updated) {
@@ -37,7 +39,19 @@ public class ResourceManager {
     }
 
     public Boolean removeResource(Resource resource) {
-        return catalog.remove(resource);
+        // Find and remove by matching display name and details since equals() is not implemented
+        // TODO: this is a temporary workaround; consider implementing equals() in Resource classes
+        for (int i = 0; i < catalog.size(); i++) {
+            Resource r = catalog.get(i);
+            if (r.getDisplayName().equals(resource.getDisplayName()) && 
+                r.getDetails().equals(resource.getDetails())) {
+                catalog.remove(i);
+                System.out.println("[ResourceManager] Resource removed: " + resource.getDisplayName() + " - Total resources: " + catalog.size());
+                return true;
+            }
+        }
+        System.out.println("[ResourceManager] Failed to remove resource: " + resource.getDisplayName() + " - not found in catalog");
+        return false;
     }
 
     public Boolean checkoutResource(Resource resource, Member member) {
@@ -69,9 +83,9 @@ public class ResourceManager {
         return true;
     }
 
-	public Object getAll() {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Resource> getAll() {
+		System.out.println("[ResourceManager] getAll() called - returning " + catalog.size() + " resources");
+		return catalog;
 	}
 
 }
