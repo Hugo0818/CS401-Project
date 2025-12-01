@@ -563,28 +563,62 @@ public class GUIManager {
         contentArea.add(titleLabel, BorderLayout.NORTH);
         
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(new JLabel("Search Catalog:"));
         JTextField searchField = new JTextField(30);
-        JButton searchBtn = new JButton("Search");
-        searchPanel.add(new JLabel("Search:"));
         searchPanel.add(searchField);
+        JButton searchBtn = new JButton("Search");
         searchPanel.add(searchBtn);
         
-        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
-        centerPanel.add(searchPanel, BorderLayout.NORTH);
+        contentArea.add(searchPanel, BorderLayout.NORTH);
         
-        // Results area
-        JTextArea resultsArea = new JTextArea(15, 50);
-        resultsArea.setEditable(false);
-        resultsArea.setText("Enter a search term to browse available resources.");
-        JScrollPane scrollPane = new JScrollPane(resultsArea);
-        centerPanel.add(scrollPane, BorderLayout.CENTER);
+        // Center panel with split pane: results on left, details on right
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setResizeWeight(0.6);
         
-        contentArea.add(centerPanel, BorderLayout.CENTER);
+        // Left: Results table
+        String[] columnNames = {"Resource Name", "Type"};
+        currentTableModel = new javax.swing.table.DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        currentResultsTable = new JTable(currentTableModel);
+        currentResultsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane tableScroll = new JScrollPane(currentResultsTable);
+        tableScroll.setBorder(BorderFactory.createTitledBorder("Search Results"));
+        splitPane.setLeftComponent(tableScroll);
         
+        // Right: Details area
+        currentDetailsArea = new JTextArea();
+        currentDetailsArea.setEditable(false);
+        currentDetailsArea.setText("Select a resource to view details.");
+        currentDetailsArea.setLineWrap(true);
+        currentDetailsArea.setWrapStyleWord(true);
+        JScrollPane detailsScroll = new JScrollPane(currentDetailsArea);
+        detailsScroll.setBorder(BorderFactory.createTitledBorder("Resource Details"));
+        splitPane.setRightComponent(detailsScroll);
+        
+        contentArea.add(splitPane, BorderLayout.CENTER);
+        
+        // Table selection listener to show details
+        currentResultsTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = currentResultsTable.getSelectedRow();
+                if (selectedRow >= 0 && currentSearchResults != null && selectedRow < currentSearchResults.size()) {
+                    Resource resource = currentSearchResults.get(selectedRow);
+                    currentDetailsArea.setText(resource.getDetails() + 
+                        "\nAvailable: " + (resource.isAvailable() ? "Yes" : "No"));
+                }
+            }
+        });
+        
+        // Search button action
         searchBtn.addActionListener(e -> {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
-                resultsArea.setText("Searching for: " + query + "\n\nResults will appear here...");
+                currentTableModel.setRowCount(0);
+                currentDetailsArea.setText("Searching...");
                 client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
             }
         });
@@ -1053,31 +1087,102 @@ public class GUIManager {
         contentArea.add(titleLabel, BorderLayout.NORTH);
         
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(new JLabel("Search Catalog:"));
         JTextField searchField = new JTextField(30);
-        JButton searchBtn = new JButton("Search");
-        searchPanel.add(new JLabel("Search for resource to remove:"));
         searchPanel.add(searchField);
+        JButton searchBtn = new JButton("Search");
         searchPanel.add(searchBtn);
         
-        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
-        centerPanel.add(searchPanel, BorderLayout.NORTH);
+        contentArea.add(searchPanel, BorderLayout.NORTH);
         
-        JTextArea resultsArea = new JTextArea(15, 50);
-        resultsArea.setEditable(false);
-        resultsArea.setText("Search for a resource to remove it from the catalog.");
-        JScrollPane scrollPane = new JScrollPane(resultsArea);
-        centerPanel.add(scrollPane, BorderLayout.CENTER);
+        // Center panel with split pane: results on left, details on right
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setResizeWeight(0.6);
         
-        contentArea.add(centerPanel, BorderLayout.CENTER);
+        // Left: Results table
+        String[] columnNames = {"Resource Name", "Type"};
+        currentTableModel = new javax.swing.table.DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        currentResultsTable = new JTable(currentTableModel);
+        currentResultsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane tableScroll = new JScrollPane(currentResultsTable);
+        tableScroll.setBorder(BorderFactory.createTitledBorder("Search Results"));
+        splitPane.setLeftComponent(tableScroll);
         
+        // Right: Details area
+        currentDetailsArea = new JTextArea();
+        currentDetailsArea.setEditable(false);
+        currentDetailsArea.setText("Select a resource to view details.");
+        currentDetailsArea.setLineWrap(true);
+        currentDetailsArea.setWrapStyleWord(true);
+        JScrollPane detailsScroll = new JScrollPane(currentDetailsArea);
+        detailsScroll.setBorder(BorderFactory.createTitledBorder("Resource Details"));
+        splitPane.setRightComponent(detailsScroll);
+        
+        contentArea.add(splitPane, BorderLayout.CENTER);
+        
+        // Bottom panel with remove button
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton removeBtn = new JButton("Remove Selected Resource");
+        removeBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+        removeBtn.setBackground(new Color(200, 50, 50));
+        removeBtn.setForeground(Color.WHITE);
+        bottomPanel.add(removeBtn);
+        contentArea.add(bottomPanel, BorderLayout.SOUTH);
+        
+        // Table selection listener to show details
+        currentResultsTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = currentResultsTable.getSelectedRow();
+                if (selectedRow >= 0 && currentSearchResults != null && selectedRow < currentSearchResults.size()) {
+                    Resource resource = currentSearchResults.get(selectedRow);
+                    currentDetailsArea.setText(resource.getDetails() + 
+                        "\nAvailable: " + (resource.isAvailable() ? "Yes" : "No"));
+                }
+            }
+        });
+        
+        // Search button action
         searchBtn.addActionListener(e -> {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
-                resultsArea.setText("Searching for: " + query + "\n\nResults will appear here...\nSelect a resource and click Remove.");
+                currentTableModel.setRowCount(0);
+                currentDetailsArea.setText("Searching...");
                 client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
             }
         });
         
         searchField.addActionListener(e -> searchBtn.doClick());
+        
+        // Remove button action
+        removeBtn.addActionListener(e -> {
+            int selectedRow = currentResultsTable.getSelectedRow();
+            
+            if (selectedRow < 0) {
+                showError("Please select a resource to remove");
+                return;
+            }
+            
+            if (currentSearchResults != null && selectedRow < currentSearchResults.size()) {
+                Resource selectedResource = currentSearchResults.get(selectedRow);
+                
+                // Confirm deletion
+                int confirm = JOptionPane.showConfirmDialog(
+                    mainFrame,
+                    "Are you sure you want to remove: " + selectedResource.getDisplayName() + "?",
+                    "Confirm Removal",
+                    JOptionPane.YES_NO_OPTION,
+                    JOptionPane.WARNING_MESSAGE
+                );
+                
+                if (confirm == JOptionPane.YES_OPTION) {
+                    client.sendMessage(new Message(MessageType.REMOVE_RESOURCE_REQ, selectedResource));
+                }
+            }
+        });
     }
 }
