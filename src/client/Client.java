@@ -88,7 +88,7 @@ public class Client implements Runnable {
         }
     }
 
-    private boolean connect() {
+    public boolean connect() {
         try {
             socket = new Socket(host, port);
             out = new ObjectOutputStream(socket.getOutputStream());
@@ -107,7 +107,7 @@ public class Client implements Runnable {
         switch (msg.getType()) {
    
             case LOGIN_RESPONSE -> {
-            	//2 cases ok is true or false
+            	//if ok is true show the corresponding dashboard
             	if(msg.isOk()) {
             		Object payload = msg.getPayload(); //staff or member
             		
@@ -129,9 +129,18 @@ public class Client implements Runnable {
             	}           
             }
             
+            case LOGOUT_RESPONSE -> {
+                gui.showLoginScreen();
+                return true;
+            }
+            
+            case W_CLOSED -> {
+            	return false;
+            }
+            
             
             case SIGNUP_RESPONSE ->{
-            	//2 cases ok is true or false
+            	//if ok is true go back to login
             	if(msg.isOk()) {
             		// payload: UID string
                     gui.showInfo("Account created. Your UID: " + msg.getPayload());
@@ -139,7 +148,7 @@ public class Client implements Runnable {
                     return true;
             	}            	
             	else {         
-            		gui.showError("Signup failed: " + msg.getPayload());
+            		gui.showError("Signup failed: " + msg.getInfo());
                     return true;
             		
             	}
@@ -155,10 +164,7 @@ public class Client implements Runnable {
                 gui.handleMemberSearchResults(msg.getPayload());
                 return true;
             }
-            case LOGOUT_RESPONSE -> {
-                gui.showLoginScreen();
-                return true;
-            }
+            
             case ERROR -> {
                 gui.showError("Server error: " + msg.getInfo());
                 return true;
@@ -172,6 +178,11 @@ public class Client implements Runnable {
                 return true;
             }
         }
+<<<<<<< HEAD
+=======
+        
+		return false;
+>>>>>>> a05e54ba44f7267443fc09b01906365bc94368a9
     }
 
     /** Thread-safe send */

@@ -53,7 +53,7 @@ public class ClientHandler implements Runnable {
                 if (msg == null) break;
                 System.out.println("[Handler#" + clientId + "] Received message: " + msg.getType());
                 processMessage(msg);
-                if (msg.getType() == MessageType.LOGOUT_ATTEMPT) break;
+                if (msg.getType() == MessageType.W_CLOSED) break;
             }
         } catch (EOFException eof) {
             System.out.println("[Handler#" + clientId + "] Client disconnected.");
@@ -70,6 +70,10 @@ public class ClientHandler implements Runnable {
             switch (msg.getType()) {
                 case LOGIN_ATTEMPT -> handleLogin(msg); 
                 case SIGNUP_ATTEMPT -> handleSignup(msg);
+                case W_CLOSED -> {
+                    sendMessage(Message.ok(MessageType.W_CLOSED, "Goodbye"));
+                    closeConnection();
+                }
                 
                 case CATALOG_SEARCH_REQ -> handleCatalogSearch(msg);
                 case MEMBER_SEARCH_REQ -> handleMemberSearch(msg);
