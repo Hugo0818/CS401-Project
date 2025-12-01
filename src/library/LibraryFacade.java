@@ -157,6 +157,10 @@ public class LibraryFacade {
     public ArrayList<Log> getLogsByDate(Date d) {
         return logManager.getLogsByDate(d);
     }
+    
+    public void addLog (Log log) {
+    	logManager.addLog(log);
+    }
 
     // ---------------------------
     // Save Changes

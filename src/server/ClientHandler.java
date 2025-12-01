@@ -28,10 +28,6 @@ public class ClientHandler implements Runnable {
     private ObjectOutputStream out;
     private ObjectInputStream in;
 
-    // track logged user (could be Staff or Member)
-    private Staff loggedStaff = null;
-    private Member loggedMember = null;
-
     public ClientHandler(Socket socket, int clientId, LibraryFacade facade, LibraryServer server) {
         this.socket = socket;
         this.clientId = clientId;
@@ -71,12 +67,11 @@ public class ClientHandler implements Runnable {
                 case W_CLOSED -> {
                     sendMessage(Message.ok(MessageType.W_CLOSED, "Goodbye"));
                     closeConnection();
-                }
-                
-                //not fully done, waiting on GUI logic
+                }      
                 case CATALOG_SEARCH_REQ -> handleCatalogSearch(msg);
                 case MEMBER_SEARCH_REQ -> handleMemberSearch(msg);
-                case ADD_RESOURCE_REQ -> handleAddResource(msg);
+                
+                case ADD_RESOURCE_REQ -> handleAddResource(msg);          
                 case REMOVE_RESOURCE_REQ -> handleRemoveResource(msg);
                 case CHECK_OUT_REQ -> handleCheckout(msg);
                 case CHECK_IN_REQ -> handleCheckin(msg);
@@ -124,7 +119,8 @@ public class ClientHandler implements Runnable {
             }                                 
         } else {
             Member searchedMember = facade.findMemberByUsername(info.getUidOrName());
-            if(searchedMember == null) {            	
+            if(searchedMember == null) {  
+            	sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "This username does not exists"));
             }           
             else {
             	//passwords match
@@ -211,11 +207,6 @@ public class ClientHandler implements Runnable {
             return;
         }
         
-        // Check if user is staff
-        if (loggedStaff == null) {
-            sendMessage(Message.fail(MessageType.ADD_RESOURCE_RES, "Only staff can add resources"));
-            return;
-        }
         
         boolean success = facade.addResource(resource);
         if (success) {
@@ -233,11 +224,6 @@ public class ClientHandler implements Runnable {
             return;
         }
         
-        // Check if user is staff
-        if (loggedStaff == null) {
-            sendMessage(Message.fail(MessageType.REMOVE_RESOURCE_RES, "Only staff can remove resources"));
-            return;
-        }
         
         boolean success = facade.removeResource(resource);
         if (success) {
@@ -265,11 +251,6 @@ public class ClientHandler implements Runnable {
             return;
         }
         
-        // Check if user is staff
-        if (loggedStaff == null) {
-            sendMessage(Message.fail(MessageType.CHECK_OUT_RES, "Only staff can checkout resources"));
-            return;
-        }
         
         // Find member by UID
         Member member = null;
@@ -318,11 +299,7 @@ public class ClientHandler implements Runnable {
             return;
         }
         
-        // Check if user is staff
-        if (loggedStaff == null) {
-            sendMessage(Message.fail(MessageType.CHECK_IN_RES, "Only staff can check in resources"));
-            return;
-        }
+        
         
         // Find member by UID
         Member member = null;
