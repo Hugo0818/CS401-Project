@@ -13,7 +13,7 @@ import java.util.List;
 /**
  * Unit tests for LibraryServer class (simple, no network integration).
  */
-class LibraryServerTest {
+public class LibraryServerTest {
 
     private LibraryServer server;
     private FakeFacade fakeFacade;

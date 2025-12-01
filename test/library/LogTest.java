@@ -3,7 +3,7 @@ package library;
 import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.Test;
 
-class LogTest {
+public class LogTest {
 
     // ----- Dummy LoginInfo for testing -----
     static class DummyLoginInfo extends LoginInfo {

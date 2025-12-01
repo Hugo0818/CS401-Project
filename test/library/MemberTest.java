@@ -6,7 +6,7 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-class MemberTest {
+public class MemberTest {
 
     // Fake LoginInfo class so we can test Member independently
     private static class FakeLoginInfo extends LoginInfo {
