@@ -141,6 +141,40 @@ public class Client implements Runnable {
                 gui.handleMemberSearchResults(msg.getPayload());
                 return true;
             }
+
+            case ADD_RESOURCE_RES -> {
+                if (msg.isOk()) {
+                    gui.showInfo("Resource added successfully!");
+                } else {
+                    gui.showError("Failed to add resource: " + msg.getInfo());
+                }
+                return true;
+            }
+            case REMOVE_RESOURCE_RES -> {
+                if (msg.isOk()) {
+                    gui.showInfo("Resource removed successfully!");
+                } else {
+                    gui.showError("Failed to remove resource: " + msg.getInfo());
+                }
+                return true;
+            }
+            case CHECK_OUT_RES -> {
+                if (msg.isOk()) {
+                    gui.showInfo("Resource checked out successfully!");
+                } else {
+                    gui.showError("Checkout failed: " + msg.getInfo());
+                }
+                return true;
+            }
+            case CHECK_IN_RES -> {
+                if (msg.isOk()) {
+                    gui.showInfo("Resource checked in successfully!");
+                } else {
+                    gui.showError("Check-in failed: " + msg.getInfo());
+                }
+                return true;
+            }
+
             
             case ERROR -> {
                 gui.showError("Server error: " + msg.getInfo());

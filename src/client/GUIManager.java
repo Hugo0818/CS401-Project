@@ -13,6 +13,12 @@ import java.awt.event.WindowEvent;
 public class GUIManager {
     private final Client client;
     private final JFrame mainFrame;
+    
+    // For managing search results display
+    private JTable currentResultsTable;
+    private javax.swing.table.DefaultTableModel currentTableModel;
+    private JTextArea currentDetailsArea;
+    private java.util.List<Resource> currentSearchResults;
 
     public GUIManager(Client client) {
         this.client = client;
@@ -316,34 +322,117 @@ public class GUIManager {
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
         contentArea.add(titleLabel, BorderLayout.NORTH);
         
+        // Top panel with member UID and search
+        JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
+        
+        JPanel memberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        memberPanel.add(new JLabel("Member UID:"));
+        JTextField memberUidField = new JTextField(15);
+        memberPanel.add(memberUidField);
+        topPanel.add(memberPanel);
+        
         JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JTextField searchField = new JTextField(30);
-        JButton searchBtn = new JButton("Search");
         searchPanel.add(new JLabel("Search Catalog:"));
+        JTextField searchField = new JTextField(30);
         searchPanel.add(searchField);
+        JButton searchBtn = new JButton("Search");
         searchPanel.add(searchBtn);
+        topPanel.add(searchPanel);
         
-        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
-        centerPanel.add(searchPanel, BorderLayout.NORTH);
+        contentArea.add(topPanel, BorderLayout.NORTH);
         
-        // Results area
-        JTextArea resultsArea = new JTextArea(15, 50);
-        resultsArea.setEditable(false);
-        resultsArea.setText("Enter a search term and click Search to browse the catalog.");
-        JScrollPane scrollPane = new JScrollPane(resultsArea);
-        centerPanel.add(scrollPane, BorderLayout.CENTER);
+        // Center panel with split pane: results on left, details on right
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setResizeWeight(0.6);
         
-        contentArea.add(centerPanel, BorderLayout.CENTER);
+        // Left: Results table
+        String[] columnNames = {"Resource Name", "Type"};
+        currentTableModel = new javax.swing.table.DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        currentResultsTable = new JTable(currentTableModel);
+        currentResultsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane tableScroll = new JScrollPane(currentResultsTable);
+        tableScroll.setBorder(BorderFactory.createTitledBorder("Search Results"));
+        splitPane.setLeftComponent(tableScroll);
         
+        // Right: Details area
+        currentDetailsArea = new JTextArea();
+        currentDetailsArea.setEditable(false);
+        currentDetailsArea.setText("Select a resource to view details.");
+        currentDetailsArea.setLineWrap(true);
+        currentDetailsArea.setWrapStyleWord(true);
+        JScrollPane detailsScroll = new JScrollPane(currentDetailsArea);
+        detailsScroll.setBorder(BorderFactory.createTitledBorder("Resource Details"));
+        splitPane.setRightComponent(detailsScroll);
+        
+        contentArea.add(splitPane, BorderLayout.CENTER);
+        
+        // Bottom panel with checkout button
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton checkoutBtn = new JButton("Checkout Selected Resource");
+        checkoutBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+        bottomPanel.add(checkoutBtn);
+        contentArea.add(bottomPanel, BorderLayout.SOUTH);
+        
+        // Table selection listener to show details
+        currentResultsTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = currentResultsTable.getSelectedRow();
+                if (selectedRow >= 0 && currentSearchResults != null && selectedRow < currentSearchResults.size()) {
+                    Resource resource = currentSearchResults.get(selectedRow);
+                    currentDetailsArea.setText(resource.getDetails() + 
+                        "\nAvailable: " + (resource.isAvailable() ? "Yes" : "No"));
+                }
+            }
+        });
+        
+        // Search button action
         searchBtn.addActionListener(e -> {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
-                resultsArea.setText("Searching for: " + query + "\n\nResults will appear here...");
+                currentTableModel.setRowCount(0);
+                currentDetailsArea.setText("Searching...");
                 client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
             }
         });
         
         searchField.addActionListener(e -> searchBtn.doClick());
+        
+        // Checkout button action
+        checkoutBtn.addActionListener(e -> {
+            String memberUid = memberUidField.getText().trim();
+            int selectedRow = currentResultsTable.getSelectedRow();
+            
+            if (memberUid.isEmpty()) {
+                showError("Please enter a Member UID");
+                return;
+            }
+            
+            if (selectedRow < 0) {
+                showError("Please select a resource to checkout");
+                return;
+            }
+            
+            if (currentSearchResults != null && selectedRow < currentSearchResults.size()) {
+                Resource selectedResource = currentSearchResults.get(selectedRow);
+                
+                if (!selectedResource.isAvailable()) {
+                    showError("This resource is not available for checkout");
+                    return;
+                }
+                
+                // Send checkout request with member UID and resource
+                java.util.Map<String, Object> checkoutData = new java.util.HashMap<>();
+                checkoutData.put("memberUid", memberUid);
+                checkoutData.put("resource", selectedResource);
+                
+                client.sendMessage(new Message(MessageType.CHECK_OUT_REQ, checkoutData));
+            }
+        });
     }
     
     private void showCheckinPanel(JPanel contentArea) {
@@ -353,12 +442,117 @@ public class GUIManager {
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
         contentArea.add(titleLabel, BorderLayout.NORTH);
         
-        JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
-        JLabel infoLabel = new JLabel("Check in functionality coming soon...");
-        infoLabel.setHorizontalAlignment(SwingConstants.CENTER);
-        centerPanel.add(infoLabel, BorderLayout.CENTER);
+        // Top panel with member UID and search
+        JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
         
-        contentArea.add(centerPanel, BorderLayout.CENTER);
+        JPanel memberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        memberPanel.add(new JLabel("Member UID:"));
+        JTextField memberUidField = new JTextField(15);
+        memberPanel.add(memberUidField);
+        topPanel.add(memberPanel);
+        
+        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        searchPanel.add(new JLabel("Search Catalog:"));
+        JTextField searchField = new JTextField(30);
+        searchPanel.add(searchField);
+        JButton searchBtn = new JButton("Search");
+        searchPanel.add(searchBtn);
+        topPanel.add(searchPanel);
+        
+        contentArea.add(topPanel, BorderLayout.NORTH);
+        
+        // Center panel with split pane: results on left, details on right
+        JSplitPane splitPane = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT);
+        splitPane.setResizeWeight(0.6);
+        
+        // Left: Results table
+        String[] columnNames = {"Resource Name", "Type"};
+        currentTableModel = new javax.swing.table.DefaultTableModel(columnNames, 0) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        currentResultsTable = new JTable(currentTableModel);
+        currentResultsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        JScrollPane tableScroll = new JScrollPane(currentResultsTable);
+        tableScroll.setBorder(BorderFactory.createTitledBorder("Search Results"));
+        splitPane.setLeftComponent(tableScroll);
+        
+        // Right: Details area
+        currentDetailsArea = new JTextArea();
+        currentDetailsArea.setEditable(false);
+        currentDetailsArea.setText("Select a resource to view details.");
+        currentDetailsArea.setLineWrap(true);
+        currentDetailsArea.setWrapStyleWord(true);
+        JScrollPane detailsScroll = new JScrollPane(currentDetailsArea);
+        detailsScroll.setBorder(BorderFactory.createTitledBorder("Resource Details"));
+        splitPane.setRightComponent(detailsScroll);
+        
+        contentArea.add(splitPane, BorderLayout.CENTER);
+        
+        // Bottom panel with check-in button
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton checkinBtn = new JButton("Check In Selected Resource");
+        checkinBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+        bottomPanel.add(checkinBtn);
+        contentArea.add(bottomPanel, BorderLayout.SOUTH);
+        
+        // Table selection listener to show details
+        currentResultsTable.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                int selectedRow = currentResultsTable.getSelectedRow();
+                if (selectedRow >= 0 && currentSearchResults != null && selectedRow < currentSearchResults.size()) {
+                    Resource resource = currentSearchResults.get(selectedRow);
+                    currentDetailsArea.setText(resource.getDetails() + 
+                        "\nAvailable: " + (resource.isAvailable() ? "Yes" : "No"));
+                }
+            }
+        });
+        
+        // Search button action
+        searchBtn.addActionListener(e -> {
+            String query = searchField.getText().trim();
+            if (!query.isEmpty()) {
+                currentTableModel.setRowCount(0);
+                currentDetailsArea.setText("Searching...");
+                client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
+            }
+        });
+        
+        searchField.addActionListener(e -> searchBtn.doClick());
+        
+        // Check-in button action
+        checkinBtn.addActionListener(e -> {
+            String memberUid = memberUidField.getText().trim();
+            int selectedRow = currentResultsTable.getSelectedRow();
+            
+            if (memberUid.isEmpty()) {
+                showError("Please enter a Member UID");
+                return;
+            }
+            
+            if (selectedRow < 0) {
+                showError("Please select a resource to check in");
+                return;
+            }
+            
+            if (currentSearchResults != null && selectedRow < currentSearchResults.size()) {
+                Resource selectedResource = currentSearchResults.get(selectedRow);
+                
+                if (selectedResource.isAvailable()) {
+                    showError("This resource is already checked in");
+                    return;
+                }
+                
+                // Send check-in request with member UID and resource
+                java.util.Map<String, Object> checkinData = new java.util.HashMap<>();
+                checkinData.put("memberUid", memberUid);
+                checkinData.put("resource", selectedResource);
+                
+                client.sendMessage(new Message(MessageType.CHECK_IN_REQ, checkinData));
+            }
+        });
     }
     
     private void showBrowseCatalogPanel(JPanel contentArea) {
@@ -479,13 +673,54 @@ public class GUIManager {
 
     // Called by client listener when server sends catalog search results.
     public void handleCatalogSearchResults(Object payload) {
-        // payload is expected to be ArrayList<Resource>
-        // You can show results in a new window. For now show a dialog.
         SwingUtilities.invokeLater(() -> {
-            if (payload instanceof java.util.List list) {
-                showInfo("Search returned " + list.size() + " items.");
-            } else showInfo("Search returned no items.");
+            if (payload instanceof java.util.List) {
+                @SuppressWarnings("unchecked")
+                java.util.List<Resource> results = (java.util.List<Resource>) payload;
+                currentSearchResults = results;
+                
+                if (currentTableModel != null && currentResultsTable != null) {
+                    // Clear existing rows
+                    currentTableModel.setRowCount(0);
+                    
+                    // Add new rows
+                    for (Resource resource : results) {
+                        String resourceType = getResourceType(resource);
+                        currentTableModel.addRow(new Object[]{
+                            resource.getDisplayName(),
+                            resourceType
+                        });
+                    }
+                    
+                    if (currentDetailsArea != null) {
+                        currentDetailsArea.setText("Found " + results.size() + " result(s). Select one to view details.");
+                    }
+                } else {
+                    // Fallback if table not initialized
+                    showInfo("Search returned " + results.size() + " items.");
+                }
+            } else {
+                if (currentDetailsArea != null) {
+                    currentDetailsArea.setText("No results found.");
+                } else {
+                    showInfo("Search returned no items.");
+                }
+            }
         });
+    }
+    
+    private String getResourceType(Resource resource) {
+        if (resource instanceof Book) {
+            return "Book";
+        } else if (resource instanceof Movie) {
+            return "Movie";
+        } else if (resource instanceof CD) {
+            return "CD";
+        } else if (resource instanceof GenericResource) {
+            return "Other";
+        } else {
+            return "Unknown";
+        }
     }
 
     public void handleMemberSearchResults(Object payload) {
