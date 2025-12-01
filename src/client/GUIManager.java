@@ -14,6 +14,10 @@ public class GUIManager {
     private final Client client;
     private final JFrame mainFrame;
     
+//<<<<<<< HEAD
+    private DefaultListModel<Member> resultsAreaModel;
+    private JList<Member> resultsArea;
+//=======
     // For managing search results display
     private JTable currentResultsTable;
     private javax.swing.table.DefaultTableModel currentTableModel;
@@ -637,18 +641,47 @@ public class GUIManager {
         JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
         centerPanel.add(searchPanel, BorderLayout.NORTH);
         
-        JTextArea resultsArea = new JTextArea(15, 50);
-        resultsArea.setEditable(false);
-        resultsArea.setText("Search for members by name or UID.");
+        resultsAreaModel = new DefaultListModel<>();
+        resultsArea = new JList<>(resultsAreaModel);
+        resultsArea.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+  
         JScrollPane scrollPane = new JScrollPane(resultsArea);
         centerPanel.add(scrollPane, BorderLayout.CENTER);
         
         contentArea.add(centerPanel, BorderLayout.CENTER);
         
+        JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        JButton removeBtn = new JButton("Remove Selected Member");
+        removeBtn.setEnabled(false);
+        bottomPanel.add(removeBtn);
+        contentArea.add(bottomPanel, BorderLayout.SOUTH);
+        
+        resultsArea.addListSelectionListener(e -> {
+            removeBtn.setEnabled(!resultsArea.isSelectionEmpty());
+        });
+        
         searchBtn.addActionListener(e -> {
             String query = searchField.getText().trim();
-            resultsArea.setText("Searching for members: " + query + "\n\nResults will appear here...");
+            
+            resultsAreaModel.clear();
+            
+            if (query.isEmpty()) {
+                return;
+            }
             client.sendMessage(new Message(MessageType.MEMBER_SEARCH_REQ, query));
+        });
+        
+        removeBtn.addActionListener(e -> { 
+            Member selected = resultsArea.getSelectedValue();
+            if (selected == null) {
+                showError("No member selected.");
+                return;
+            }
+
+            String uid = selected.getUID();
+            int numID = Integer.parseInt(uid.substring(1));
+
+            client.sendMessage(new Message(MessageType.REMOVE_MEMBER_REQ, numID));
         });
         
         searchField.addActionListener(e -> searchBtn.doClick());
@@ -764,8 +797,20 @@ public class GUIManager {
 
     public void handleMemberSearchResults(Object payload) {
         SwingUtilities.invokeLater(() -> {
-            if (payload instanceof java.util.List list) showInfo("Member search returned " + list.size());
-            else showInfo("No results");
+            if (!(payload instanceof java.util.List<?> list)) {
+                showInfo("No results");
+                return;
+            }
+
+            resultsAreaModel.clear();
+
+            for (Object o : list) {
+                if (o instanceof Member m) {
+                	resultsAreaModel.addElement(m);
+                }
+            }
+
+            showInfo("Found " + resultsAreaModel.size() + " member(s).");
         });
     }
     
@@ -846,7 +891,20 @@ public class GUIManager {
             }
         }
     }
+    public void handleRemoveMember(Object payload) {
+        SwingUtilities.invokeLater(() -> {
+            if (payload instanceof String msg) {
+                showInfo(msg);
+            }
 
+            // If a member is currently selected, remove it from the list model
+            Member selected = resultsArea.getSelectedValue();
+            if (selected != null) {
+                resultsAreaModel.removeElement(selected);
+            }
+        });
+    }
+    
     public void showError(String s) { JOptionPane.showMessageDialog(mainFrame, s, "Error", JOptionPane.ERROR_MESSAGE); }
     public void showInfo(String s) { JOptionPane.showMessageDialog(mainFrame, s, "Info", JOptionPane.INFORMATION_MESSAGE); }
     
