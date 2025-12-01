@@ -2,7 +2,9 @@ package library;
 
 import java.util.ArrayList;
 
-public class CD implements Resource {
+import java.io.Serializable;
+
+public class CD implements Resource, Serializable {
     private String albumName;
     private String artist;
     private int numSongs;

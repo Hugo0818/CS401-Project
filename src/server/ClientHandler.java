@@ -77,6 +77,8 @@ public class ClientHandler implements Runnable {
                 
                 case CATALOG_SEARCH_REQ -> handleCatalogSearch(msg);
                 case MEMBER_SEARCH_REQ -> handleMemberSearch(msg);
+                case ADD_RESOURCE_REQ -> handleAddResource(msg);
+                case REMOVE_RESOURCE_REQ -> handleRemoveResource(msg);
                 case LOGOUT_ATTEMPT -> handleLogout(msg);
                 default -> sendMessage(Message.fail(MessageType.ERROR, "Unknown message type: " + msg.getType()));
             }
@@ -198,6 +200,50 @@ public class ClientHandler implements Runnable {
 
     private void handleLogout(Message msg) {
         sendMessage(Message.ok(MessageType.LOGOUT_RESPONSE, "Goodbye"));
+    }
+    
+    private void handleAddResource(Message msg) {
+        Object p = msg.getPayload();
+        if (!(p instanceof Resource resource)) {
+            sendMessage(Message.fail(MessageType.ADD_RESOURCE_RES, "Invalid resource payload"));
+            return;
+        }
+        
+        // Check if user is staff
+        if (loggedStaff == null) {
+            sendMessage(Message.fail(MessageType.ADD_RESOURCE_RES, "Only staff can add resources"));
+            return;
+        }
+        
+        boolean success = facade.addResource(resource);
+        if (success) {
+            System.out.println("[Handler#" + clientId + "] Resource added: " + resource.getDisplayName());
+            sendMessage(Message.ok(MessageType.ADD_RESOURCE_RES, "Resource added successfully"));
+        } else {
+            sendMessage(Message.fail(MessageType.ADD_RESOURCE_RES, "Failed to add resource"));
+        }
+    }
+    
+    private void handleRemoveResource(Message msg) {
+        Object p = msg.getPayload();
+        if (!(p instanceof Resource resource)) {
+            sendMessage(Message.fail(MessageType.REMOVE_RESOURCE_RES, "Invalid resource payload"));
+            return;
+        }
+        
+        // Check if user is staff
+        if (loggedStaff == null) {
+            sendMessage(Message.fail(MessageType.REMOVE_RESOURCE_RES, "Only staff can remove resources"));
+            return;
+        }
+        
+        boolean success = facade.removeResource(resource);
+        if (success) {
+            System.out.println("[Handler#" + clientId + "] Resource removed: " + resource.getDisplayName());
+            sendMessage(Message.ok(MessageType.REMOVE_RESOURCE_RES, "Resource removed successfully"));
+        } else {
+            sendMessage(Message.fail(MessageType.REMOVE_RESOURCE_RES, "Failed to remove resource"));
+        }
     }
 
     public synchronized void sendMessage(Message msg) {

@@ -2,7 +2,9 @@ package library;
 
 import java.util.ArrayList;
 
-public class Movie implements Resource {
+import java.io.Serializable;
+
+public class Movie implements Resource, Serializable {
     private String director;
     private int runtime;
     private String rating;

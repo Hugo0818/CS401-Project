@@ -2,7 +2,9 @@ package library;
 
 import java.util.ArrayList;
 
-public class Book implements Resource {
+import java.io.Serializable;
+
+public class Book implements Resource, Serializable {
     private String author;
     private String publisher;
     private String isbn;
