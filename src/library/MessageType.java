@@ -4,16 +4,11 @@ public enum MessageType {
     // Auth
     LOGIN_ATTEMPT,
     LOGIN_RESPONSE,
-    
-
     SIGNUP_ATTEMPT,
     SIGNUP_RESPONSE,
-    
-    SIGNUP_SUCCESS,
-    SIGNUP_FAIL,
-
     LOGOUT_ATTEMPT,
     LOGOUT_RESPONSE,
+    
 
     // Catalog
     CATALOG_SEARCH_REQ,
@@ -35,5 +30,9 @@ public enum MessageType {
 
     // Generic
     ERROR,
-    PING
+    PING,
+    
+    //Window closes
+    W_CLOSED;
+    
 }
