@@ -25,6 +25,9 @@ public class GUIManager {
     private java.util.List<Resource> currentSearchResults;
     private String lastSearchQuery;
     private String currentMemberUid;
+    
+    // Client-side cache of borrowed resources by member UID
+    private java.util.Map<String, java.util.List<Resource>> memberBorrowedCache = new java.util.HashMap<>();
 
     public GUIManager(Client client) {
         this.client = client;
@@ -438,6 +441,7 @@ public class GUIManager {
                 checkoutData.put("resource", selectedResource);
                 
                 client.setLastCheckoutResource(selectedResource);
+                client.setLastCheckoutMemberUid(memberUid);
                 client.sendMessage(new Message(MessageType.CHECK_OUT_REQ, checkoutData));
             }
         });
@@ -519,7 +523,15 @@ public class GUIManager {
             currentMemberUid = memberUid;
             currentTableModel.setRowCount(0);
             currentDetailsArea.setText("Loading borrowed resources...");
-            client.sendMessage(new Message(MessageType.MEMBER_BORROWED_REQ, memberUid));
+            
+            // Try cache first
+            if (memberBorrowedCache.containsKey(memberUid)) {
+                System.out.println("[GUIManager] Using cached borrowed items for " + memberUid);
+                handleMemberBorrowedResults(memberBorrowedCache.get(memberUid));
+            } else {
+                System.out.println("[GUIManager] Sending MEMBER_BORROWED_REQ for: " + memberUid);
+                client.sendMessage(new Message(MessageType.MEMBER_BORROWED_REQ, memberUid));
+            }
         });
         
         memberUidField.addActionListener(e -> searchMemberBtn.doClick());
@@ -816,14 +828,20 @@ public class GUIManager {
     
     public void handleMemberBorrowedResults(Object payload) {
         SwingUtilities.invokeLater(() -> {
+            System.out.println("[GUIManager] handleMemberBorrowedResults called");
+            System.out.println("[GUIManager] payload type: " + (payload != null ? payload.getClass().getName() : "null"));
             if (payload instanceof java.util.List) {
                 @SuppressWarnings("unchecked")
                 java.util.List<Resource> results = (java.util.List<Resource>) payload;
                 currentSearchResults = results;
+                System.out.println("[GUIManager] Received " + results.size() + " borrowed items");
+                System.out.println("[GUIManager] currentTableModel: " + (currentTableModel != null ? "exists" : "null"));
+                System.out.println("[GUIManager] currentResultsTable: " + (currentResultsTable != null ? "exists" : "null"));
                 
                 if (currentTableModel != null && currentResultsTable != null) {
                     // Clear existing rows
                     currentTableModel.setRowCount(0);
+                    System.out.println("[GUIManager] Cleared table, adding " + results.size() + " rows");
                     
                     // Add new rows
                     for (Resource resource : results) {
@@ -832,6 +850,7 @@ public class GUIManager {
                             resource.getDisplayName(),
                             resourceType
                         });
+                        System.out.println("[GUIManager] Added row: " + resource.getDisplayName());
                     }
                     
                     if (currentDetailsArea != null) {
@@ -852,7 +871,28 @@ public class GUIManager {
     
     public void refreshMemberBorrowed() {
         if (currentMemberUid != null && !currentMemberUid.isEmpty()) {
-            client.sendMessage(new Message(MessageType.MEMBER_BORROWED_REQ, currentMemberUid));
+            // Try to use cache first, fallback to server
+            if (memberBorrowedCache.containsKey(currentMemberUid)) {
+                System.out.println("[GUIManager] Using cached borrowed items for " + currentMemberUid);
+                handleMemberBorrowedResults(memberBorrowedCache.get(currentMemberUid));
+            } else {
+                System.out.println("[GUIManager] No cache, requesting from server");
+                client.sendMessage(new Message(MessageType.MEMBER_BORROWED_REQ, currentMemberUid));
+            }
+        }
+    }
+    
+    public void addToBorrowedCache(String memberUid, Resource resource) {
+        memberBorrowedCache.computeIfAbsent(memberUid, k -> new java.util.ArrayList<>()).add(resource);
+        System.out.println("[GUIManager] Added " + resource.getDisplayName() + " to borrowed cache for " + memberUid);
+    }
+    
+    public void removeFromBorrowedCache(String memberUid, Resource resource) {
+        java.util.List<Resource> list = memberBorrowedCache.get(memberUid);
+        if (list != null) {
+            list.removeIf(r -> r.getDisplayName().equals(resource.getDisplayName()) && 
+                              r.getDetails().equals(resource.getDetails()));
+            System.out.println("[GUIManager] Removed " + resource.getDisplayName() + " from borrowed cache for " + memberUid);
         }
     }
     
@@ -865,10 +905,13 @@ public class GUIManager {
                     r.setCheckedOut(available);
                     System.out.println("[GUIManager] Locally updated " + r.getDisplayName() + " availability to: " + available);
                     
-                    // If checking in (making available), remove from borrowed list
+                    // If checking in (making available), remove from borrowed list and cache
                     if (available && currentTableModel != null && currentResultsTable != null) {
                         currentSearchResults.remove(i);
                         currentTableModel.removeRow(i);
+                        if (currentMemberUid != null) {
+                            removeFromBorrowedCache(currentMemberUid, r);
+                        }
                         if (currentDetailsArea != null) {
                             if (currentSearchResults.isEmpty()) {
                                 currentDetailsArea.setText("No borrowed resources.");

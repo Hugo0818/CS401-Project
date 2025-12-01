@@ -26,6 +26,7 @@ public class Client implements Runnable {
     private GUIManager gui; // set when GUIManager constructed
     private Resource lastCheckoutResource;
     private Resource lastCheckinResource;
+    private String lastCheckoutMemberUid;
     
     public static void main(String[] args) {
         // Load configuration from config.properties
@@ -189,9 +190,12 @@ public class Client implements Runnable {
             case CHECK_OUT_RES -> {
                 if (msg.isOk()) {
                     gui.showInfo("Resource checked out successfully!");
-                    // Update availability locally instead of fetching from server
+                    // Update availability locally and add to borrowed cache
                     if (lastCheckoutResource != null) {
                         gui.updateResourceAvailability(lastCheckoutResource, false);
+                        if (lastCheckoutMemberUid != null) {
+                            gui.addToBorrowedCache(lastCheckoutMemberUid, lastCheckoutResource);
+                        }
                     }
                 } else {
                     gui.showError("Checkout failed: " + msg.getInfo());
@@ -257,6 +261,10 @@ public class Client implements Runnable {
     
     public void setLastCheckinResource(Resource resource) {
         this.lastCheckinResource = resource;
+    }
+    
+    public void setLastCheckoutMemberUid(String memberUid) {
+        this.lastCheckoutMemberUid = memberUid;
     }
 
     public void close() {

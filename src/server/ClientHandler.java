@@ -254,7 +254,11 @@ public class ClientHandler implements Runnable {
         }
         
         ArrayList<Resource> borrowedResources = member.getCurrentlyHeldResources();
-        System.out.println("[Handler#" + clientId + "] Member " + member.getName() + " has " + borrowedResources.size() + " borrowed items");
+        System.out.println("[Handler#" + clientId + "] Member " + member.getName() + " (Object: " + System.identityHashCode(member) + ") has " + borrowedResources.size() + " borrowed items");
+        for (Resource r : borrowedResources) {
+            System.out.println("[Handler#" + clientId + "]   - " + r.getDisplayName() + " (type: " + r.getClass().getSimpleName() + ")");
+        }
+        System.out.println("[Handler#" + clientId + "] Sending borrowed resources list (size: " + borrowedResources.size() + ")");
         sendMessage(Message.ok(MessageType.MEMBER_BORROWED_RES, borrowedResources));
     }
 
@@ -350,10 +354,10 @@ public class ClientHandler implements Runnable {
             return;
         }
         
-        System.out.println("[Handler#" + clientId + "] Before checkout - Member " + member.getName() + " has " + member.getCurrentlyHeldResources().size() + " borrowed items");
+        System.out.println("[Handler#" + clientId + "] Before checkout - Member " + member.getName() + " (Object: " + System.identityHashCode(member) + ") has " + member.getCurrentlyHeldResources().size() + " borrowed items");
         boolean success = facade.checkoutResource(resource, member);
         if (success) {
-            System.out.println("[Handler#" + clientId + "] After checkout - Member " + member.getName() + " has " + member.getCurrentlyHeldResources().size() + " borrowed items");
+            System.out.println("[Handler#" + clientId + "] After checkout - Member " + member.getName() + " (Object: " + System.identityHashCode(member) + ") has " + member.getCurrentlyHeldResources().size() + " borrowed items");
             System.out.println("[Handler#" + clientId + "] Checkout: " + resource.getDisplayName() + " to " + member.getName());
             sendMessage(Message.ok(MessageType.CHECK_OUT_RES, "Checked out successfully"));
         } else {
