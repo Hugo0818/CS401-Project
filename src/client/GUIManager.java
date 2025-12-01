@@ -13,6 +13,9 @@ import java.awt.event.WindowEvent;
 public class GUIManager {
     private final Client client;
     private final JFrame mainFrame;
+    
+    private DefaultListModel<Member> resultsAreaModel;
+    private JList<Member> resultsArea;
 
     public GUIManager(Client client) {
         this.client = client;
@@ -413,9 +416,14 @@ public class GUIManager {
         JPanel centerPanel = new JPanel(new BorderLayout(10, 10));
         centerPanel.add(searchPanel, BorderLayout.NORTH);
         
-        JTextArea resultsArea = new JTextArea(15, 50);
-        resultsArea.setEditable(false);
-        resultsArea.setText("Search for members by name or UID.");
+        resultsAreaModel = new DefaultListModel<>();
+        resultsArea = new JList<>(resultsAreaModel);
+        resultsArea.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        
+//        JTextArea resultsArea = new JTextArea(15, 50);
+//        resultsArea.setEditable(false);
+//        resultsArea.setText("Search for members by name or UID.");
+        
         JScrollPane scrollPane = new JScrollPane(resultsArea);
         centerPanel.add(scrollPane, BorderLayout.CENTER);
         
@@ -423,7 +431,15 @@ public class GUIManager {
         
         searchBtn.addActionListener(e -> {
             String query = searchField.getText().trim();
-            resultsArea.setText("Searching for members: " + query + "\n\nResults will appear here...");
+            
+//            resultsArea.setText("Searching for members: " + query + "\n\nResults will appear here...");
+//            client.sendMessage(new Message(MessageType.MEMBER_SEARCH_REQ, query));
+            
+            resultsAreaModel.clear();
+            
+            if (query.isEmpty()) {
+                return;
+            }
             client.sendMessage(new Message(MessageType.MEMBER_SEARCH_REQ, query));
         });
         
@@ -488,8 +504,20 @@ public class GUIManager {
 
     public void handleMemberSearchResults(Object payload) {
         SwingUtilities.invokeLater(() -> {
-            if (payload instanceof java.util.List list) showInfo("Member search returned " + list.size());
-            else showInfo("No results");
+            if (!(payload instanceof java.util.List<?> list)) {
+                showInfo("No results");
+                return;
+            }
+
+            resultsAreaModel.clear();
+
+            for (Object o : list) {
+                if (o instanceof Member m) {
+                	resultsAreaModel.addElement(m);
+                }
+            }
+
+            showInfo("Found " + resultsAreaModel.size() + " member(s).");
         });
     }
 
