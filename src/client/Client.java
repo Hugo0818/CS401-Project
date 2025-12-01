@@ -197,6 +197,11 @@ public class Client implements Runnable {
                 return true;
             }
             
+            case REMOVE_MEMBER_RES -> {
+                gui.handleRemoveMember(msg.getPayload());
+                return true;
+            }
+            
             case ERROR -> {
                 gui.showError("Server error: " + msg.getInfo());
                 return true;

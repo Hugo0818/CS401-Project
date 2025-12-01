@@ -86,6 +86,11 @@ public class LibraryFacade {
         memberManager.addMember(member);
         saveChanges();
     }
+    
+    public void removeMember(Member member) {
+        memberManager.removeMember(member);
+        saveChanges();
+    }
 
     public Member findMemberByUsername(String username) {
         return memberManager.findByUsername(username);
@@ -98,6 +103,7 @@ public class LibraryFacade {
     public ArrayList<Member> searchMembers(String query) {
         return memberManager.searchMembers(query);
     }
+    
     //////////////////////
     /*
     public Member signupMember(String name) {

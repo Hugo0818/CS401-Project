@@ -77,6 +77,7 @@ public class ClientHandler implements Runnable {
                 
                 case CATALOG_SEARCH_REQ -> handleCatalogSearch(msg);
                 case MEMBER_SEARCH_REQ -> handleMemberSearch(msg);
+                case REMOVE_MEMBER_REQ -> handleRemoveMember(msg);
                 case ADD_RESOURCE_REQ -> handleAddResource(msg);
                 case REMOVE_RESOURCE_REQ -> handleRemoveResource(msg);
                 case CHECK_OUT_REQ -> handleCheckout(msg);
@@ -199,7 +200,26 @@ public class ClientHandler implements Runnable {
         ArrayList<Member> results = facade.searchMembers(q); // assume facade exposes this
         sendMessage(Message.ok(MessageType.MEMBER_SEARCH_RES, results));
     }
+    
+    private void handleRemoveMember(Message msg) {
+        Object p = msg.getPayload();
 
+        if (!(p instanceof Integer id)) {
+            sendMessage(Message.fail(MessageType.REMOVE_MEMBER_RES, "Invalid UID"));
+            return;
+        }
+
+        Member m = facade.findMemberByUID(id);
+
+        if (m == null) {
+            sendMessage(Message.fail(MessageType.REMOVE_MEMBER_RES, "Member not found"));
+            return;
+        }
+
+        facade.removeMember(m);
+        sendMessage(Message.ok(MessageType.REMOVE_MEMBER_RES, "Member removed successfully"));
+    }
+    
     private void handleLogout(Message msg) {
         sendMessage(Message.ok(MessageType.LOGOUT_RESPONSE, "Goodbye"));
     }
