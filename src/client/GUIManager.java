@@ -14,11 +14,9 @@ public class GUIManager {
     private final Client client;
     private final JFrame mainFrame;
     
-//<<<<<<< HEAD
     private DefaultListModel<Member> resultsAreaModel;
     private JList<Member> resultsArea;
-//=======
-    // For managing search results display
+    
     private JTable currentResultsTable;
     private javax.swing.table.DefaultTableModel currentTableModel;
     private JTextArea currentDetailsArea;
@@ -891,6 +889,7 @@ public class GUIManager {
             }
         }
     }
+    
     public void handleRemoveMember(Object payload) {
         SwingUtilities.invokeLater(() -> {
             if (payload instanceof String msg) {
