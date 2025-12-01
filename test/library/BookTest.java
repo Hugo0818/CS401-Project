@@ -38,4 +38,3 @@ public class BookTest {
         assertEquals("My Book", b.getDisplayName());
     }
 }
-

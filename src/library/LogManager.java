@@ -58,9 +58,9 @@ public class LogManager {
         return day1 == day2;
     }
 
-	public Object getAll() {
-		// TODO Auto-generated method stub
-		return null;
+	public ArrayList<Log> getAll() {
+		System.out.println("[LogManager] getAll() called - returning " + allLogs.size() + " logs");
+		return allLogs;
 	}
     
 }

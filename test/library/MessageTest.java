@@ -1,34 +1,70 @@
 package library;
 
 import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-/**
- * Unit tests for Message class.
- * Tests message creation and serialization.
- */
-class MessageTest {
-    
-    private Message message;
-    
-    @BeforeEach
-    void setUp() {
-        message = new Message("TEST", "Test content");
-    }
-    
+public class MessageTest {
+
     @Test
-    void testGetType() {
-        // TODO: Implement test
+    void testConstructorStoresFieldsCorrectly() {
+        Object payload = 123;  // Any object
+        Message m = new Message(
+                MessageType.LOGIN_ATTEMPT,
+                payload,
+                false,
+                "Failed login"
+        );
+
+        assertEquals(MessageType.LOGIN_ATTEMPT, m.getType());
+        assertEquals(payload, m.getPayload());
+        assertFalse(m.isOk());
+        assertEquals("Failed login", m.getInfo());
     }
-    
+
     @Test
-    void testGetContent() {
-        // TODO: Implement test
+    void testSimpleConstructorDefaultsOkAndInfo() {
+        Object payload = "Some payload";
+        Message m = new Message(MessageType.CATALOG_VIEW_REQ, payload);
+
+        assertEquals(MessageType.CATALOG_VIEW_REQ, m.getType());
+        assertEquals(payload, m.getPayload());
+        assertTrue(m.isOk());
+        assertEquals("", m.getInfo());
     }
-    
+
     @Test
-    void testDefaultConstructor() {
-        // TODO: Implement test
+    void testOkFactoryMethod() {
+        Object payload = "All good";
+        Message m = Message.ok(MessageType.PING, payload);
+
+        assertEquals(MessageType.PING, m.getType());
+        assertEquals(payload, m.getPayload());
+        assertTrue(m.isOk());
+        assertEquals("", m.getInfo());
+    }
+
+    @Test
+    void testFailFactoryMethod() {
+        Message m = Message.fail(MessageType.ERROR, "Something went wrong");
+
+        assertEquals(MessageType.ERROR, m.getType());
+        assertNull(m.getPayload());
+        assertFalse(m.isOk());
+        assertEquals("Something went wrong", m.getInfo());
+    }
+
+    @Test
+    void testToStringFormat() {
+        Message m = new Message(
+                MessageType.W_CLOSED,
+                null,
+                true,
+                "Window closed"
+        );
+
+        String s = m.toString();
+        assertTrue(s.contains("W_CLOSED"));
+        assertTrue(s.contains("ok=true"));
+        assertTrue(s.contains("info=Window closed"));
     }
 }

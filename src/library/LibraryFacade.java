@@ -31,11 +31,16 @@ public class LibraryFacade {
             ArrayList<Member> memberList = (ArrayList<Member>) in.readObject();
             @SuppressWarnings("unchecked")
             ArrayList<Log> logList = (ArrayList<Log>) in.readObject();
+            
+            System.out.println("[LibraryFacade] Loaded " + staffList.size() + " staff, " + resources.size() + " resources, " + memberList.size() + " members, " + logList.size() + " logs");
 
             this.staffManager = new StaffManager(staffList);
             this.resourceManager = new ResourceManager(resources);
             this.memberManager = new MemberManager(memberList);
             this.logManager = new LogManager(logList);
+            
+            // Reconcile member borrowed resources with catalog instances
+            reconcileBorrowedResources(memberList, resources);
 
         } catch (Exception e) {
             // File does NOT exist or is corrupted → start empty
@@ -86,6 +91,11 @@ public class LibraryFacade {
         memberManager.addMember(member);
         saveChanges();
     }
+    
+    public void removeMember(Member member) {
+        memberManager.removeMember(member);
+        saveChanges();
+    }
 
     public Member findMemberByUsername(String username) {
         return memberManager.findByUsername(username);
@@ -98,6 +108,7 @@ public class LibraryFacade {
     public ArrayList<Member> searchMembers(String query) {
         return memberManager.searchMembers(query);
     }
+    
     //////////////////////
     /*
     public Member signupMember(String name) {
@@ -169,14 +180,61 @@ public class LibraryFacade {
         try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serFilePath))) {
 
             System.out.println("[LibraryFacade] Saving data to " + serFilePath);
+            
+            ArrayList<Staff> staff = staffManager.getAll();
+            ArrayList<Resource> resources = (ArrayList<Resource>) resourceManager.getAll();
+            ArrayList<Member> members = memberManager.getAll();
+            ArrayList<Log> logs = (ArrayList<Log>) logManager.getAll();
+            
+            System.out.println("[LibraryFacade] Saving " + staff.size() + " staff, " + resources.size() + " resources, " + members.size() + " members, " + logs.size() + " logs");
 
-            out.writeObject(staffManager.getAll());
-            out.writeObject(resourceManager.getAll()); //not implemented
-            out.writeObject(memberManager.getAll());
-            out.writeObject(logManager.getAll()); //not implemented
+            out.writeObject(staff);
+            out.writeObject(resources);
+            out.writeObject(members);
+            out.writeObject(logs);
+            
+            System.out.println("[LibraryFacade] Save completed successfully");
 
         } catch (Exception e) {
             System.err.println("[LibraryFacade] Error saving data: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
+    
+    // Reconcile borrowed resources to use catalog instances
+    private void reconcileBorrowedResources(ArrayList<Member> members, ArrayList<Resource> catalogResources) {
+        System.out.println("[LibraryFacade] Reconciling borrowed resources with catalog...");
+        for (Member member : members) {
+            ArrayList<Resource> borrowedResources = member.getCurrentlyHeldResources();
+            ArrayList<Resource> reconciledResources = new ArrayList<>();
+            
+            for (Resource borrowed : borrowedResources) {
+                // Find matching resource in catalog
+                Resource catalogResource = null;
+                for (Resource catalogItem : catalogResources) {
+                    if (catalogItem.getDisplayName().equals(borrowed.getDisplayName()) &&
+                        catalogItem.getDetails().equals(borrowed.getDetails())) {
+                        catalogResource = catalogItem;
+                        break;
+                    }
+                }
+                
+                if (catalogResource != null) {
+                    reconciledResources.add(catalogResource);
+                    // Ensure catalog resource is marked as checked out
+                    if (catalogResource.isAvailable()) {
+                        catalogResource.setCheckedOut(false);
+                        System.out.println("[LibraryFacade] Marked " + catalogResource.getDisplayName() + " as checked out");
+                    }
+                } else {
+                    System.err.println("[LibraryFacade] Warning: Borrowed resource not found in catalog: " + borrowed.getDisplayName());
+                }
+            }
+            
+            // Replace member's borrowed list with reconciled list
+            borrowedResources.clear();
+            borrowedResources.addAll(reconciledResources);
+            System.out.println("[LibraryFacade] Reconciled " + reconciledResources.size() + " borrowed items for member " + member.getName());
         }
     }
 }

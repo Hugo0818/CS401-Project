@@ -23,6 +23,8 @@ public class Client implements Runnable {
 
     private Thread thread;
     private GUIManager gui; // set when GUIManager constructed
+    private Resource lastCheckoutResource;
+    private Resource lastCheckinResource;
     
     public static void main(String[] args) {
         Client client = new Client("localhost", 12345); // or your server port
@@ -142,6 +144,11 @@ public class Client implements Runnable {
                 return true;
             }
 
+            case MEMBER_BORROWED_RES -> {
+                gui.handleMemberBorrowedResults(msg.getPayload());
+                return true;
+            }
+
             case ADD_RESOURCE_RES -> {
                 if (msg.isOk()) {
                     gui.showInfo("Resource added successfully!");
@@ -161,6 +168,10 @@ public class Client implements Runnable {
             case CHECK_OUT_RES -> {
                 if (msg.isOk()) {
                     gui.showInfo("Resource checked out successfully!");
+                    // Update availability locally instead of fetching from server
+                    if (lastCheckoutResource != null) {
+                        gui.updateResourceAvailability(lastCheckoutResource, false);
+                    }
                 } else {
                     gui.showError("Checkout failed: " + msg.getInfo());
                 }
@@ -169,12 +180,22 @@ public class Client implements Runnable {
             case CHECK_IN_RES -> {
                 if (msg.isOk()) {
                     gui.showInfo("Resource checked in successfully!");
+                    // Update availability locally and refresh borrowed list
+                    if (lastCheckinResource != null) {
+                        gui.updateResourceAvailability(lastCheckinResource, true);
+                    }
+                    gui.refreshMemberBorrowed();
                 } else {
                     gui.showError("Check-in failed: " + msg.getInfo());
                 }
                 return true;
             }
 
+            
+            case REMOVE_MEMBER_RES -> {
+                gui.handleRemoveMember(msg.getPayload());
+                return true;
+            }
             
             case ERROR -> {
                 gui.showError("Server error: " + msg.getInfo());
@@ -209,6 +230,14 @@ public class Client implements Runnable {
     }
 
     public GUIManager getGui() { return gui; }
+    
+    public void setLastCheckoutResource(Resource resource) {
+        this.lastCheckoutResource = resource;
+    }
+    
+    public void setLastCheckinResource(Resource resource) {
+        this.lastCheckinResource = resource;
+    }
 
     public void close() {
         try {
