@@ -70,7 +70,7 @@ public class Client implements Runnable {
         }
     }
 
-    boolean connect() {
+    public boolean connect() {
         try {
             socket = new Socket(host, port);
             out = new ObjectOutputStream(socket.getOutputStream());
