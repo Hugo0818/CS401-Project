@@ -269,6 +269,8 @@ public class ClientHandler implements Runnable {
         if (success) {
             System.out.println("[Handler#" + clientId + "] Resource added: " + resource.getDisplayName());
             sendMessage(Message.ok(MessageType.ADD_RESOURCE_RES, "Resource added successfully"));
+          //log the operation
+            facade.addLog(new Log(resource, MessageType.ADD_RESOURCE_RES));
         } else {
             sendMessage(Message.fail(MessageType.ADD_RESOURCE_RES, "Failed to add resource"));
         }
@@ -286,6 +288,7 @@ public class ClientHandler implements Runnable {
         if (success) {
             System.out.println("[Handler#" + clientId + "] Resource removed: " + resource.getDisplayName());
             sendMessage(Message.ok(MessageType.REMOVE_RESOURCE_RES, "Resource removed successfully"));
+            facade.addLog(new Log(resource, MessageType.REMOVE_RESOURCE_RES));
         } else {
             sendMessage(Message.fail(MessageType.REMOVE_RESOURCE_RES, "Failed to remove resource"));
         }
@@ -336,6 +339,8 @@ public class ClientHandler implements Runnable {
             System.out.println("[Handler#" + clientId + "] After checkout - Member " + member.getName() + " has " + member.getCurrentlyHeldResources().size() + " borrowed items");
             System.out.println("[Handler#" + clientId + "] Checkout: " + resource.getDisplayName() + " to " + member.getName());
             sendMessage(Message.ok(MessageType.CHECK_OUT_RES, "Checked out successfully"));
+          //log the operation
+            facade.addLog(new Log(member, resource, MessageType.CHECK_OUT_RES));
         } else {
             sendMessage(Message.fail(MessageType.CHECK_OUT_RES, "Checkout failed - resource may not be available"));
         }
@@ -385,6 +390,8 @@ public class ClientHandler implements Runnable {
         if (success) {
             System.out.println("[Handler#" + clientId + "] Check-in: " + resource.getDisplayName() + " from " + member.getName());
             sendMessage(Message.ok(MessageType.CHECK_IN_RES, "Checked in successfully"));
+            //log the operation
+            facade.addLog(new Log(member, resource, MessageType.CHECK_IN_RES));
         } else {
             sendMessage(Message.fail(MessageType.CHECK_IN_RES, "Check-in failed"));
         }

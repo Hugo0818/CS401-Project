@@ -97,6 +97,7 @@ public class Client implements Runnable {
             		
             		if(payload instanceof Staff staff) {
             			gui.showStaffDashboard();
+            			
             		}            		
             		else {
             			gui.showMemberDashboard();
