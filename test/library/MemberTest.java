@@ -8,29 +8,14 @@ import java.util.ArrayList;
 
 public class MemberTest {
 
-    // Fake LoginInfo class so we can test Member independently
+    // Fake LoginInfo using your provided class exactly
     private static class FakeLoginInfo extends LoginInfo {
-        private final String name;
-        private final String password;
-
         public FakeLoginInfo(String name, String password) {
-            super(name, password, true); // If your LoginInfo has a different constructor, adjust
-            this.name = name;
-            this.password = password;
-        }
-
-        @Override
-        public String getUidOrName() {
-            return name;
-        }
-
-        @Override
-        public String getPassword() {
-            return password;
+            super(name, password, false); // members are NOT staff
         }
     }
 
-    // Fake resource
+    // Fake Resource so Member can interact without real resources
     private static class FakeResource implements Resource {
         @Override public ArrayList<Log> getLogs() { return new ArrayList<>(); }
         @Override public void addLog(Log log) {}
@@ -53,8 +38,12 @@ public class MemberTest {
     void testConstructorInitializesFields() {
         assertEquals("John Doe", member.getName());
         assertEquals("pass123", member.getpassword());
+        
         assertNotNull(member.getUID());
+        assertTrue(member.getUID().startsWith("M"));
+
         assertEquals("Member", member.getType());
+
         assertNotNull(member.getCheckoutHistory());
         assertNotNull(member.getCurrentlyHeldResources());
     }
@@ -90,7 +79,11 @@ public class MemberTest {
 
     @Test
     void testAddLog() {
-        Log log = new Log(member, new FakeResource());
+        FakeResource r = new FakeResource();
+
+        // Updated to new Log constructor
+        Log log = new Log(member, r, MessageType.CHECK_OUT_RES);
+
         member.addLog(log);
 
         assertEquals(1, member.getCheckoutHistory().size());
@@ -99,8 +92,12 @@ public class MemberTest {
 
     @Test
     void testSetLogs() {
-        Log log1 = new Log(member, new FakeResource());
-        Log log2 = new Log(member, new FakeResource());
+        FakeResource r1 = new FakeResource();
+        FakeResource r2 = new FakeResource();
+
+        Log log1 = new Log(member, r1, MessageType.CHECK_OUT_RES);
+        Log log2 = new Log(member, r2, MessageType.CHECK_OUT_RES);
+
         ArrayList<Log> newLogs = new ArrayList<>();
         newLogs.add(log1);
         newLogs.add(log2);
@@ -112,3 +109,4 @@ public class MemberTest {
         assertSame(log2, member.getCheckoutHistory().get(1));
     }
 }
+

@@ -5,16 +5,21 @@ import org.junit.jupiter.api.Test;
 
 public class LogTest {
 
-    // ----- Dummy LoginInfo for testing -----
-    static class DummyLoginInfo extends LoginInfo {
-        public DummyLoginInfo(String user, String pass) {
-            super(user, pass, true);
-        }
+    // ----- Dummy Member -----
+    static class DummyMember extends Member {
+        public DummyMember() { super(null); }
+        @Override public String getUID() { return "M123"; }
     }
 
-    // ----- Dummy Resource for testing -----
+    // ----- Dummy Staff -----
+    static class DummyStaff extends Staff {
+        public DummyStaff() { super(null); }
+        @Override public String getUID() { return "S999"; }
+    }
+
+    // ----- Dummy Resource -----
     static class DummyResource implements Resource {
-        @Override public String getDisplayName() { return "Dummy"; }
+        @Override public String getDisplayName() { return "DummyResource"; }
         @Override public boolean isAvailable() { return true; }
         @Override public void setCheckedOut(boolean b) {}
         @Override public String getDetails() { return ""; }
@@ -22,56 +27,103 @@ public class LogTest {
         @Override public void addLog(Log log) {}
     }
 
-    @Test
-    void testConstructorInitializesWhenValid() {
-        Member m = new Member(new DummyLoginInfo("user", "pass"));
-        Resource r = new DummyResource();
+    // ---------- TESTS FOR CONSTRUCTORS ----------
 
-        Log log = new Log(m, r);
+    @Test
+    void testMemberCheckOutConstructor() {
+        DummyMember m = new DummyMember();
+        DummyResource r = new DummyResource();
+
+        Log log = new Log(m, r, MessageType.CHECK_OUT_RES);
 
         assertEquals(m, log.getMember());
         assertEquals(r, log.getResource());
-        assertNotNull(log.getCheckOutTime());
-        assertNull(log.getCheckInTime());
+        assertTrue(log.getDetails().contains("Member M123checked out DummyResource"));
     }
 
     @Test
-    void testConstructorDoesNothingWhenNullsProvided() {
-        Log log = new Log(null, null);
+    void testMemberCheckInConstructor() {
+        DummyMember m = new DummyMember();
+        DummyResource r = new DummyResource();
 
-        assertNull(log.getMember());
-        assertNull(log.getResource());
+        Log log = new Log(m, r, MessageType.CHECK_IN_RES);
+
+        assertEquals(m, log.getMember());
+        assertEquals(r, log.getResource());
+        assertTrue(log.getDetails().contains("Member M123checked in DummyResource"));
+    }
+
+    @Test
+    void testStaffCheckOutConstructor() {
+        DummyStaff s = new DummyStaff();
+        DummyResource r = new DummyResource();
+
+        Log log = new Log(s, r, MessageType.CHECK_OUT_RES);
+
+        assertEquals(s, log.getStaff());
+        assertEquals(r, log.getResource());
+        assertTrue(log.getDetails().contains("Staff S999checked out DummyResource"));
+    }
+
+    @Test
+    void testStaffCheckInConstructor() {
+        DummyStaff s = new DummyStaff();
+        DummyResource r = new DummyResource();
+
+        Log log = new Log(s, r, MessageType.CHECK_IN_RES);
+
+        assertEquals(s, log.getStaff());
+        assertEquals(r, log.getResource());
+        assertTrue(log.getDetails().contains("Staff S999checked in DummyResource"));
+    }
+
+    @Test
+    void testAddResourceConstructor() {
+        DummyResource r = new DummyResource();
+
+        Log log = new Log(r, MessageType.ADD_RESOURCE_RES);
+
+        assertEquals(r, log.getResource());
+        assertTrue(log.getDetails().contains("New entry added to catalog"));
+    }
+
+    @Test
+    void testRemoveResourceConstructor() {
+        DummyResource r = new DummyResource();
+
+        Log log = new Log(r, MessageType.REMOVE_RESOURCE_RES);
+
+        assertEquals(r, log.getResource());
+        assertTrue(log.getDetails().contains("New entry removed from catalog"));
+    }
+
+    // ---------- TESTING checkOut + checkIn METHODS ----------
+
+    @Test
+    void testCheckOutWorksOnce() {
+        Log log = new Log(new DummyMember(), new DummyResource(), MessageType.CHECK_OUT_RES);
+
+        // Initial constructor does NOT set checkout time, so checkOut() should succeed
         assertNull(log.getCheckOutTime());
-        assertNull(log.getCheckInTime());
-    }
-
-    @Test
-    void testCheckOutWorksOnlyOnce() {
-        Member m = new Member(new DummyLoginInfo("user", "pass"));
-        Resource r = new DummyResource();
-        Log log = new Log(null, null);
-
-        // First checkout should succeed
-        assertTrue(log.checkOut(m, r));
+        assertTrue(log.checkOut(new DummyMember(), new DummyResource()));
         assertNotNull(log.getCheckOutTime());
 
-        // Second checkout must fail
-        assertFalse(log.checkOut(m, r));
+        // Second call should fail
+        assertFalse(log.checkOut(new DummyMember(), new DummyResource()));
     }
 
     @Test
-    void testCheckInWorksOnlyAfterCheckout() {
-        Member m = new Member(new DummyLoginInfo("user", "pass"));
-        Resource r = new DummyResource();
-        Log log = new Log(m, r);
+    void testCheckInOnlyAfterCheckOut() {
+        Log log = new Log(new DummyMember(), new DummyResource(), MessageType.CHECK_OUT_RES);
 
+        // Must call checkOut before checkIn can work
+        assertTrue(log.checkOut(new DummyMember(), new DummyResource()));
         assertNull(log.getCheckInTime());
 
-        // First check-in succeeds
         assertTrue(log.checkIn());
         assertNotNull(log.getCheckInTime());
 
-        // Second check-in must fail
+        // Second check-in should fail
         assertFalse(log.checkIn());
     }
 }
