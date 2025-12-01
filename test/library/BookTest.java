@@ -1,39 +1,41 @@
 package library;
 
-import static org.junit.jupiter.api.Assertions.*;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import static org.junit.jupiter.api.Assertions.*;
 
-/**
- * Unit tests for Book class.
- * Tests Book resource implementation.
- */
-class BookTest {
-    
-    private Book book;
-    
-    @BeforeEach
-    void setUp() {
-        book = new Book();
-    }
-    
+public class BookTest {
+
     @Test
-    void testInitialAvailability() {
-        // TODO: Implement test
+    void testConstructorAndGetters() {
+        Book b = new Book("Test Title", "John Doe", "TestPub", "12345", true);
+
+        assertEquals("Title: Test Title\n" +
+                     "Author: John Doe\n" +
+                     "Publisher: TestPub\n" +
+                     "ISBN: 12345\n",
+                b.getDetails());
+
+        assertTrue(b.isAvailable());
+        assertEquals("Test Title", b.getDisplayName());
+        assertNotNull(b.getLogs());
+        assertTrue(b.getLogs().isEmpty());
     }
-    
+
     @Test
-    void testSetAvailability() {
-        // TODO: Implement test
+    void testAvailabilitySetter() {
+        Book b = new Book("A", "B", "C", "D", true);
+
+        assertTrue(b.isAvailable());
+        b.setCheckedOut(false);
+        assertFalse(b.isAvailable());
+        b.setCheckedOut(true);
+        assertTrue(b.isAvailable());
     }
-    
+
     @Test
-    void testGetLogs() {
-        // TODO: Implement test
-    }
-    
-    @Test
-    void testAddLog() {
-        // TODO: Implement test
+    void testGetDisplayName() {
+        Book b = new Book("My Book", "Author", "Publisher", "111", true);
+        assertEquals("My Book", b.getDisplayName());
     }
 }
+
