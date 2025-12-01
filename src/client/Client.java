@@ -178,11 +178,6 @@ public class Client implements Runnable {
                 return true;
             }
         }
-<<<<<<< HEAD
-=======
-        
-		return false;
->>>>>>> a05e54ba44f7267443fc09b01906365bc94368a9
     }
 
     /** Thread-safe send */
