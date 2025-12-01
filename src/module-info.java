@@ -9,7 +9,9 @@ module LibraryProject {
     exports client;
     exports server;
     
+    //Needed for suite to work
     opens library to org.junit.platform.commons;
     opens client to org.junit.platform.commons;
     opens server to org.junit.platform.commons;
+    
 }
