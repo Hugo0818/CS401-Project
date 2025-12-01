@@ -220,33 +220,28 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description                  | Assigned To | Notes |
 | ------ | --------------------------------- | ----------- | ----- |
-| [ ]    | Implement testInitialAvailability |             |       |
-| [ ]    | Implement testSetAvailability     |             |       |
-| [ ]    | Implement testGetLogs             |             |       |
-| [ ]    | Implement testAddLog              |             |       |
+| [x]    | Implement testConstructor&Getters | Sal         |       |
+| [x]    | Implement testAvailabilitySetter  | Sal         |       |
+| [x]    | Implement testGetDisplayName      | Sal         |       |
 | [x]    | Test file created                 | Ryan-pelo   |       |
 
 # ClientTest.java
 
 | Status | Task Description              | Assigned To | Notes |
 | ------ | ----------------------------- | ----------- | ----- |
-| [ ]    | Implement testClientCreation  |             |       |
-| [ ]    | Implement testConnectToServer |             |       |
-| [ ]    | Implement testSendMessage     |             |       |
-| [ ]    | Implement testReceiveMessage  |             |       |
-| [ ]    | Implement testCloseConnection |             |       |
-| [ ]    | Implement testIsConnected     |             |       |
+| [x]    | Implement testClientCreation  | Sal         |       |
+| [x]    | Implement testIsConnected     | Sal         |       |
+| [x]    | Implement testClose           | Sal         |       |
+| [x]    | Implement testSendMsgNotCnt   | Sal         |       |
 | [x]    | Test file created             | Ryan-pelo   |       |
 
 # LibraryServerTest.java
 
 | Status | Task Description                        | Assigned To | Notes |
 | ------ | --------------------------------------- | ----------- | ----- |
-| [ ]    | Implement testServerCreation            |             |       |
-| [ ]    | Implement testStartServer               |             |       |
-| [ ]    | Implement testAcceptClient              |             |       |
-| [ ]    | Implement testCloseServer               |             |       |
-| [ ]    | Implement testMultipleClientConnections |             |       |
+| [x]    | Implement testServerCreation            | Sal         |       |
+| [x]    | Implement testStopServer                | Sal         |       |
+| [x]    | Implement testRemoveHandler             | Sal         |       |
 | [x]    | Test file created                       | Ryan-pelo   |       |
 
 # LogTest.java
@@ -286,10 +281,10 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description                  | Assigned To | Notes |
 | ------ | --------------------------------- | ----------- | ----- |
-| [ ]    | Implement testInitialAvailability |             |       |
-| [ ]    | Implement testGetDetails          |             |       |
-| [ ]    | Implement testGetDisplayName      |             |       |
-| [ ]    | Implement testAddLog              |             |       |
+| [x]    | Implement testConstructor         | Sal         |       |
+| [x]    | Implement testAvailability        | Sal         |       |
+| [x]    | Implement testGetDisplayName      | Sal         |       |
+| [x]    | Implement testAddLog              | Sal         |       |
 | [x]    | Test file created                 | Ryan-pelo   |       |
 
 # Other/Project Tasks
