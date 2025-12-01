@@ -238,38 +238,6 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement testIsConnected     |             |       |
 | [x]    | Test file created             | Ryan-pelo   |       |
 
-# ClientHandlerTest.java
-
-| Status | Task Description                    | Assigned To | Notes |
-| ------ | ----------------------------------- | ----------- | ----- |
-| [ ]    | Implement testClientHandlerCreation |             |       |
-| [ ]    | Implement testRun                   |             |       |
-| [ ]    | Implement testProcessMessage        |             |       |
-| [ ]    | Implement testSendMessage           |             |       |
-| [ ]    | Implement testCloseConnection       |             |       |
-| [ ]    | Implement testDisconnectMessage     |             |       |
-| [x]    | Test file created                   | Ryan-pelo   |       |
-
-# GUIManagerTest.java
-
-| Status | Task Description                   | Assigned To | Notes |
-| ------ | ---------------------------------- | ----------- | ----- |
-| [ ]    | Implement testGUIManagerCreation   |             |       |
-| [ ]    | Implement testClientInitialization |             |       |
-| [ ]    | Implement testFrameCreation        |             |       |
-| [ ]    | Implement testConfigLoading        |             |       |
-| [x]    | Test file created                  | Ryan-pelo   |       |
-
-# LibraryFacadeTest.java
-
-| Status | Task Description            | Assigned To | Notes |
-| ------ | --------------------------- | ----------- | ----- |
-| [ ]    | Implement testAddResource   |             |       |
-| [ ]    | Implement testSearchCatalog |             |       |
-| [ ]    | Implement testAddMember     |             |       |
-| [ ]    | Implement testAddStaff      |             |       |
-| [x]    | Test file created           | Ryan-pelo   |       |
-
 # LibraryServerTest.java
 
 | Status | Task Description                        | Assigned To | Notes |
@@ -280,16 +248,6 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement testCloseServer               |             |       |
 | [ ]    | Implement testMultipleClientConnections |             |       |
 | [x]    | Test file created                       | Ryan-pelo   |       |
-
-# LogManagerTest.java
-
-| Status | Task Description                       | Assigned To | Notes |
-| ------ | -------------------------------------- | ----------- | ----- |
-| [ ]    | Implement testAddLog                   |             |       |
-| [ ]    | Implement testGetLogsByDate            |             |       |
-| [ ]    | Implement testGetLogsByDateNull        |             |       |
-| [ ]    | Implement testGetLogsByNonMatchingDate |             |       |
-| [x]    | Test file created                      | Ryan-pelo   |       |
 
 # LogTest.java
 
@@ -302,17 +260,6 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement testGetMember                     |             |       |
 | [ ]    | Implement testGetResource                   |             |       |
 | [x]    | Test file created                           | Ryan-pelo   |       |
-
-# MemberManagerTest.java
-
-| Status | Task Description                   | Assigned To | Notes |
-| ------ | ---------------------------------- | ----------- | ----- |
-| [ ]    | Implement testAddMember            |             |       |
-| [ ]    | Implement testRemoveMember         |             |       |
-| [ ]    | Implement testSearchMembers        |             |       |
-| [ ]    | Implement testSearchMembersByUID   |             |       |
-| [ ]    | Implement testGetMemberOutOfBounds |             |       |
-| [x]    | Test file created                  | Ryan-pelo   |       |
 
 # MemberTest.java
 
@@ -345,36 +292,10 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement testAddLog              |             |       |
 | [x]    | Test file created                 | Ryan-pelo   |       |
 
-# ResourceManagerTest.java
-
-| Status | Task Description                        | Assigned To | Notes |
-| ------ | --------------------------------------- | ----------- | ----- |
-| [ ]    | Implement testAddResource               |             |       |
-| [ ]    | Implement testSearchCatalog             |             |       |
-| [ ]    | Implement testEditResource              |             |       |
-| [ ]    | Implement testRemoveResource            |             |       |
-| [ ]    | Implement testRemoveNonExistentResource |             |       |
-| [x]    | Test file created                       | Ryan-pelo   |       |
-
-# StaffManagerTest.java
-
-| Status | Task Description               | Assigned To | Notes |
-| ------ | ------------------------------ | ----------- | ----- |
-| [ ]    | Implement testAddStaff         |             |       |
-| [ ]    | Implement testRemoveStaff      |             |       |
-| [ ]    | Implement testSetStaff         |             |       |
-| [ ]    | Implement testSetStaffNotFound |             |       |
-| [x]    | Test file created              | Ryan-pelo   |       |
-
 # Other/Project Tasks
 
 | Status | Task Description                        | Assigned To | Notes                   |
 | ------ | --------------------------------------- | ----------- | ----------------------- |
-| [ ]    | Write unit tests for ResourceManager    |             | Test checkout/checkin   |
-| [ ]    | Write unit tests for MemberManager      |             | Test member CRUD        |
-| [ ]    | Write unit tests for StaffManager       |             | Test staff/permissions  |
-| [ ]    | Write unit tests for LogManager         |             | Test log retrieval      |
-| [ ]    | Write unit tests for LibraryFacade      |             | Test passthrough        |
 | [ ]    | Write README.md with setup instructions |             | Eclipse setup, run cmd  |
 | [ ]    | Add error handling for socket timeouts  |             | Client/ClientHandler    |
 | [ ]    | Add error handling for serialization    |             | LibraryFacade.java      |
