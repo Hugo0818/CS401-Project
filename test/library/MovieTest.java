@@ -5,7 +5,13 @@ import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 
-class MovieTest {
+public class MovieTest {
+	
+	//Dummy member for creating logs
+	static class DummyMember extends Member{
+		public DummyMember() {super(null);}
+		@Override public String getUID() {return "M123";}
+	}
 
     @Test
     void testConstructorInitialValues() {
@@ -36,7 +42,9 @@ class MovieTest {
     @Test
     void testAddLog() {
         Movie movie = new Movie("Jaws", "Spielberg", 124, "PG");
-        Log log = new Log(null, movie);  // member null is fine for testing
+        
+        DummyMember m = new DummyMember();
+        Log log = new Log(m, movie, MessageType.CHECK_OUT_RES);  // member null is fine for testing
 
         movie.addLog(log);
 

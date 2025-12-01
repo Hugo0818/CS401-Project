@@ -14,11 +14,9 @@ public class GUIManager {
     private final Client client;
     private final JFrame mainFrame;
     
-//<<<<<<< HEAD
     private DefaultListModel<Member> resultsAreaModel;
     private JList<Member> resultsArea;
-//=======
-    // For managing search results display
+    
     private JTable currentResultsTable;
     private javax.swing.table.DefaultTableModel currentTableModel;
     private JTextArea currentDetailsArea;
@@ -148,8 +146,8 @@ public class GUIManager {
             
             LoginInfo li = new LoginInfo(name, pw, isStaff); // uidOrName holds name for signup
             client.sendMessage(new Message(MessageType.SIGNUP_ATTEMPT, li));
-
-            showInfo("Signup sent...");
+            
+            
             showLoginScreen();
         });
 
@@ -934,6 +932,7 @@ public class GUIManager {
             }
         }
     }
+    
     public void handleRemoveMember(Object payload) {
         SwingUtilities.invokeLater(() -> {
             if (payload instanceof String msg) {
@@ -1021,7 +1020,7 @@ public class GUIManager {
                 if (newResource != null) {
                     // Send message to server to add resource
                     client.sendMessage(new Message(MessageType.ADD_RESOURCE_REQ, newResource));
-                    showInfo("Resource created successfully!");
+                    showInfo("Resource add request sent");
                     
                     // Clear fields
                     fieldsPanel.removeAll();
