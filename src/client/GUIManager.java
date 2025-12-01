@@ -19,6 +19,8 @@ public class GUIManager {
     private javax.swing.table.DefaultTableModel currentTableModel;
     private JTextArea currentDetailsArea;
     private java.util.List<Resource> currentSearchResults;
+    private String lastSearchQuery;
+    private String currentMemberUid;
 
     public GUIManager(Client client) {
         this.client = client;
@@ -394,6 +396,7 @@ public class GUIManager {
         searchBtn.addActionListener(e -> {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
+                lastSearchQuery = query;
                 currentTableModel.setRowCount(0);
                 currentDetailsArea.setText("Searching...");
                 client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
@@ -430,6 +433,7 @@ public class GUIManager {
                 checkoutData.put("memberUid", memberUid);
                 checkoutData.put("resource", selectedResource);
                 
+                client.setLastCheckoutResource(selectedResource);
                 client.sendMessage(new Message(MessageType.CHECK_OUT_REQ, checkoutData));
             }
         });
@@ -440,24 +444,15 @@ public class GUIManager {
         
         JLabel titleLabel = new JLabel("Check In Resources");
         titleLabel.setFont(new Font("SansSerif", Font.BOLD, 20));
-        contentArea.add(titleLabel, BorderLayout.NORTH);
         
-        // Top panel with member UID and search
-        JPanel topPanel = new JPanel(new GridLayout(2, 1, 5, 5));
-        
-        JPanel memberPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        memberPanel.add(new JLabel("Member UID:"));
+        JPanel topPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        topPanel.add(titleLabel);
+        topPanel.add(Box.createHorizontalStrut(20));
+        topPanel.add(new JLabel("Member UID:"));
         JTextField memberUidField = new JTextField(15);
-        memberPanel.add(memberUidField);
-        topPanel.add(memberPanel);
-        
-        JPanel searchPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        searchPanel.add(new JLabel("Search Catalog:"));
-        JTextField searchField = new JTextField(30);
-        searchPanel.add(searchField);
-        JButton searchBtn = new JButton("Search");
-        searchPanel.add(searchBtn);
-        topPanel.add(searchPanel);
+        topPanel.add(memberUidField);
+        JButton searchMemberBtn = new JButton("Find Borrowed Items");
+        topPanel.add(searchMemberBtn);
         
         contentArea.add(topPanel, BorderLayout.NORTH);
         
@@ -476,13 +471,13 @@ public class GUIManager {
         currentResultsTable = new JTable(currentTableModel);
         currentResultsTable.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
         JScrollPane tableScroll = new JScrollPane(currentResultsTable);
-        tableScroll.setBorder(BorderFactory.createTitledBorder("Search Results"));
+        tableScroll.setBorder(BorderFactory.createTitledBorder("Currently Borrowed"));
         splitPane.setLeftComponent(tableScroll);
         
         // Right: Details area
         currentDetailsArea = new JTextArea();
         currentDetailsArea.setEditable(false);
-        currentDetailsArea.setText("Select a resource to view details.");
+        currentDetailsArea.setText("Enter a Member UID and click 'Find Borrowed Items' to see their checked out resources.");
         currentDetailsArea.setLineWrap(true);
         currentDetailsArea.setWrapStyleWord(true);
         JScrollPane detailsScroll = new JScrollPane(currentDetailsArea);
@@ -491,11 +486,11 @@ public class GUIManager {
         
         contentArea.add(splitPane, BorderLayout.CENTER);
         
-        // Bottom panel with check-in button
+        // Bottom panel with return button
         JPanel bottomPanel = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        JButton checkinBtn = new JButton("Check In Selected Resource");
-        checkinBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
-        bottomPanel.add(checkinBtn);
+        JButton returnBtn = new JButton("Return Selected Resource");
+        returnBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
+        bottomPanel.add(returnBtn);
         contentArea.add(bottomPanel, BorderLayout.SOUTH);
         
         // Table selection listener to show details
@@ -504,52 +499,50 @@ public class GUIManager {
                 int selectedRow = currentResultsTable.getSelectedRow();
                 if (selectedRow >= 0 && currentSearchResults != null && selectedRow < currentSearchResults.size()) {
                     Resource resource = currentSearchResults.get(selectedRow);
-                    currentDetailsArea.setText(resource.getDetails() + 
-                        "\nAvailable: " + (resource.isAvailable() ? "Yes" : "No"));
+                    currentDetailsArea.setText(resource.getDetails());
                 }
             }
         });
         
-        // Search button action
-        searchBtn.addActionListener(e -> {
-            String query = searchField.getText().trim();
-            if (!query.isEmpty()) {
-                currentTableModel.setRowCount(0);
-                currentDetailsArea.setText("Searching...");
-                client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
-            }
-        });
-        
-        searchField.addActionListener(e -> searchBtn.doClick());
-        
-        // Check-in button action
-        checkinBtn.addActionListener(e -> {
+        // Search member button action
+        searchMemberBtn.addActionListener(e -> {
             String memberUid = memberUidField.getText().trim();
-            int selectedRow = currentResultsTable.getSelectedRow();
-            
             if (memberUid.isEmpty()) {
                 showError("Please enter a Member UID");
                 return;
             }
             
+            currentMemberUid = memberUid;
+            currentTableModel.setRowCount(0);
+            currentDetailsArea.setText("Loading borrowed resources...");
+            client.sendMessage(new Message(MessageType.MEMBER_BORROWED_REQ, memberUid));
+        });
+        
+        memberUidField.addActionListener(e -> searchMemberBtn.doClick());
+        
+        // Return button action
+        returnBtn.addActionListener(e -> {
+            int selectedRow = currentResultsTable.getSelectedRow();
+            
+            if (currentMemberUid == null || currentMemberUid.isEmpty()) {
+                showError("Please search for a member first");
+                return;
+            }
+            
             if (selectedRow < 0) {
-                showError("Please select a resource to check in");
+                showError("Please select a resource to return");
                 return;
             }
             
             if (currentSearchResults != null && selectedRow < currentSearchResults.size()) {
                 Resource selectedResource = currentSearchResults.get(selectedRow);
                 
-                if (selectedResource.isAvailable()) {
-                    showError("This resource is already checked in");
-                    return;
-                }
-                
                 // Send check-in request with member UID and resource
                 java.util.Map<String, Object> checkinData = new java.util.HashMap<>();
-                checkinData.put("memberUid", memberUid);
+                checkinData.put("memberUid", currentMemberUid);
                 checkinData.put("resource", selectedResource);
                 
+                client.setLastCheckinResource(selectedResource);
                 client.sendMessage(new Message(MessageType.CHECK_IN_REQ, checkinData));
             }
         });
@@ -617,6 +610,7 @@ public class GUIManager {
         searchBtn.addActionListener(e -> {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
+                lastSearchQuery = query;
                 currentTableModel.setRowCount(0);
                 currentDetailsArea.setText("Searching...");
                 client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
@@ -706,12 +700,23 @@ public class GUIManager {
     }
 
     // Called by client listener when server sends catalog search results.
+    public void refreshCurrentSearch() {
+        if (lastSearchQuery != null && !lastSearchQuery.isEmpty()) {
+            client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, lastSearchQuery));
+        }
+    }
+    
     public void handleCatalogSearchResults(Object payload) {
         SwingUtilities.invokeLater(() -> {
             if (payload instanceof java.util.List) {
                 @SuppressWarnings("unchecked")
                 java.util.List<Resource> results = (java.util.List<Resource>) payload;
                 currentSearchResults = results;
+                
+                System.out.println("[GUIManager] Received catalog search results:");
+                for (Resource r : results) {
+                    System.out.println("  - " + r.getDisplayName() + " - isAvailable: " + r.isAvailable());
+                }
                 
                 if (currentTableModel != null && currentResultsTable != null) {
                     // Clear existing rows
@@ -762,6 +767,84 @@ public class GUIManager {
             if (payload instanceof java.util.List list) showInfo("Member search returned " + list.size());
             else showInfo("No results");
         });
+    }
+    
+    public void handleMemberBorrowedResults(Object payload) {
+        SwingUtilities.invokeLater(() -> {
+            if (payload instanceof java.util.List) {
+                @SuppressWarnings("unchecked")
+                java.util.List<Resource> results = (java.util.List<Resource>) payload;
+                currentSearchResults = results;
+                
+                if (currentTableModel != null && currentResultsTable != null) {
+                    // Clear existing rows
+                    currentTableModel.setRowCount(0);
+                    
+                    // Add new rows
+                    for (Resource resource : results) {
+                        String resourceType = getResourceType(resource);
+                        currentTableModel.addRow(new Object[]{
+                            resource.getDisplayName(),
+                            resourceType
+                        });
+                    }
+                    
+                    if (currentDetailsArea != null) {
+                        currentDetailsArea.setText("Found " + results.size() + " borrowed item(s). Select one to view details.");
+                    }
+                } else {
+                    showInfo("Member has " + results.size() + " borrowed items.");
+                }
+            } else {
+                if (currentDetailsArea != null) {
+                    currentDetailsArea.setText("This member has no borrowed resources.");
+                } else {
+                    showInfo("No borrowed items found.");
+                }
+            }
+        });
+    }
+    
+    public void refreshMemberBorrowed() {
+        if (currentMemberUid != null && !currentMemberUid.isEmpty()) {
+            client.sendMessage(new Message(MessageType.MEMBER_BORROWED_REQ, currentMemberUid));
+        }
+    }
+    
+    public void updateResourceAvailability(Resource resource, boolean available) {
+        if (currentSearchResults != null) {
+            for (int i = 0; i < currentSearchResults.size(); i++) {
+                Resource r = currentSearchResults.get(i);
+                if (r.getDisplayName().equals(resource.getDisplayName()) &&
+                    r.getDetails().equals(resource.getDetails())) {
+                    r.setCheckedOut(available);
+                    System.out.println("[GUIManager] Locally updated " + r.getDisplayName() + " availability to: " + available);
+                    
+                    // If checking in (making available), remove from borrowed list
+                    if (available && currentTableModel != null && currentResultsTable != null) {
+                        currentSearchResults.remove(i);
+                        currentTableModel.removeRow(i);
+                        if (currentDetailsArea != null) {
+                            if (currentSearchResults.isEmpty()) {
+                                currentDetailsArea.setText("No borrowed resources.");
+                            } else {
+                                currentDetailsArea.setText("Select a resource to view details.");
+                            }
+                        }
+                        System.out.println("[GUIManager] Removed resource from borrowed list display");
+                    } else {
+                        // For checkout, just refresh the details if selected
+                        int selectedRow = currentResultsTable.getSelectedRow();
+                        if (selectedRow >= 0 && selectedRow < currentSearchResults.size() &&
+                            currentSearchResults.get(selectedRow) == r && currentDetailsArea != null) {
+                            currentDetailsArea.setText(r.getDetails() + 
+                                "\nAvailable: " + (r.isAvailable() ? "Yes" : "No"));
+                        }
+                    }
+                    break;
+                }
+            }
+        }
     }
 
     public void showError(String s) { JOptionPane.showMessageDialog(mainFrame, s, "Error", JOptionPane.ERROR_MESSAGE); }
@@ -1150,6 +1233,7 @@ public class GUIManager {
         searchBtn.addActionListener(e -> {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
+                lastSearchQuery = query;
                 currentTableModel.setRowCount(0);
                 currentDetailsArea.setText("Searching...");
                 client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
