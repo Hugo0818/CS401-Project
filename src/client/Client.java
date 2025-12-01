@@ -180,6 +180,22 @@ public class Client implements Runnable {
                 }
                 return true;
             }
+            case CHECK_OUT_RES -> {
+                if (msg.isOk()) {
+                    gui.showInfo("Resource checked out successfully!");
+                } else {
+                    gui.showError("Checkout failed: " + msg.getInfo());
+                }
+                return true;
+            }
+            case CHECK_IN_RES -> {
+                if (msg.isOk()) {
+                    gui.showInfo("Resource checked in successfully!");
+                } else {
+                    gui.showError("Check-in failed: " + msg.getInfo());
+                }
+                return true;
+            }
             
             case ERROR -> {
                 gui.showError("Server error: " + msg.getInfo());
