@@ -12,14 +12,14 @@ import library.MovieTest;
 import server.LibraryServerTest;
 
 @Suite
-@SelectClasses({ClientTest.class, 
-				BookTest.class, 
-				LogTest.class, 
-				MemberTest.class, 
-				MessageTest.class, 
-				MovieTest.class, 
-				LibraryServerTest.class})
+@SelectClasses({
+	ClientTest.class, 
+	BookTest.class, 
+	LogTest.class, 
+	MemberTest.class, 
+	MessageTest.class, 
+	MovieTest.class, 
+	LibraryServerTest.class
+})
 
-public class AllTests {
-
-}
+public class AllTests {}
