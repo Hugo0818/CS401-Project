@@ -43,15 +43,25 @@ public class ServerMain {
         }
         
         // Initialize LibraryFacade
-        LibraryFacade facade = null;
+        final LibraryFacade facade;
         try {
             facade = new LibraryFacade("data/library.ser");
         } catch (Exception e) {
             System.err.println("Error loading library data: " + e.getMessage());
             System.exit(1);
+            return; // Required after System.exit() for compiler
         }
         
         LibraryServer server = new LibraryServer(host, port, facade);
+        
+        // Register shutdown hook to ensure cleanup on termination
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            System.out.println("\n[SHUTDOWN] Shutting down server gracefully...");
+            server.stopServer();
+            facade.saveChanges();
+            System.out.println("[SHUTDOWN] Server stopped and data saved.");
+        }, "ShutdownHook"));
+        
         server.startServer();
     }
 }
