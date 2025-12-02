@@ -6,7 +6,7 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 - Add new tasks to the list below.
 - Assign each task to a team member (add your name).
-- Mark status as `[ ]` (not started), `[~]` (in progress), or `[x]` (done).
+- Mark status as `[ ]` (not started), `[~]` (in progress), `[/]` (cancelled), or `[x]` (done).
 - Move completed tasks to the bottom or a separate section if desired.
 
 ---
@@ -22,7 +22,7 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement constructor(s)      |             |             |
 | [ ]    | Implement getters             |             |             |
 | [ ]    | Implement setters             |             |             |
-| [ ]    | Implement saveChanges         |             | saveChanges |
+| [ ]    | Implement saveChanges         | Ryan-pelo   |             |
 | [x]    | Implement passthrough methods | Ryan-pelo   |             |
 | [x]    | Implement serialization       | Ryan-pelo   |             |
 
@@ -70,7 +70,7 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description         | Assigned To | Notes   |
 | ------ | ------------------------ | ----------- | ------- |
-| [ ]    | Implement constructor(s) |             |         |
+| [x]    | Implement constructor(s) | Ryan        |         |
 | [ ]    | Implement getters        |             |         |
 | [ ]    | Implement setters        |             |         |
 | [ ]    | Implement getDetails()   |             | line 26 |
@@ -141,7 +141,6 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description                      | Assigned To | Notes |
 | ------ | ------------------------------------- | ----------- | ----- |
-| [ ]    | Change message content type to String |             |       |
 | [ ]    | Implement constructor(s)              |             |       |
 | [ ]    | Implement getters                     |             |       |
 | [ ]    | Implement setters                     |             |       |
@@ -180,38 +179,24 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 # GUIManager.java
 
-| Status | Task Description                 | Assigned To | Notes |
-| ------ | -------------------------------- | ----------- | ----- |
-| [ ]    | Implement constructor(s)         |             |       |
-| [ ]    | Implement getters                |             |       |
-| [ ]    | Implement setters                |             |       |
-| [ ]    | Design Swing GUI layout          |             |       |
-| [ ]    | Implement Swing GUI panels       |             |       |
-| [ ]    | Connect GUI to Client networking |             |       |
-| [x]    | Class skeleton created           | Ryan-pelo   |       |
-
-# GUI SECTION
-
-# GUI.java
-
 | Status | Task Description                            | Assigned To | Notes |
 | ------ | ------------------------------------------- | ----------- | ----- |
-| [ ]    | Draft a flow diagram showing GUI navigation |   Sal       |       |
-| [ ]    | Sketch visuals for GUI windows              |   Sal       |       |
-| [ ]    | Create Main GUI menu                        |             |       |
-| [ ]    | Create a GUI menu for staff                 |             |       |
-| [ ]    | Librarian Frame                             |             |       |
-| [ ]    | Librarian Assistant Frame                   |             |       |
+| [x]    | Draft a flow diagram showing GUI navigation |   Sal       |       |
+| [/]    | Sketch visuals for GUI windows              |   Sal       |       |
+| [x]    | Create Main GUI menu                        |   Ryan      |       |
+| [x]    | Create a GUI menu for staff                 |   Ryan      |       |
+| [/]    | Librarian Frame                             |    -        |       |
+| [/]    | Librarian Assistant Frame                   |    -        |       |
 | [x]    | Create a GUI menu for member                |   Nathan    |       |
 | [x]    | Member Frame                                |   Nathan    |       |
-| [ ]    | Search/Search results frame                 |   Ryan      |       |
-| [ ]    | Search query interface                      |   Ryan      |       |
-| [ ]    | Catalog management                          |   Ryan      |       |
-| [ ]    | Login & Sign up window                      |   Sal       |       |
-| [ ]    | Checkout                                    |             |       |
-| [ ]    | Returns                                     |             |       |
-| [ ]    | Member management                           |   Nathan    |       |
-| [ ]    | Staff management                            |             |       |
+| [x]    | Search/Search results frame                 |   Ryan      |       |
+| [x]    | Search query interface                      |   Ryan      |       |
+| [x]    | Catalog management                          |   Ryan      |       |
+| [x]    | Login & Sign up window                      |   Sal       |       |
+| [x]    | Checkout                                    |   Ryan      |       |
+| [x]    | Returns                                     |   Ryan      |       |
+| [x]    | Member management                           |   Nathan    |       |
+| [/]    | Staff management                            |    -        |       |
 |        |                                             |             |       |
 
 # Test Files
@@ -220,76 +205,29 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description                  | Assigned To | Notes |
 | ------ | --------------------------------- | ----------- | ----- |
-| [ ]    | Implement testInitialAvailability |             |       |
-| [ ]    | Implement testSetAvailability     |             |       |
-| [ ]    | Implement testGetLogs             |             |       |
-| [ ]    | Implement testAddLog              |             |       |
+| [x]    | Implement testConstructor&Getters | Sal         |       |
+| [x]    | Implement testAvailabilitySetter  | Sal         |       |
+| [x]    | Implement testGetDisplayName      | Sal         |       |
 | [x]    | Test file created                 | Ryan-pelo   |       |
 
 # ClientTest.java
 
 | Status | Task Description              | Assigned To | Notes |
 | ------ | ----------------------------- | ----------- | ----- |
-| [ ]    | Implement testClientCreation  |             |       |
-| [ ]    | Implement testConnectToServer |             |       |
-| [ ]    | Implement testSendMessage     |             |       |
-| [ ]    | Implement testReceiveMessage  |             |       |
-| [ ]    | Implement testCloseConnection |             |       |
-| [ ]    | Implement testIsConnected     |             |       |
+| [x]    | Implement testClientCreation  | Sal         |       |
+| [x]    | Implement testIsConnected     | Sal         |       |
+| [x]    | Implement testClose           | Sal         |       |
+| [x]    | Implement testSendMsgNotCnt   | Sal         |       |
 | [x]    | Test file created             | Ryan-pelo   |       |
-
-# ClientHandlerTest.java
-
-| Status | Task Description                    | Assigned To | Notes |
-| ------ | ----------------------------------- | ----------- | ----- |
-| [ ]    | Implement testClientHandlerCreation |             |       |
-| [ ]    | Implement testRun                   |             |       |
-| [ ]    | Implement testProcessMessage        |             |       |
-| [ ]    | Implement testSendMessage           |             |       |
-| [ ]    | Implement testCloseConnection       |             |       |
-| [ ]    | Implement testDisconnectMessage     |             |       |
-| [x]    | Test file created                   | Ryan-pelo   |       |
-
-# GUIManagerTest.java
-
-| Status | Task Description                   | Assigned To | Notes |
-| ------ | ---------------------------------- | ----------- | ----- |
-| [ ]    | Implement testGUIManagerCreation   |             |       |
-| [ ]    | Implement testClientInitialization |             |       |
-| [ ]    | Implement testFrameCreation        |             |       |
-| [ ]    | Implement testConfigLoading        |             |       |
-| [x]    | Test file created                  | Ryan-pelo   |       |
-
-# LibraryFacadeTest.java
-
-| Status | Task Description            | Assigned To | Notes |
-| ------ | --------------------------- | ----------- | ----- |
-| [ ]    | Implement testAddResource   |             |       |
-| [ ]    | Implement testSearchCatalog |             |       |
-| [ ]    | Implement testAddMember     |             |       |
-| [ ]    | Implement testAddStaff      |             |       |
-| [x]    | Test file created           | Ryan-pelo   |       |
 
 # LibraryServerTest.java
 
 | Status | Task Description                        | Assigned To | Notes |
 | ------ | --------------------------------------- | ----------- | ----- |
-| [ ]    | Implement testServerCreation            |             |       |
-| [ ]    | Implement testStartServer               |             |       |
-| [ ]    | Implement testAcceptClient              |             |       |
-| [ ]    | Implement testCloseServer               |             |       |
-| [ ]    | Implement testMultipleClientConnections |             |       |
+| [x]    | Implement testServerCreation            | Sal         |       |
+| [x]    | Implement testStopServer                | Sal         |       |
+| [x]    | Implement testRemoveHandler             | Sal         |       |
 | [x]    | Test file created                       | Ryan-pelo   |       |
-
-# LogManagerTest.java
-
-| Status | Task Description                       | Assigned To | Notes |
-| ------ | -------------------------------------- | ----------- | ----- |
-| [ ]    | Implement testAddLog                   |             |       |
-| [ ]    | Implement testGetLogsByDate            |             |       |
-| [ ]    | Implement testGetLogsByDateNull        |             |       |
-| [ ]    | Implement testGetLogsByNonMatchingDate |             |       |
-| [x]    | Test file created                      | Ryan-pelo   |       |
 
 # LogTest.java
 
@@ -302,17 +240,6 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement testGetMember                     |             |       |
 | [ ]    | Implement testGetResource                   |             |       |
 | [x]    | Test file created                           | Ryan-pelo   |       |
-
-# MemberManagerTest.java
-
-| Status | Task Description                   | Assigned To | Notes |
-| ------ | ---------------------------------- | ----------- | ----- |
-| [ ]    | Implement testAddMember            |             |       |
-| [ ]    | Implement testRemoveMember         |             |       |
-| [ ]    | Implement testSearchMembers        |             |       |
-| [ ]    | Implement testSearchMembersByUID   |             |       |
-| [ ]    | Implement testGetMemberOutOfBounds |             |       |
-| [x]    | Test file created                  | Ryan-pelo   |       |
 
 # MemberTest.java
 
@@ -339,46 +266,20 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description                  | Assigned To | Notes |
 | ------ | --------------------------------- | ----------- | ----- |
-| [ ]    | Implement testInitialAvailability |             |       |
-| [ ]    | Implement testGetDetails          |             |       |
-| [ ]    | Implement testGetDisplayName      |             |       |
-| [ ]    | Implement testAddLog              |             |       |
+| [x]    | Implement testConstructor         | Sal         |       |
+| [x]    | Implement testAvailability        | Sal         |       |
+| [x]    | Implement testGetDisplayName      | Sal         |       |
+| [x]    | Implement testAddLog              | Sal         |       |
 | [x]    | Test file created                 | Ryan-pelo   |       |
-
-# ResourceManagerTest.java
-
-| Status | Task Description                        | Assigned To | Notes |
-| ------ | --------------------------------------- | ----------- | ----- |
-| [ ]    | Implement testAddResource               |             |       |
-| [ ]    | Implement testSearchCatalog             |             |       |
-| [ ]    | Implement testEditResource              |             |       |
-| [ ]    | Implement testRemoveResource            |             |       |
-| [ ]    | Implement testRemoveNonExistentResource |             |       |
-| [x]    | Test file created                       | Ryan-pelo   |       |
-
-# StaffManagerTest.java
-
-| Status | Task Description               | Assigned To | Notes |
-| ------ | ------------------------------ | ----------- | ----- |
-| [ ]    | Implement testAddStaff         |             |       |
-| [ ]    | Implement testRemoveStaff      |             |       |
-| [ ]    | Implement testSetStaff         |             |       |
-| [ ]    | Implement testSetStaffNotFound |             |       |
-| [x]    | Test file created              | Ryan-pelo   |       |
 
 # Other/Project Tasks
 
 | Status | Task Description                        | Assigned To | Notes                   |
 | ------ | --------------------------------------- | ----------- | ----------------------- |
-| [ ]    | Write unit tests for ResourceManager    |             | Test checkout/checkin   |
-| [ ]    | Write unit tests for MemberManager      |             | Test member CRUD        |
-| [ ]    | Write unit tests for StaffManager       |             | Test staff/permissions  |
-| [ ]    | Write unit tests for LogManager         |             | Test log retrieval      |
-| [ ]    | Write unit tests for LibraryFacade      |             | Test passthrough        |
 | [ ]    | Write README.md with setup instructions |             | Eclipse setup, run cmd  |
 | [ ]    | Add error handling for socket timeouts  |             | Client/ClientHandler    |
 | [ ]    | Add error handling for serialization    |             | LibraryFacade.java      |
-| [ ]    | Implement login system                  |             |                         |
+| [x]    | Implement login system                  |             |                         |
 | [x]    | Set up Eclipse project structure        | Ryan-pelo   | .project, .classpath    |
 | [x]    | Create config.properties file           | Ryan-pelo   | HOST/PORT               |
 | [x]    | Configure module-info.java              | Ryan-pelo   | java.desktop            |
