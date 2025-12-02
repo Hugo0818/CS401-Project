@@ -689,6 +689,9 @@ public class GUIManager {
         });
         
         searchField.addActionListener(e -> searchBtn.doClick());
+
+        resultsAreaModel.clear();
+        client.sendMessage(new Message(MessageType.MEMBER_SEARCH_REQ, ""));
     }
     
     private void showLogsPanel(JPanel contentArea) {
@@ -873,8 +876,6 @@ public class GUIManager {
                 	resultsAreaModel.addElement(m);
                 }
             }
-
-            showInfo("Found " + resultsAreaModel.size() + " member(s).");
         });
     }
     
