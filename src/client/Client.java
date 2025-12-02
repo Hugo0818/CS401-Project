@@ -263,6 +263,10 @@ public class Client implements Runnable {
         this.lastCheckoutMemberUid = memberUid;
     }
 
+    public String getLoggedInUID() {
+    	return loggedInUID;
+    }
+    
     public void close() {
         try {
             if (in != null) in.close();
