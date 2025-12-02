@@ -108,6 +108,7 @@ public class Client implements Runnable {
             	}            	
             	else {
             		gui.showError("Login failed: " + msg.getInfo());
+            		return true;
             	}           
             }
             
@@ -216,7 +217,6 @@ public class Client implements Runnable {
             }
         }
         
-		return false;
     }
 
     /** Thread-safe send */
