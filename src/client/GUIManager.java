@@ -756,6 +756,13 @@ public class GUIManager {
         JScrollPane scrollPane = new JScrollPane(checkoutsArea);
         
         contentArea.add(scrollPane, BorderLayout.CENTER);
+        
+        String uid = client.getLoggedInUID();
+        if (uid != null) {
+            client.sendMessage(new Message(MessageType.MEMBER_BORROWED_REQ, uid));
+        }
+        
+        this.currentDetailsArea = checkoutsArea;
     }
     
     private void showCheckoutHistoryPanel(JPanel contentArea) {
@@ -916,7 +923,7 @@ public class GUIManager {
             }
         });
     }
-    
+
     public void handleMemberBorrowedResults(Object payload) {
         SwingUtilities.invokeLater(() -> {
             System.out.println("[GUIManager] handleMemberBorrowedResults called");
@@ -948,8 +955,30 @@ public class GUIManager {
                         currentDetailsArea.setText("Found " + results.size() + " borrowed item(s). Select one to view details.");
                     }
                 } else {
-                    showInfo("Member has " + results.size() + " borrowed items.");
+
+                    if (currentDetailsArea != null) {
+
+                        StringBuilder string = new StringBuilder();
+
+                        if (results.isEmpty()) {
+                        	string.append("You have no currently borrowed items.");
+                        } else {
+                        	string.append("You currently have ")
+                              .append(results.size())
+                              .append(" item(s) checked out:\n\n");
+
+                            for (Resource resource : results) {
+                            	string.append("- ")
+                                  .append(resource.getDisplayName())
+                                  .append(" (")
+                                  .append(getResourceType(resource))
+                                  .append(")\n");
+                            }
+                        }
+                        currentDetailsArea.setText(string.toString());
+                    }
                 }
+                
             } else {
                 if (currentDetailsArea != null) {
                     currentDetailsArea.setText("This member has no borrowed resources.");

@@ -22,7 +22,7 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [ ]    | Implement constructor(s)      |             |             |
 | [ ]    | Implement getters             |             |             |
 | [ ]    | Implement setters             |             |             |
-| [ ]    | Implement saveChanges         | Ryan-pelo   |             |
+| [x]    | Implement saveChanges         | Ryan-pelo   |             |
 | [x]    | Implement passthrough methods | Ryan-pelo   |             |
 | [x]    | Implement serialization       | Ryan-pelo   |             |
 
@@ -122,8 +122,8 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | Status | Task Description             | Assigned To | Notes   |
 | ------ | ---------------------------- | ----------- | ------- |
 | [x]    | Implement constructor(s)     | Sal         |         |
-| [x]    | Implement getters            |             |         |
-| [x]    | Implement setters            |             |         |
+| [x]    | Implement getters            | Sal         |         |
+| [x]    | Implement setters            | Sal         |         |
 | [x]    | Implement staff search logic | Sal         | line 38 |
 | [x]    | Implement addStaff           | Ryan-pelo   |         |
 | [x]    | Implement removeStaff        | Ryan-pelo   |         |
@@ -233,33 +233,37 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description                            | Assigned To | Notes |
 | ------ | ------------------------------------------- | ----------- | ----- |
-| [ ]    | Implement testLogCreation                   |             |       |
-| [ ]    | Implement testCheckIn                       |             |       |
-| [ ]    | Implement testCheckInTwice                  |             |       |
-| [ ]    | Implement testCheckOutWhenAlreadyCheckedOut |             |       |
-| [ ]    | Implement testGetMember                     |             |       |
-| [ ]    | Implement testGetResource                   |             |       |
+| [x]    | Implement testMemberCheckoutConstructor     | Sal         |       |
+| [x]    | Implement testMemberCheckInConstructor      | Sal         |       |
+| [x]    | Implement testStaffCheckoutConstructor      | Sal         |       |
+| [x]    | Implement testStaffCheckInConstructor       | Sal         |       |
+| [x]    | Implement testAddResourceConstructor        | Sal         |       |
+| [x]    | Implement testRemoveResourceConstructor     | Sal         |       |
+| [x]    | Implement testCheckOutWorksOnce             | Sal         |       |
+| [x]    | Implement testCheckInOnlyAfterCheckOut      | Sal         |       |
 | [x]    | Test file created                           | Ryan-pelo   |       |
 
 # MemberTest.java
 
 | Status | Task Description                           | Assigned To | Notes |
 | ------ | ------------------------------------------ | ----------- | ----- |
-| [ ]    | Implement testGetName                      |             |       |
-| [ ]    | Implement testSetName                      |             |       |
-| [ ]    | Implement testUIDGeneration                |             |       |
-| [ ]    | Implement testAddResourceToPossession      |             |       |
-| [ ]    | Implement testRemoveResourceFromPossession |             |       |
-| [ ]    | Implement testAddLog                       |             |       |
+| [x]    | Implement testConstructorInitializesFields | Sal         |       |
+| [x]    | Implement testUIDAutoIncrement             | Sal         |       |
+| [x]    | Implement testAddResourceToPossession      | Sal         |       |
+| [x]    | Implement testRemoveResourceFromPossession | Sal         |       |
+| [x]    | Implement testAddLog                       | Sal         |       |
+| [x]    | Implement testSetLogs                      | Sal         |       |
 | [x]    | Test file created                          | Ryan-pelo   |       |
 
 # MessageTest.java
 
 | Status | Task Description                 | Assigned To | Notes |
 | ------ | -------------------------------- | ----------- | ----- |
-| [ ]    | Implement testGetType            |             |       |
-| [ ]    | Implement testGetContent         |             |       |
-| [ ]    | Implement testDefaultConstructor |             |       |
+| [x]    | Implement testConstructor        | Sal         |       |
+| [x]    | Implement testConstructorOk&Info | Sal         |       |
+| [x]    | Implement testOkMethod           | Sal         |       |
+| [x]    | Implement testFailMethod         | Sal         |       |
+| [x]    | Implement testToStringFormat     | Sal         |       |
 | [x]    | Test file created                | Ryan-pelo   |       |
 
 # MovieTest.java
