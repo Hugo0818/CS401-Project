@@ -46,17 +46,17 @@ public class ClientHandler implements Runnable {
 
             while (!socket.isClosed()) {
                 Message msg = (Message) in.readObject();
-                if (msg == null) break;
+                if (msg == null) {break;}
                 processMessage(msg);
-                if (msg.getType() == MessageType.W_CLOSED) break;
+                
             }
+            
         } catch (EOFException eof) {
             System.out.println("[Handler#" + clientId + "] Client disconnected.");
         } catch (Exception e) {
             System.err.println("[Handler#" + clientId + "] Error: " + e.getMessage());
-        } finally {
-            closeConnection();
-        }
+        } 
+        
     }
 
     private void processMessage(Message msg) {
@@ -115,6 +115,7 @@ public class ClientHandler implements Runnable {
             	if(searchedStaff.getPassword().equals(info.getPassword())) {
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, searchedStaff));
             		facade.addLog(new Log(searchedStaff, MessageType.LOGIN_RESPONSE, true));
+            		searchedStaff.setTry(0);
             		
             	}
             	
@@ -124,6 +125,7 @@ public class ClientHandler implements Runnable {
             		facade.addLog(new Log(searchedStaff, MessageType.LOGIN_RESPONSE, false));
             		if(searchedStaff.getAccessTry() >= 5) {
             			facade.addLog(new Log("suspicious login attempts on " + searchedStaff.getUID()));
+            			searchedStaff.setTry(searchedStaff.getAccessTry() + 1);
             		}      		
             	}            		
             }                                 
@@ -137,6 +139,7 @@ public class ClientHandler implements Runnable {
             	if(searchedMember.getpassword().equals(info.getPassword())) {
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, searchedMember));
             		facade.addLog(new Log(searchedMember, MessageType.LOGIN_RESPONSE, true));
+            		searchedMember.setTry(0);
             	}            	
             	//passwords don't match
             	else {
@@ -144,6 +147,7 @@ public class ClientHandler implements Runnable {
             		facade.addLog(new Log(searchedMember, MessageType.LOGIN_RESPONSE, false));
             		if(searchedMember.getAccessTry() >= 5) {
             			facade.addLog(new Log("suspicious login attempts on " + searchedMember.getUID()));
+            			searchedMember.setTry(searchedMember.getAccessTry() + 1);
             		}
             		
             	}            	
