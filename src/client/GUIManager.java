@@ -1368,9 +1368,10 @@ public class GUIManager {
         JButton removeBtn = new JButton("Remove Selected Resource");
         removeBtn.setFont(new Font("SansSerif", Font.BOLD, 14));
         removeBtn.setBackground(new Color(200, 50, 50));
-        removeBtn.setForeground(Color.WHITE);
+        removeBtn.setForeground(Color.black);
         bottomPanel.add(removeBtn);
         contentArea.add(bottomPanel, BorderLayout.SOUTH);
+        
         
         // Table selection listener to show details
         currentResultsTable.getSelectionModel().addListSelectionListener(e -> {
@@ -1422,5 +1423,8 @@ public class GUIManager {
                 }
             }
         });
+        currentTableModel.setRowCount(0);
+        currentDetailsArea.setText("Loading full catalog...");
+        client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, ""));
     }
 }
