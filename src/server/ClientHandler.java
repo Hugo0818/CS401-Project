@@ -459,6 +459,7 @@ public class ClientHandler implements Runnable {
         try {
             out.writeObject(msg);
             out.flush();
+            out.reset(); // Clear object cache to ensure fresh data is sent
         } catch (IOException e) {
             System.err.println("[Handler#" + clientId + "] Send failed: " + e.getMessage());
         }

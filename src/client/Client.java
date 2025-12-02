@@ -24,9 +24,6 @@ public class Client implements Runnable {
 
     private Thread thread;
     private GUIManager gui; // set when GUIManager constructed
-    private Resource lastCheckoutResource;
-    private Resource lastCheckinResource;
-    private String lastCheckoutMemberUid;
     private String loggedInUID;
     
     public static void main(String[] args) {
@@ -111,6 +108,7 @@ public class Client implements Runnable {
             	}            	
             	else {
             		gui.showError("Login failed: " + msg.getInfo());
+            		return true;
             	}           
             }
             
@@ -174,13 +172,6 @@ public class Client implements Runnable {
             case CHECK_OUT_RES -> {
                 if (msg.isOk()) {
                     gui.showInfo("Resource checked out successfully!");
-                    // Update availability locally and add to borrowed cache
-                    if (lastCheckoutResource != null) {
-                        gui.updateResourceAvailability(lastCheckoutResource, false);
-                        if (lastCheckoutMemberUid != null) {
-                            gui.addToBorrowedCache(lastCheckoutMemberUid, lastCheckoutResource);
-                        }
-                    }
                 } else {
                     gui.showError("Checkout failed: " + msg.getInfo());
                 }
@@ -189,11 +180,6 @@ public class Client implements Runnable {
             case CHECK_IN_RES -> {
                 if (msg.isOk()) {
                     gui.showInfo("Resource checked in successfully!");
-                    // Update availability locally and refresh borrowed list
-                    if (lastCheckinResource != null) {
-                        gui.updateResourceAvailability(lastCheckinResource, true);
-                    }
-                    gui.refreshMemberBorrowed();
                 } else {
                     gui.showError("Check-in failed: " + msg.getInfo());
                 }
@@ -231,7 +217,6 @@ public class Client implements Runnable {
             }
         }
         
-		return false;
     }
 
     /** Thread-safe send */
@@ -239,6 +224,7 @@ public class Client implements Runnable {
         try {
             out.writeObject(msg);
             out.flush();
+            out.reset(); // Clear object cache to prevent stale data
         } catch (IOException e) {
             System.err.println("[CLIENT] Send failed: " + e.getMessage());
             gui.showError("Network error sending message.");
@@ -250,18 +236,6 @@ public class Client implements Runnable {
     }
 
     public GUIManager getGui() { return gui; }
-    
-    public void setLastCheckoutResource(Resource resource) {
-        this.lastCheckoutResource = resource;
-    }
-    
-    public void setLastCheckinResource(Resource resource) {
-        this.lastCheckinResource = resource;
-    }
-    
-    public void setLastCheckoutMemberUid(String memberUid) {
-        this.lastCheckoutMemberUid = memberUid;
-    }
 
     public String getLoggedInUID() {
     	return loggedInUID;
