@@ -909,6 +909,7 @@ public class GUIManager {
                 currentTableModel.setRowCount(0);
                 
                 // Add log entries
+                int filteredCount = 0;
                 for (Log log : logs) {
                     String time = "";
                     String operation = "";
@@ -924,10 +925,21 @@ public class GUIManager {
                     String resourceName = (log.getResource() != null) ? log.getResource().getDisplayName() : "Unknown";
                     String memberName = (log.getMember() != null) ? log.getMember().getName() + " (" + log.getMember().getUID() + ")" : "Unknown";
                     
-                    currentTableModel.addRow(new Object[]{time, operation, resourceName, memberName});
+                    // Filter out logs that are not check-in/check-out AND have "Unknown" resource or member
+                    // this is a jank way of finding the "create resource" logs
+                    if (operation.isEmpty() && !resourceName.equals("Unknown") && memberName.equals("Unknown")) {
+                        filteredCount++;
+                        memberName = "";
+                        operation = "Create Resource";
+                        currentTableModel.addRow(new Object[]{time, operation, resourceName, memberName});
+                        continue;
+                    } else if (!operation.isEmpty() && !resourceName.equals("Unknown") && !memberName.equals("Unknown")) {
+                        currentTableModel.addRow(new Object[]{time, operation, resourceName, memberName});
+                    }
+                    
                 }
                 
-                System.out.println("[GUIManager] Loaded " + logs.size() + " logs into table");
+                System.out.println("[GUIManager] Loaded " + (logs.size() - filteredCount) + " logs into table (filtered " + filteredCount + ")");
             }
         });
     }
