@@ -61,11 +61,15 @@ public class Log implements Serializable {
     	if(type == MessageType.ADD_RESOURCE_RES){
     		resource = r;
     		details = "New entry added to catalog: " + resource.getDisplayName();
+            checkOutTime = new Date();
+            checkInTime = new Date();
     	}
     	
     	else if(type == MessageType.REMOVE_RESOURCE_RES) {
     		resource = r;
     		details = "New entry removed from catalog: " + resource.getDisplayName();
+            checkOutTime = new Date();
+            checkInTime = new Date();
     	}
     }
     

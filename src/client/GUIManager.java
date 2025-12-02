@@ -891,8 +891,13 @@ public class GUIManager {
                 for (Log log : logs) {
                     String time = "";
                     String operation = "";
-                    
-                    if (log.getCheckInTime() != null) {
+                    String memberName = (log.getMember() != null) ? log.getMember().getName() + " (" + log.getMember().getUID() + ")" : "Unknown";
+                    if (log.getDetails().startsWith("New entry added")) {
+                        time = (log.getCheckInTime() != null) ? log.getCheckInTime().toString() : (log.getCheckOutTime() != null) ? log.getCheckOutTime().toString() : "";
+                        operation = "Create Resource";
+                        memberName = (log.getStaff() != null) ? log.getStaff().getName() + " (" + log.getStaff().getUID() + ")" : "";
+                    }
+                    else if (log.getCheckInTime() != null) {
                         time = log.getCheckInTime().toString();
                         operation = "Check In";
                     } else if (log.getCheckOutTime() != null) {
@@ -901,16 +906,10 @@ public class GUIManager {
                     }
                     
                     String resourceName = (log.getResource() != null) ? log.getResource().getDisplayName() : "Unknown";
-                    String memberName = (log.getMember() != null) ? log.getMember().getName() + " (" + log.getMember().getUID() + ")" : "Unknown";
                     
                     // Filter out logs that are not check-in/check-out AND have "Unknown" resource or member
                     // this is a jank way of finding the "create resource" logs
-                    if (operation.isEmpty() && !resourceName.equals("Unknown") && memberName.equals("Unknown")) {
-                        memberName = "";
-                        operation = "Create Resource";
-                        currentTableModel.addRow(new Object[]{time, operation, resourceName, memberName});
-                        continue;
-                    } else if (!operation.isEmpty() && !resourceName.equals("Unknown") && !memberName.equals("Unknown")) {
+                    if (!operation.isEmpty() && !resourceName.equals("Unknown") && !memberName.equals("Unknown")) {
                         currentTableModel.addRow(new Object[]{time, operation, resourceName, memberName});
                     } else {
                         filteredCount++;
