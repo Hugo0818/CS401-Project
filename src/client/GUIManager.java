@@ -22,11 +22,7 @@ public class GUIManager {
     private javax.swing.table.DefaultTableModel currentTableModel;
     private JTextArea currentDetailsArea;
     private java.util.List<Resource> currentSearchResults;
-    private String lastSearchQuery;
     private String currentMemberUid;
-    
-    // Client-side cache of borrowed resources by member UID
-    private java.util.Map<String, java.util.List<Resource>> memberBorrowedCache = new java.util.HashMap<>();
 
     public GUIManager(Client client) {
         this.client = client;
@@ -403,7 +399,6 @@ public class GUIManager {
         searchBtn.addActionListener(e -> {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
-                lastSearchQuery = query;
                 currentTableModel.setRowCount(0);
                 currentDetailsArea.setText("Searching...");
                 client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
@@ -440,8 +435,6 @@ public class GUIManager {
                 checkoutData.put("memberUid", memberUid);
                 checkoutData.put("resource", selectedResource);
                 
-                client.setLastCheckoutResource(selectedResource);
-                client.setLastCheckoutMemberUid(memberUid);
                 client.sendMessage(new Message(MessageType.CHECK_OUT_REQ, checkoutData));
             }
         });
@@ -528,14 +521,8 @@ public class GUIManager {
             currentTableModel.setRowCount(0);
             currentDetailsArea.setText("Loading borrowed resources...");
             
-            // Try cache first
-            if (memberBorrowedCache.containsKey(memberUid)) {
-                System.out.println("[GUIManager] Using cached borrowed items for " + memberUid);
-                handleMemberBorrowedResults(memberBorrowedCache.get(memberUid));
-            } else {
-                System.out.println("[GUIManager] Sending MEMBER_BORROWED_REQ for: " + memberUid);
-                client.sendMessage(new Message(MessageType.MEMBER_BORROWED_REQ, memberUid));
-            }
+            System.out.println("[GUIManager] Sending MEMBER_BORROWED_REQ for: " + memberUid);
+            client.sendMessage(new Message(MessageType.MEMBER_BORROWED_REQ, memberUid));
         });
         
         memberUidField.addActionListener(e -> searchMemberBtn.doClick());
@@ -562,7 +549,6 @@ public class GUIManager {
                 checkinData.put("memberUid", currentMemberUid);
                 checkinData.put("resource", selectedResource);
                 
-                client.setLastCheckinResource(selectedResource);
                 client.sendMessage(new Message(MessageType.CHECK_IN_REQ, checkinData));
             }
         });
@@ -629,7 +615,6 @@ public class GUIManager {
         searchBtn.addActionListener(e -> {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
-                lastSearchQuery = query;
                 currentTableModel.setRowCount(0);
                 currentDetailsArea.setText("Searching...");
                 client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
@@ -787,13 +772,6 @@ public class GUIManager {
         
         contentArea.add(scrollPane, BorderLayout.CENTER);
     }
-
-    // Called by client listener when server sends catalog search results.
-    public void refreshCurrentSearch() {
-        if (lastSearchQuery != null && !lastSearchQuery.isEmpty()) {
-            client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, lastSearchQuery));
-        }
-    }
     
     public void handleCatalogSearchResults(Object payload) {
         SwingUtilities.invokeLater(() -> {
@@ -928,13 +906,14 @@ public class GUIManager {
                     // Filter out logs that are not check-in/check-out AND have "Unknown" resource or member
                     // this is a jank way of finding the "create resource" logs
                     if (operation.isEmpty() && !resourceName.equals("Unknown") && memberName.equals("Unknown")) {
-                        filteredCount++;
                         memberName = "";
                         operation = "Create Resource";
                         currentTableModel.addRow(new Object[]{time, operation, resourceName, memberName});
                         continue;
                     } else if (!operation.isEmpty() && !resourceName.equals("Unknown") && !memberName.equals("Unknown")) {
                         currentTableModel.addRow(new Object[]{time, operation, resourceName, memberName});
+                    } else {
+                        filteredCount++;
                     }
                     
                 }
@@ -1007,72 +986,6 @@ public class GUIManager {
                 }
             }
         });
-    }
-    
-    public void refreshMemberBorrowed() {
-        if (currentMemberUid != null && !currentMemberUid.isEmpty()) {
-            // Try to use cache first, fallback to server
-            if (memberBorrowedCache.containsKey(currentMemberUid)) {
-                System.out.println("[GUIManager] Using cached borrowed items for " + currentMemberUid);
-                handleMemberBorrowedResults(memberBorrowedCache.get(currentMemberUid));
-            } else {
-                System.out.println("[GUIManager] No cache, requesting from server");
-                client.sendMessage(new Message(MessageType.MEMBER_BORROWED_REQ, currentMemberUid));
-            }
-        }
-    }
-    
-    public void addToBorrowedCache(String memberUid, Resource resource) {
-        memberBorrowedCache.computeIfAbsent(memberUid, k -> new java.util.ArrayList<>()).add(resource);
-        System.out.println("[GUIManager] Added " + resource.getDisplayName() + " to borrowed cache for " + memberUid);
-    }
-    
-    public void removeFromBorrowedCache(String memberUid, Resource resource) {
-        java.util.List<Resource> list = memberBorrowedCache.get(memberUid);
-        if (list != null) {
-            list.removeIf(r -> r.getDisplayName().equals(resource.getDisplayName()) && 
-                              r.getDetails().equals(resource.getDetails()));
-            System.out.println("[GUIManager] Removed " + resource.getDisplayName() + " from borrowed cache for " + memberUid);
-        }
-    }
-    
-    public void updateResourceAvailability(Resource resource, boolean available) {
-        if (currentSearchResults != null) {
-            for (int i = 0; i < currentSearchResults.size(); i++) {
-                Resource r = currentSearchResults.get(i);
-                if (r.getDisplayName().equals(resource.getDisplayName()) &&
-                    r.getDetails().equals(resource.getDetails())) {
-                    r.setCheckedOut(available);
-                    System.out.println("[GUIManager] Locally updated " + r.getDisplayName() + " availability to: " + available);
-                    
-                    // If checking in (making available), remove from borrowed list and cache
-                    if (available && currentTableModel != null && currentResultsTable != null) {
-                        currentSearchResults.remove(i);
-                        currentTableModel.removeRow(i);
-                        if (currentMemberUid != null) {
-                            removeFromBorrowedCache(currentMemberUid, r);
-                        }
-                        if (currentDetailsArea != null) {
-                            if (currentSearchResults.isEmpty()) {
-                                currentDetailsArea.setText("No borrowed resources.");
-                            } else {
-                                currentDetailsArea.setText("Select a resource to view details.");
-                            }
-                        }
-                        System.out.println("[GUIManager] Removed resource from borrowed list display");
-                    } else {
-                        // For checkout, just refresh the details if selected
-                        int selectedRow = currentResultsTable.getSelectedRow();
-                        if (selectedRow >= 0 && selectedRow < currentSearchResults.size() &&
-                            currentSearchResults.get(selectedRow) == r && currentDetailsArea != null) {
-                            currentDetailsArea.setText(r.getDetails() + 
-                                "\nAvailable: " + (r.isAvailable() ? "Yes" : "No"));
-                        }
-                    }
-                    break;
-                }
-            }
-        }
     }
     
     public void handleRemoveMember(Object payload) {
@@ -1475,7 +1388,6 @@ public class GUIManager {
         searchBtn.addActionListener(e -> {
             String query = searchField.getText().trim();
             if (!query.isEmpty()) {
-                lastSearchQuery = query;
                 currentTableModel.setRowCount(0);
                 currentDetailsArea.setText("Searching...");
                 client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, query));
