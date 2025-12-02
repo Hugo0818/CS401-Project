@@ -109,6 +109,7 @@ public class ClientHandler implements Runnable {
             if(searchedStaff == null) {
             	sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "This username does not exists"));
             }
+            
             else {
             	//passwords match
             	if(searchedStaff.getPassword().equals(info.getPassword())) {
@@ -119,13 +120,11 @@ public class ClientHandler implements Runnable {
             	
             	//passwords don't match
             	else {
-            		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, "Invalid password"));
+            		sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "Invalid password"));
             		facade.addLog(new Log(searchedStaff, MessageType.LOGIN_RESPONSE, false));
             		if(searchedStaff.getAccessTry() >= 5) {
             			facade.addLog(new Log("suspicious login attempts on " + searchedStaff.getUID()));
-            		}
-            		
-            		
+            		}      		
             	}            		
             }                                 
         } else {
@@ -141,7 +140,7 @@ public class ClientHandler implements Runnable {
             	}            	
             	//passwords don't match
             	else {
-            		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, "Invalid password"));
+            		sendMessage(Message.fail(MessageType.LOGIN_RESPONSE, "Invalid password"));
             		facade.addLog(new Log(searchedMember, MessageType.LOGIN_RESPONSE, false));
             		if(searchedMember.getAccessTry() >= 5) {
             			facade.addLog(new Log("suspicious login attempts on " + searchedMember.getUID()));
