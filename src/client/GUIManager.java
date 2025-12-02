@@ -212,6 +212,7 @@ public class GUIManager {
                     case "Manage Members" -> showManageMembersPanel(contentArea);
                     case "View Logs" -> showLogsPanel(contentArea);
                     case "Logout" -> {
+                    	//send client
                         client.sendMessage(new Message(MessageType.LOGOUT_ATTEMPT, null));
                         return;
                     }
@@ -1112,7 +1113,7 @@ public class GUIManager {
                 if (newResource != null) {
                     // Send message to server to add resource
                     client.sendMessage(new Message(MessageType.ADD_RESOURCE_REQ, newResource));
-                    showInfo("Resource add request sent");
+                    
                     
                     // Clear fields
                     fieldsPanel.removeAll();

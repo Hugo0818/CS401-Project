@@ -29,7 +29,8 @@ public class Client implements Runnable {
     private String lastCheckoutMemberUid;
     
     public static void main(String[] args) {
-        Client client = new Client("192.168.1.124", 12345); // or your server port
+    	//127.0.0.1
+        Client client = new Client("127.0.0.1", 12345); // or your server port
         client.start();
     }
 

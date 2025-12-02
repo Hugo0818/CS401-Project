@@ -10,7 +10,7 @@ public class Log implements Serializable {
     private String details;
     private Date checkOutTime;
     private Date checkInTime;
-    
+   
 
     //Log constructor for check out/in
     //From member
@@ -69,9 +69,44 @@ public class Log implements Serializable {
     	}
     }
     
-    //Staff Member log in
-    public Log(Staff s, MessageType type) {
+    //Staff log in
+    public Log(Staff s, MessageType type, boolean ok) {
+    	if(type == MessageType.LOGIN_RESPONSE) {
+    		if(ok) {
+    			staff = s;
+    			details = staff.getUID() + " logged in successfully";
+    			staff.setTry(0); 
+    		}
+    		else {
+    			details = "Login attempt failed on " + staff.getUID() + "" + staff.getAccessTry() + "th time";
+    			staff.setTry(staff.getAccessTry() + 1);
+    			
+    
+    		}
+    	}
     	
+    }
+    
+    //Member log in
+    public Log(Member m, MessageType type, boolean ok) {
+    	if(type == MessageType.LOGIN_RESPONSE) {
+    		if(ok) {
+    			member = m;
+    			details = member.getUID() + " logged in successfully";
+    			member.setTry(0); 
+    		}
+    		else {
+    			details = "Login attempt failed on " + member.getUID() + "" + member.getAccessTry() + "th time";
+    			member.setTry(member.getAccessTry() + 1);
+    		}
+    	}
+    	
+    	
+    	
+    }
+    
+    public Log(String x) {
+    	details = x;
     }
     
     public Staff getStaff() {

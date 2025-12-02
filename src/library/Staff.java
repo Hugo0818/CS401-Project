@@ -10,6 +10,7 @@ public class Staff implements Serializable{
 	private String uid;
 	private static int idCounter = 1; //unique id
 	private String clientType = "Staff";
+	private int accessTry = 0;
 	
 	public Staff(LoginInfo info) {
 		uid = "S" + idCounter++;
@@ -21,6 +22,9 @@ public class Staff implements Serializable{
 		creds= info;
 	}
 	
+	public int getAccessTry() {
+    	return accessTry;
+    }
 	
 	public String getName() {
 		return creds.getUidOrName();
@@ -40,7 +44,9 @@ public class Staff implements Serializable{
     	return clientType;
     }
 	
-	
+	public void setTry(int i) {
+		accessTry = i;
+	}
 	
 	public void setUID(String uid) {
 	    this.uid = uid;

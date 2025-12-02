@@ -10,6 +10,7 @@ public class Member implements Serializable {
 	private LoginInfo creds;
     private String uid;
     private String clientType = "Member";
+    private int accessTry = 0;
     
     
     private ArrayList<Log> checkoutHistory;
@@ -26,6 +27,10 @@ public class Member implements Serializable {
     // Getters
     public String getName() {
         return creds.getUidOrName();
+    }
+    
+    public int getAccessTry() {
+    	return accessTry;
     }
     
     public String getpassword() {
@@ -52,6 +57,10 @@ public class Member implements Serializable {
     public void setUID(String uid) {
         this.uid = uid;
     }
+    
+    public void setTry(int i) {
+		accessTry = i;
+	}
     
     public void addResourceToPossession(Resource resource) {
         heldResources.add(resource);

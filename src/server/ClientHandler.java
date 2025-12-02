@@ -62,22 +62,25 @@ public class ClientHandler implements Runnable {
     private void processMessage(Message msg) {
         try {
             switch (msg.getType()) {
-                case LOGIN_ATTEMPT -> handleLogin(msg); 
-                case SIGNUP_ATTEMPT -> handleSignup(msg);
+                case LOGIN_ATTEMPT -> handleLogin(msg); //logged
+                case SIGNUP_ATTEMPT -> handleSignup(msg); //logged
                 case W_CLOSED -> {
                     sendMessage(Message.ok(MessageType.W_CLOSED, "Goodbye"));
                     closeConnection();
                 }      
-                case CATALOG_SEARCH_REQ -> handleCatalogSearch(msg);
-                case MEMBER_SEARCH_REQ -> handleMemberSearch(msg);
-                case REMOVE_MEMBER_REQ -> handleRemoveMember(msg);
-                case MEMBER_BORROWED_REQ -> handleMemberBorrowed(msg);
-                case ADD_RESOURCE_REQ -> handleAddResource(msg);
-                case REMOVE_RESOURCE_REQ -> handleRemoveResource(msg);
-                case CHECK_OUT_REQ -> handleCheckout(msg);
-                case CHECK_IN_REQ -> handleCheckin(msg);
-                case LOGS_REQ -> handleLogsRequest(msg);
-                case LOGOUT_ATTEMPT -> handleLogout(msg);
+                case CATALOG_SEARCH_REQ -> handleCatalogSearch(msg); //wont be logged
+                case MEMBER_SEARCH_REQ -> handleMemberSearch(msg); //wont be logged
+                
+                case REMOVE_MEMBER_REQ -> handleRemoveMember(msg); //logged
+                case MEMBER_BORROWED_REQ -> handleMemberBorrowed(msg); 
+
+                case ADD_RESOURCE_REQ -> handleAddResource(msg); //logged
+                case REMOVE_RESOURCE_REQ -> handleRemoveResource(msg); //logged
+                case CHECK_OUT_REQ -> handleCheckout(msg); //logged
+                case CHECK_IN_REQ -> handleCheckin(msg); //logged
+                case LOGS_REQ -> handleLogsRequest(msg); //logged
+                case LOGOUT_ATTEMPT -> handleLogout(msg);//logged
+
 
                 default -> sendMessage(Message.fail(MessageType.ERROR, "Unknown message type: " + msg.getType()));
             }
@@ -110,12 +113,18 @@ public class ClientHandler implements Runnable {
             	//passwords match
             	if(searchedStaff.getPassword().equals(info.getPassword())) {
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, searchedStaff));
-            		System.out.println("Login success"); //DEBUG MSG
+            		facade.addLog(new Log(searchedStaff, MessageType.LOGIN_RESPONSE, true));
+            		
             	}
             	
             	//passwords don't match
             	else {
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, "Invalid password"));
+            		facade.addLog(new Log(searchedStaff, MessageType.LOGIN_RESPONSE, false));
+            		if(searchedStaff.getAccessTry() >= 5) {
+            			facade.addLog(new Log("suspicious login attempts on " + searchedStaff.getUID()));
+            		}
+            		
             		
             	}            		
             }                                 
@@ -128,10 +137,15 @@ public class ClientHandler implements Runnable {
             	//passwords match
             	if(searchedMember.getpassword().equals(info.getPassword())) {
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, searchedMember));
+            		facade.addLog(new Log(searchedMember, MessageType.LOGIN_RESPONSE, true));
             	}            	
             	//passwords don't match
             	else {
             		sendMessage(Message.ok(MessageType.LOGIN_RESPONSE, "Invalid password"));
+            		facade.addLog(new Log(searchedMember, MessageType.LOGIN_RESPONSE, false));
+            		if(searchedMember.getAccessTry() >= 5) {
+            			facade.addLog(new Log("suspicious login attempts on " + searchedMember.getUID()));
+            		}
             		
             	}            	
             }     
@@ -218,6 +232,7 @@ public class ClientHandler implements Runnable {
 
         facade.removeMember(m);
         sendMessage(Message.ok(MessageType.REMOVE_MEMBER_RES, "Member removed successfully"));
+        facade.addLog(new Log(m.getUID() + "'s account has been removed"));
     }
         
     private void handleMemberBorrowed(Message msg) {
@@ -258,7 +273,9 @@ public class ClientHandler implements Runnable {
     }
 
     private void handleLogout(Message msg) {
+    	
         sendMessage(Message.ok(MessageType.LOGOUT_RESPONSE, "Goodbye"));
+        facade.addLog(new Log("Client " + clientId + " logged out"));
     }
 
     
@@ -432,6 +449,7 @@ public class ClientHandler implements Runnable {
         
         System.out.println("[Handler#" + clientId + "] Sending " + allLogs.size() + " logs");
         sendMessage(Message.ok(MessageType.LOGS_RES, allLogs));
+        facade.addLog(new Log(clientId + " requested logs"));
     }
 
     public synchronized void sendMessage(Message msg) {
