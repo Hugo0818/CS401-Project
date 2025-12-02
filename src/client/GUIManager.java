@@ -1498,5 +1498,8 @@ public class GUIManager {
                 }
             }
         });
+        currentTableModel.setRowCount(0);
+        currentDetailsArea.setText("Loading full catalog...");
+        client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, ""));
     }
 }
