@@ -27,6 +27,7 @@ public class Client implements Runnable {
     private Resource lastCheckoutResource;
     private Resource lastCheckinResource;
     private String lastCheckoutMemberUid;
+    private String loggedInUID;
     
     public static void main(String[] args) {
     	//127.0.0.1
@@ -102,7 +103,8 @@ public class Client implements Runnable {
             			gui.showStaffDashboard();
             			
             		}            		
-            		else {
+            		else if (payload instanceof Member member){
+            			loggedInUID = member.getUID();
             			gui.showMemberDashboard();
             		}
             		return true;            		
