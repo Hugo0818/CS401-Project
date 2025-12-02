@@ -445,6 +445,10 @@ public class GUIManager {
                 client.sendMessage(new Message(MessageType.CHECK_OUT_REQ, checkoutData));
             }
         });
+
+        currentTableModel.setRowCount(0);
+        currentDetailsArea.setText("Loading full catalog...");
+        client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, ""));
     }
     
     private void showCheckinPanel(JPanel contentArea) {
@@ -633,6 +637,10 @@ public class GUIManager {
         });
         
         searchField.addActionListener(e -> searchBtn.doClick());
+        
+        currentTableModel.setRowCount(0);
+        currentDetailsArea.setText("Loading full catalog...");
+        client.sendMessage(new Message(MessageType.CATALOG_SEARCH_REQ, ""));
     }
     
     private void showManageMembersPanel(JPanel contentArea) {
@@ -742,7 +750,7 @@ public class GUIManager {
         // Auto-fetch logs on panel show
         client.sendMessage(new Message(MessageType.LOGS_REQ, null));
     }
-    
+
     private void showMyCheckoutsPanel(JPanel contentArea) {
         contentArea.setLayout(new BorderLayout(10, 10));
         
