@@ -1459,6 +1459,7 @@ public class GUIManager {
         bottomPanel.add(removeBtn);
         contentArea.add(bottomPanel, BorderLayout.SOUTH);
         
+        
         // Table selection listener to show details
         currentResultsTable.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
