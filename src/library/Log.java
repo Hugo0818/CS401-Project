@@ -82,6 +82,7 @@ public class Log implements Serializable {
     			staff.setTry(0); 
     		}
     		else {
+    			staff = s;
     			details = "Login attempt failed on " + staff.getUID() + "" + staff.getAccessTry() + "th time";
     			staff.setTry(staff.getAccessTry() + 1);
     			
@@ -100,6 +101,7 @@ public class Log implements Serializable {
     			member.setTry(0); 
     		}
     		else {
+    			member = m;
     			details = "Login attempt failed on " + member.getUID() + "" + member.getAccessTry() + "th time";
     			member.setTry(member.getAccessTry() + 1);
     		}
