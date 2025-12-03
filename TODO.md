@@ -165,12 +165,9 @@ Use this file to track project tasks, assign them to team members, and mark prog
 # Client.java
 | Status | Task Description                  | Assigned To | Notes                 |
 | ------ | --------------------------------- | ----------- | --------------------- |
-| [ ]    | Run method                        |  RD         | processMessage methods |
-
-| Status | Task Description                  | Assigned To | Notes                 |
-| ------ | --------------------------------- | ----------- | --------------------- |
 | [ ]    | Implement message processing      |  RD         | processMessage methods |
 | [ ]    | Implement message sending         |  RD         | sendMessage method    |
+| [ ]    | Run method                        |  RD         | processMessage methods |
 | [x]    | Implement socket connection logic | Ryan-pelo   |                       |
 | [x]    | Implement closeConnection method  | Ryan-pelo   |                       |
 
