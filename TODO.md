@@ -99,6 +99,13 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [x]    | Implement isSameDay helper | Ryan-pelo   |         |
 | [x]    | Implement addLog           | Ryan-pelo   |         |
 
+# Log.java
+
+| Status | Task Description  | Assigned To | Notes |
+| ------ | ----------------- | ----------- | ----- |
+| [x]    | Constructors for creating different type of logs | Ralph        |       |
+
+
 # MemberManager.java
 
 | Status | Task Description         | Assigned To | Notes |
@@ -156,13 +163,14 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [x]    | Class created            | Ryan-pelo   |       |
 
 # Client.java
+| Status | Task Description                  | Assigned To | Notes                 |
+| ------ | --------------------------------- | ----------- | --------------------- |
+| [ ]    | Run method                        |  RD         | processMessage methods |
 
 | Status | Task Description                  | Assigned To | Notes                 |
 | ------ | --------------------------------- | ----------- | --------------------- |
-| [ ]    | Implement constructor(s)          |             |                       |
-| [ ]    | Implement getters                 |             |                       |
-| [ ]    | Implement message processing      |             | processMessage method |
-| [ ]    | Implement message sending         |             | sendMessage method    |
+| [ ]    | Implement message processing      |  RD         | processMessage methods |
+| [ ]    | Implement message sending         |  RD         | sendMessage method    |
 | [x]    | Implement socket connection logic | Ryan-pelo   |                       |
 | [x]    | Implement closeConnection method  | Ryan-pelo   |                       |
 
@@ -170,12 +178,9 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description             | Assigned To | Notes          |
 | ------ | ---------------------------- | ----------- | -------------- |
-| [ ]    | Implement constructor(s)     |             |                |
-| [ ]    | Implement getters            |             |                |
-| [ ]    | Implement setters            |             |                |
-| [ ]    | Implement message processing |     RD      | processMessage |
-| [ ]    | Implement message sending    |     RD      | sendMessage    |
-| [x]    | Implement run method         |             |                |
+| [ ]    | Implement message processing |     RD      |                |
+| [ ]    | Implement message sending    |     RD      |                |
+| [x]    | Implement run method         |     RD      |                |
 
 # GUIManager.java
 
