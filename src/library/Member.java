@@ -15,11 +15,10 @@ public class Member implements Serializable {
     
     private ArrayList<Log> checkoutHistory;
     private ArrayList<Resource> heldResources;
-    private static int newID = 1;
 
     public Member (LoginInfo info) {
     	creds = info;
-        this.uid = "M" + newID++; // M for member
+        this.uid = ""; // Will be set by MemberManager
         this.checkoutHistory = new ArrayList<>(); // New checkoutHistory array for logs
         this.heldResources = new ArrayList<>(); // New heldResources array for resources currently checked out
     }

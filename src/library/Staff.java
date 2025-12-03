@@ -8,12 +8,11 @@ public class Staff implements Serializable{
 	
 	private LoginInfo creds;
 	private String uid;
-	private static int idCounter = 1; //unique id
 	private String clientType = "Staff";
 	private int accessTry = 0;
 	
 	public Staff(LoginInfo info) {
-		uid = "S" + idCounter++;
+		uid = ""; // Will be set by StaffManager
 		creds = info;
 	}
 	

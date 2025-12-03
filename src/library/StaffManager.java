@@ -14,6 +14,9 @@ public class StaffManager {
         }
     }
     public void addStaff(Staff staff) {
+        // Set UID based on current list size + 1
+        int newId = staffList.size() + 1;
+        staff.setUID("S" + newId);
         staffList.add(staff);
     }
 

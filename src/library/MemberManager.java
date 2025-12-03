@@ -14,6 +14,9 @@ public class MemberManager {
     }
 
     public void addMember(Member member) {
+        // Set UID based on current list size + 1
+        int newId = memberList.size() + 1;
+        member.setUID("M" + newId);
         memberList.add(member);
     }
     
