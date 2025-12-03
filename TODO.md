@@ -19,9 +19,9 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description              | Assigned To | Notes       |
 | ------ | ----------------------------- | ----------- | ----------- |
-| [ ]    | Implement constructor(s)      |             |             |
-| [ ]    | Implement getters             |             |             |
-| [ ]    | Implement setters             |             |             |
+| [x]    | Implement constructor(s)      | Sal/Ralph   | 35ee216e    |
+| [x]    | Implement getters             | Sal/Ralph   | 35ee216e    |
+| [x]    | Implement setters             | Sal/Ralph   | 35ee216e    |
 | [x]    | Implement saveChanges         | Ryan-pelo   |             |
 | [x]    | Implement passthrough methods | Ryan-pelo   |             |
 | [x]    | Implement serialization       | Ryan-pelo   |             |
@@ -30,9 +30,9 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description         | Assigned To | Notes   |
 | ------ | ------------------------ | ----------- | ------- |
-| [ ]    | Implement constructor(s) |             |         |
-| [ ]    | Implement getters        |             |         |
-| [ ]    | Implement setters        |             |         |
+| [x]    | Implement constructor(s) | Ryan-pelo   | a0252867|
+| [x]    | Implement getters        | Ryan-pelo   | a0252867|
+| [x]    | Implement setters        | Ryan-pelo   | a0252867|
 | [x]    | Implement checkout logic | Hugo        | line 44 |
 | [x]    | Implement checkin logic  | Hugo        | line 49 |
 | [x]    | Implement searchCatalog  | Ryan-pelo   |         |
@@ -51,10 +51,10 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description            | Assigned To | Notes |
 | ------ | --------------------------- | ----------- | ----- |
-| [ ]    | Implement constructor(s)    |             |       |
-| [ ]    | Implement getters           |             |       |
-| [ ]    | Implement setters           |             |       |
-| [ ]    | Implement interface methods |             |       |
+| [x]    | Implement constructor(s)    | Ryan-pelo   | f8705778|
+| [x]    | Implement getters           | Ryan-pelo   | f8705778|
+| [x]    | Implement setters           | Ryan-pelo   | f8705778|
+| [x]    | Implement interface methods | Ryan-pelo   | f8705778|
 | [x]    | Class created               | Ryan-pelo   |       |
 
 # Movie.java
@@ -70,30 +70,30 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description         | Assigned To | Notes   |
 | ------ | ------------------------ | ----------- | ------- |
-| [x]    | Implement constructor(s) | Ryan        |         |
-| [ ]    | Implement getters        |             |         |
-| [ ]    | Implement setters        |             |         |
-| [ ]    | Implement getDetails()   |             | line 26 |
+| [x]    | Implement constructor(s) | Ryan        | cd5652b6|
+| [x]    | Implement getters        | Ryan-pelo   | f8705778|
+| [x]    | Implement setters        | Ryan-pelo   | f8705778|
+| [x]    | Implement getDetails()   | nsiu2       | bcda8f86|
 | [x]    | Class created            | Ralph       |         |
 
 # CD.java
 
 | Status | Task Description         | Assigned To | Notes   |
 | ------ | ------------------------ | ----------- | ------- |
-| [x]    | Implement constructor(s) | Nathan      |         |
-| [ ]    | Implement getters        | Nathan      |         |
-| [ ]    | Implement setters        | Nathan      |         |
-| [x]    | Implement getDetails()   | Nathan      |         |
-| [x]    | Implement addLog()       | Nathan      |         |
+| [x]    | Implement constructor(s) | Nathan      | 99647bbb|
+| [x]    | Implement getters        | Ryan-pelo   | f8705778|
+| [x]    | Implement setters        | Ryan-pelo   | f8705778|
+| [x]    | Implement getDetails()   | Nathan      | 99647bbb|
+| [x]    | Implement addLog()       | Nathan      | 99647bbb|
 | [x]    | Class created            | Ralph       |         |
 
 # LogManager.java
 
 | Status | Task Description           | Assigned To | Notes   |
 | ------ | -------------------------- | ----------- | ------- |
-| [ ]    | Implement constructor(s)   |             |         |
-| [ ]    | Implement getters          |             |         |
-| [ ]    | Implement setters          |             |         |
+| [x]    | Implement constructor(s)   | Ryan-pelo   | a0252867|
+| [x]    | Implement getters          | Ryan-pelo   | 19b38b2e|
+| [x]    | Implement setters          | Ryan-pelo   | a0252867|
 | [x]    | Implement getRecentLogs    | Hugo        | line 22 |
 | [x]    | Implement getLogsByDate    | Ryan-pelo   |         |
 | [x]    | Implement isSameDay helper | Ryan-pelo   |         |
@@ -110,18 +110,20 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description         | Assigned To | Notes |
 | ------ | ------------------------ | ----------- | ----- |
-| [ ]    | Implement constructor(s) |             |       |
-| [ ]    | Implement getters        |             |       |
-| [ ]    | Implement setters        |             |       |
+| [x]    | Implement constructor(s) | Ryan-pelo   | a0252867|
+| [x]    | Implement getters        | Ryan-pelo   | a0252867|
+| [x]    | Implement setters        | Ryan-pelo   | a0252867|
+| [x]    | Implement findBy methods | Ryan-pelo   | a8d3ecd5|
 | [x]    | Class created            | Ryan-pelo   |       |
 
 # Member.java
 
 | Status | Task Description         | Assigned To | Notes |
 | ------ | ------------------------ | ----------- | ----- |
-| [x]    | Implement constructor(s) | Nathan      |       |
-| [x]    | Implement getters        | Nathan      |       |
-| [x]    | Implement setters        | Nathan      |       |
+| [x]    | Implement constructor(s) | Nathan/Sal  | 1970214a|
+| [x]    | Implement getters        | Nathan/Sal  | 1970214a|
+| [x]    | Implement setters        | Nathan      | 034b9938|
+| [x]    | Add toString() method    | nsiu2       | 1704450c|
 | [x]    | Class created            | Nathan      |       |
 
 # StaffManager.java
@@ -139,35 +141,40 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description         | Assigned To | Notes |
 | ------ | ------------------------ | ----------- | ----- |
-| [x]    | Implement constructor(s) | Sal         |       |
-| [x]    | Implement getters        | Sal         |       |
-| [x]    | Implement setters        | Sal         |       |
-| [x]    | Class created            | Sal         |       |
+| [x]    | Implement constructor(s) | Sal         | 1970214a|
+| [x]    | Implement getters        | Sal         | 1970214a|
+| [x]    | Implement setters        | Sal         | 1970214a|
+| [x]    | Add password attributes  | Sal         | aef00f3e|
+| [x]    | Class created            | Sal         | a0252867|
 
 # Message.java
 
 | Status | Task Description                      | Assigned To | Notes |
 | ------ | ------------------------------------- | ----------- | ----- |
-| [ ]    | Implement constructor(s)              |             |       |
-| [ ]    | Implement getters                     |             |       |
-| [ ]    | Implement setters                     |             |       |
+| [x]    | Implement constructor(s)              | Ryan-pelo   | a0252867|
+| [x]    | Implement getters                     | Ryan-pelo   | a0252867|
+| [x]    | Implement setters                     | Ryan-pelo   | a0252867|
+| [x]    | Add enum-based message types          | Ralph       | 42909753|
+| [x]    | Update message types                  | Sal         | 6e1cfde6|
 | [x]    | Class created                         | Ryan-pelo   |       |
 
 # LibraryServer.java
 
 | Status | Task Description         | Assigned To | Notes |
 | ------ | ------------------------ | ----------- | ----- |
-| [ ]    | Implement constructor(s) |             |       |
-| [ ]    | Implement getters        |             |       |
-| [ ]    | Implement setters        |             |       |
+| [x]    | Implement constructor(s) | Ryan-pelo   | 4b15e1f1|
+| [x]    | Implement getters        | Ryan-pelo   | 4b15e1f1|
+| [x]    | Implement setters        | Ryan-pelo   | 4b15e1f1|
+| [x]    | Add shutdown hook        | Ryan        | fef682d3|
+| [x]    | Server connection logic  | Ryan-pelo   | 4b15e1f1|
 | [x]    | Class created            | Ryan-pelo   |       |
 
 # Client.java
 | Status | Task Description                  | Assigned To | Notes                 |
 | ------ | --------------------------------- | ----------- | --------------------- |
-| [ ]    | Implement message processing      |  RD         | processMessage methods |
-| [ ]    | Implement message sending         |  RD         | sendMessage method    |
-| [ ]    | Run method                        |  RD         | processMessage methods |
+| [x]    | Implement message processing      |  RD/Ralph   | 35e1b121              |
+| [x]    | Implement message sending         |  Ryan-pelo  | 4b15e1f1              |
+| [x]    | Run method                        |  Ralph      | fd881b63              |
 | [x]    | Implement socket connection logic | Ryan-pelo   |                       |
 | [x]    | Implement closeConnection method  | Ryan-pelo   |                       |
 
@@ -175,8 +182,9 @@ Use this file to track project tasks, assign them to team members, and mark prog
 
 | Status | Task Description             | Assigned To | Notes          |
 | ------ | ---------------------------- | ----------- | -------------- |
-| [ ]    | Implement message processing |     RD      |                |
-| [ ]    | Implement message sending    |     RD      |                |
+| [x]    | Implement message processing |     Ralph   | 35e1b121       |
+| [x]    | Implement message sending    |     Ryan-pelo| 4b15e1f1      |
+| [x]    | Implement login logic        |     Ralph   | 18ae7f67       |
 | [x]    | Implement run method         |     RD      |                |
 
 # GUIManager.java
@@ -199,6 +207,10 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [x]    | Returns                                     |   Ryan      |       |
 | [x]    | Member management                           |   Nathan    |       |
 | [/]    | Staff management                            |    -        |       |
+| [x]    | Implement checkin/checkout menus            |   Ryan      | 93f10a46|
+| [x]    | Implement catalog search                    |   Ralph     | a6a41ba3|
+| [x]    | Add/Remove resource menu options            |   Ryan      | 59a10455|
+| [x]    | Fix log out logic                           |   Ralph     | 40c73807|
 |        |                                             |             |       |
 
 # Test Files
@@ -292,6 +304,14 @@ Use this file to track project tasks, assign them to team members, and mark prog
 | [x]    | Set up .gitignore for collaboration     | Ryan-pelo   | Eclipse metadata        |
 | [x]    | Create TODO.md workload allocator       | Ryan-pelo   | TODO.md                 |
 | [x]    | Set up JUnit 5 testing framework        | Ryan-pelo   | .classpath, test folder |
+| [x]    | Implement serialization for DTOs        | Ryan        | 59a10455                |
+| [x]    | Make Staff/Member serializable          | Ralph       | d3564f2b                |
+| [x]    | Create LoginInfo class                  | Ralph       | 5155a4f2                |
+| [x]    | Implement signup from server side       | Ralph       | e77e0e00                |
+| [x]    | Add debugging utility                   | Ryan-pelo   | d4d13c4f                |
+| [x]    | Add getDisplayName interface method     | Ryan-pelo   | 0cd0e89e                |
+| [x]    | Implement disk I/O for managers         | Ryan-pelo   | a03f58b7                |
+| [x]    | Implement Log check in/out logic        | Ryan-pelo   | a03f58b7                |
 
 ---
 
