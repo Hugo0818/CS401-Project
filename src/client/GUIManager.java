@@ -781,6 +781,10 @@ public class GUIManager {
             if (payload instanceof java.util.List) {
                 @SuppressWarnings("unchecked")
                 java.util.List<Resource> results = (java.util.List<Resource>) payload;
+                
+                // Sort results alphabetically by display name
+                results.sort((a, b) -> a.getDisplayName().compareToIgnoreCase(b.getDisplayName()));
+                
                 currentSearchResults = results;
                 
                 System.out.println("[GUIManager] Received catalog search results:");
@@ -896,6 +900,11 @@ public class GUIManager {
                     if (log.getDetails().startsWith("New entry added")) {
                         time = (log.getCheckInTime() != null) ? log.getCheckInTime().toString() : (log.getCheckOutTime() != null) ? log.getCheckOutTime().toString() : "";
                         operation = "Create Resource";
+                        memberName = (log.getStaff() != null) ? log.getStaff().getName() + " (" + log.getStaff().getUID() + ")" : "";
+                    }
+                    else if (log.getDetails().startsWith("New entry removed")) {
+                        time = (log.getCheckInTime() != null) ? log.getCheckInTime().toString() : (log.getCheckOutTime() != null) ? log.getCheckOutTime().toString() : "";
+                        operation = "Remove Resource";
                         memberName = (log.getStaff() != null) ? log.getStaff().getName() + " (" + log.getStaff().getUID() + ")" : "";
                     }
                     else if (log.getCheckInTime() != null) {
