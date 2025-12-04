@@ -27,8 +27,22 @@ public class Client implements Runnable {
     private String loggedInUID;
     
     public static void main(String[] args) {
-    	//127.0.0.1
-        Client client = new Client("127.0.0.1", 12345); // or your server port
+    	String host = "127.0.0.1"; // Default to all interfaces
+        int port = 12345; // Default
+        try {
+            Properties props = new Properties();
+            FileInputStream fis = new FileInputStream("src/config.properties");
+            props.load(fis);
+            host = props.getProperty("HOST", "127.0.0.1");
+            port = Integer.parseInt(props.getProperty("PORT", "12345"));
+            fis.close();
+            System.out.println("[DEBUG] " + getCallerInfo() + " Configuration loaded from config.properties");
+        } catch (IOException e) {
+            System.out.println("Could not load config.properties, using defaults: " + e.getMessage());
+        } catch (NumberFormatException e) {
+            System.err.println("Invalid PORT in config.properties, using default: 8080");
+        }
+        Client client = new Client(host, port); // or your server port
         client.start();
     }
 
