@@ -7,6 +7,7 @@ import library.MessageType;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Properties;
 
 /**
  * Threaded client. Construct with host,port; call start() to start its listener thread.
@@ -36,7 +37,6 @@ public class Client implements Runnable {
             host = props.getProperty("HOST", "127.0.0.1");
             port = Integer.parseInt(props.getProperty("PORT", "12345"));
             fis.close();
-            System.out.println("[DEBUG] " + getCallerInfo() + " Configuration loaded from config.properties");
         } catch (IOException e) {
             System.out.println("Could not load config.properties, using defaults: " + e.getMessage());
         } catch (NumberFormatException e) {
