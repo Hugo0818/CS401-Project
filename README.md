@@ -28,29 +28,29 @@ The Mini Library Management System is a Java-based client-server application dev
 
 ## Project Structure
 MiniLibrarySystem/
- ├─ server/                 # Server-side logic and networking
- │    ├─ Server.java
- │    ├─ ClientHandler.java
- │    
- │
- ├─ client/                 # GUI clients using Java Swing
- │    ├─ Client.java
- │    ├─ GUI.java
- │    
- │
- ├─ managers/               # Managers controlling models and business logic
- │    ├─ LibraryManager.java
- │    ├─ LogManager.java
- │    ├─ StaffManager.java
- │    └─ ...
- │
- ├─ facade/                 # Facade design pattern for unified library operations
- │    └─ LibraryFacade.java
- │
- ├─ models/                 # Core entities
- │    ├─ Book.java
- │    ├─ Member.java
- │    ├─ Log.java
- │    └─ ...
- │
- 
+    server/                 # Server-side logic and networking
+        Server.java
+        ClientHandler.java
+
+    client/                 # GUI clients using Java Swing
+        Client.java
+        GUI.java
+
+    managers/               # Managers controlling models and business logic
+        LibraryManager.java
+        LogManager.java
+        StaffManager.java
+        ...
+
+    facade/                 # Facade design pattern for unified library operations
+        LibraryFacade.java
+
+    models/                 # Core entities
+        Book.java
+        Member.java
+        Log.java
+        ...
+
+---
+
+
