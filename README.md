@@ -27,7 +27,6 @@ The Mini Library Management System is a Java-based client-server application dev
 ---
 
 ## Project Structure
-
 MiniLibrarySystem/
     server/                 # Server-side logic and networking
         Server.java
@@ -51,4 +50,5 @@ MiniLibrarySystem/
         Member.java
         Log.java
         ...
+
 
